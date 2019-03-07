@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0DB59D21-2343-4035-A24B-BE9C43A6BF69}</ProjectGuid>
+    <RootNamespace>LightDebugEnvironment</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)Include;$(SolutionDir)Source\Include;$(SolutionDir)Source\Math;$(SolutionDir)Source\3rdParty\FBXSDK;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Lib\Win64\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)Include;$(SolutionDir)Source\Include;$(SolutionDir)Source\Math;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Lib\Win32\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)Include;$(SolutionDir)Source\Include;$(SolutionDir)Source\Math;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\LightEnvironment\Lib\Win64\Release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>opengl32.lib;assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;OpenRL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;OpenRL.lib;nvcore.lib;nvimage.lib;nvmath.lib;nvmesh.lib;thekla_atlas.lib;DirectXMesh.lib;UVAtlas.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;assimp.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;OpenRL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;assimp-vc140-mt.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;OpenRL.lib;DirectXMesh.lib;UVAtlas.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\3rdParty\DearUI\imgui.cpp" />
+    <ClCompile Include="Source\3rdParty\DearUI\ImGuizmo.cpp" />
+    <ClCompile Include="Source\3rdParty\DearUI\imgui_demo.cpp" />
+    <ClCompile Include="Source\3rdParty\DearUI\imgui_draw.cpp" />
+    <ClCompile Include="Source\3rdParty\LinearLeastSquaresStitch\Stitch.cpp" />
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\GuillotineBinPack.cpp" />
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\MaxRectsBinPack.cpp" />
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\Rect.cpp" />
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\ShelfBinPack.cpp" />
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\ShelfNextFitBinPack.cpp" />
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\SkylineBinPack.cpp" />
+    <ClCompile Include="Source\Asset\FBX.cpp" />
+    <ClCompile Include="Source\Asset\Material.cpp" />
+    <ClCompile Include="Source\Asset\GLSL.cpp" />
+    <ClCompile Include="Source\Asset\Prefab.cpp" />
+    <ClCompile Include="Source\Asset\RLSL.cpp" />
+    <ClCompile Include="Source\Asset\StaticMesh.cpp" />
+    <ClCompile Include="Source\Asset\Texture.cpp" />
+    <ClCompile Include="Source\Asset\TextureInfo.cpp" />
+    <ClCompile Include="Source\Component\IComponent.cpp" />
+    <ClCompile Include="Source\Component\GLRenderableUnit.cpp" />
+    <ClCompile Include="Source\Component\RLRenderableUnit.cpp" />
+    <ClCompile Include="Source\DesignPattern\ObserverPattern\Subject.cpp" />
+    <ClCompile Include="Source\Framework\Editor\Windows\WindowsEditor.cpp" />
+    <ClCompile Include="Source\GUI\Runtime\Windows\WindowsRuntime.cpp" />
+    <ClCompile Include="Source\GUI\GUIWrapper.cpp" />
+    <ClCompile Include="Source\Helper\AssetManager.cpp" />
+    <ClCompile Include="Source\Helper\AtlasManager.cpp" />
+    <ClCompile Include="Source\Helper\FBXImportor.cpp" />
+    <ClCompile Include="Source\Helper\FileOperator.cpp" />
+    <ClCompile Include="Source\Helper\Helper.cpp" />
+    <ClCompile Include="Source\Helper\MeshImportor.cpp" />
+    <ClCompile Include="Source\Helper\TextureOperator.cpp" />
+    <ClCompile Include="Source\Include\BaseInclude.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Math\MathGlobal.cpp" />
+    <ClCompile Include="Source\Math\Matrix4x4.cpp" />
+    <ClCompile Include="Source\Math\SH.cpp" />
+    <ClCompile Include="Source\Math\Vector2.cpp" />
+    <ClCompile Include="Source\Math\Vector3.cpp" />
+    <ClCompile Include="Source\Math\Vector4.cpp" />
+    <ClCompile Include="Source\Object\Camera.cpp" />
+    <ClCompile Include="Source\Object\DirectionLight.cpp" />
+    <ClCompile Include="Source\Object\Object.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\BaseGL.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLBuffer.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLFragmentShader.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLFrameBuffer.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLProgram.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLShader.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLTexture.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLVertexBufferLayout.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLVertexShader.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\OpenGLDevice.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\BaseRL.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLBuffer.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLDevice.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLFrameBuffer.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLPrimitive.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLProgram.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLShader.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLTexture2D.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLVertexBufferLayout.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLVertexShader.cpp" />
+    <ClCompile Include="Source\Asset\Scene.cpp" />
+    <ClCompile Include="Source\Settings\LightmappingSetting.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\3rdParty\cereal\access.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\archives\adapters.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\archives\binary.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\archives\json.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\archives\portable_binary.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\archives\xml.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\cereal.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\details\helpers.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\details\polymorphic_impl.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\details\polymorphic_impl_fwd.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\details\static_object.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\details\traits.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\details\util.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\external\base64.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\allocators.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\document.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\encodedstream.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\encodings.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\error\en.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\error\error.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\filereadstream.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\filewritestream.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\fwd.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\itoa.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\meta.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\pow10.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\regex.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\stack.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\strtod.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\swap.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\memorybuffer.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\memorystream.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\pointer.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\prettywriter.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\rapidjson.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\reader.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\schema.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\stream.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\stringbuffer.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\writer.h" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml_iterators.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml_print.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\macros.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\array.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\base_class.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\bitset.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\boost_variant.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\chrono.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\common.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\complex.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\concepts\pair_associative_container.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\deque.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\forward_list.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\functional.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\list.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\map.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\memory.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\polymorphic.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\queue.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\set.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\stack.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\string.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\tuple.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\unordered_map.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\unordered_set.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\utility.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\valarray.hpp" />
+    <ClInclude Include="Source\3rdParty\cereal\types\vector.hpp" />
+    <ClInclude Include="Source\3rdParty\DearUI\imconfig.h" />
+    <ClInclude Include="Source\3rdParty\DearUI\imgui.h" />
+    <ClInclude Include="Source\3rdParty\DearUI\ImGuizmo.h" />
+    <ClInclude Include="Source\3rdParty\DearUI\imgui_internal.h" />
+    <ClInclude Include="Source\3rdParty\DearUI\stb_rect_pack.h" />
+    <ClInclude Include="Source\3rdParty\DearUI\stb_textedit.h" />
+    <ClInclude Include="Source\3rdParty\DearUI\stb_truetype.h" />
+    <ClInclude Include="Source\3rdParty\LinearLeastSquaresStitch\Sitich.h" />
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\GuillotineBinPack.h" />
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\MaxRectsBinPack.h" />
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\Rect.h" />
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\ShelfBinPack.h" />
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\ShelfNextFitBinPack.h" />
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\SkylineBinPack.h" />
+    <ClInclude Include="Source\3rdParty\TheklaAtlas\thekla_atlas.h" />
+    <ClInclude Include="Source\3rdParty\UVAtlas\UVAtlas.h" />
+    <ClInclude Include="Source\Asset\FBX.h" />
+    <ClInclude Include="Source\Asset\IAsset.h" />
+    <ClInclude Include="Source\Asset\Material.h" />
+    <ClInclude Include="Source\Asset\GLSL.h" />
+    <ClInclude Include="Source\Asset\Prefab.h" />
+    <ClInclude Include="Source\Asset\RLSL.h" />
+    <ClInclude Include="Source\Asset\StaticMesh.h" />
+    <ClInclude Include="Source\Asset\Texture.h" />
+    <ClInclude Include="Source\Asset\TextureInfo.h" />
+    <ClInclude Include="Source\Component\IComponent.h" />
+    <ClInclude Include="Source\Component\GLRenderableUnit.h" />
+    <ClInclude Include="Source\Component\RLRenderableUnit.h" />
+    <ClInclude Include="Source\DesignPattern\ObserverPattern\Obeserver.h" />
+    <ClInclude Include="Source\DesignPattern\ObserverPattern\Subject.h" />
+    <ClInclude Include="Source\DesignPattern\SingletonPattern\Singleton.h" />
+    <ClInclude Include="Source\Framework\Editor\Windows\WindowsEditor.h" />
+    <ClInclude Include="Source\Framework\IFramework.h" />
+    <ClInclude Include="Source\GUI\Runtime\Windows\WindowsRuntime.h" />
+    <ClInclude Include="Source\GUI\GUIWrapper.h" />
+    <ClInclude Include="Source\Helper\AssetManager.h" />
+    <ClInclude Include="Source\Helper\AtlasManager.h" />
+    <ClInclude Include="Source\Helper\FBXImportor.h" />
+    <ClInclude Include="Source\Helper\FileOperator.h" />
+    <ClInclude Include="Source\Helper\MeshImportor.h" />
+    <ClInclude Include="Source\Helper\TextureOperator.h" />
+    <ClInclude Include="Source\Helper\Helper.h" />
+    <ClInclude Include="Source\Include\BaseInclude.h" />
+    <ClInclude Include="Source\Math\MathBase.h" />
+    <ClInclude Include="Source\Math\MathGlobal.h" />
+    <ClInclude Include="Source\Math\Matrix4x4.h" />
+    <ClInclude Include="Source\Math\SH.h" />
+    <ClInclude Include="Source\Math\Vector2.h" />
+    <ClInclude Include="Source\Math\Vector3.h" />
+    <ClInclude Include="Source\Math\Vector4.h" />
+    <ClInclude Include="Source\Object\Camera.h" />
+    <ClInclude Include="Source\Object\DirectionLight.h" />
+    <ClInclude Include="Source\Object\IObject.h" />
+    <ClInclude Include="Source\Object\Object.h" />
+    <ClInclude Include="Source\Platform\GenericPlatform.h" />
+    <ClInclude Include="Source\Platform\Platform.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsPlatform.h" />
+    <ClInclude Include="Source\Platform\Windows\WindowsPlatformCompilerPreSetup.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\BaseGL.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLBuffer.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLFragmentShader.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLFrameBuffer.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLProgram.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLShader.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLTexture.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLVertexBufferLayout.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLVertexShader.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\OpenGLDevice.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\BaseRL.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLBuffer.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLDevice.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLFrameBuffer.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLPrimitive.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLProgram.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLShader.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLTexture2D.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLVertexBufferLayout.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLVertexShader.h" />
+    <ClInclude Include="Source\Asset\Scene.h" />
+    <ClInclude Include="Source\Settings\LightmappingSetting.h" />
+    <ClInclude Include="Source\日志.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\3rdParty\cereal\external\rapidxml\license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\3rdParty\cereal\external\rapidxml\manual.html" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

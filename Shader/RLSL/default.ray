@@ -1,0 +1,25 @@
+//	default.ray
+uniform primitive lightPrimitive ;
+
+void setup()
+{
+	rl_OutputRayCount[0] = 1;
+}
+
+void main()
+{
+	vec3 lightPosition = vec3(0, 0, 0) ;
+
+	vec3 lightDirection = normalize(lightPosition - rl_IntersectionPoint);
+
+	createRay();
+	rl_OutRay.origin = rl_IntersectionPoint;
+	rl_OutRay.direction = lightDirection;
+	//rl_OutRay.color = vec3(0.7, 0.2, 0.1) ;//* dot(normal, lightDirection);
+	rl_OutRay.occlusionTest = true;
+	rl_OutRay.maxT = length(lightPosition - rl_IntersectionPoint);
+	
+	rl_OutRay.defaultPrimitive = lightPrimitive;
+	rl_OutRay.rayClass = 1;
+	emitRay();
+}

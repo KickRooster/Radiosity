@@ -1,0 +1,834 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{ee288c6b-2bb5-40e7-a776-de5b6a592774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Asset">
+      <UniqueIdentifier>{a24297e3-b64b-4792-a50c-db2d01324fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RHI">
+      <UniqueIdentifier>{a8c623b0-e8c0-4a1f-9dd7-c59c8100efff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RHI\D3D12RHI">
+      <UniqueIdentifier>{7ce05cad-9c0f-4039-ab2e-302102d333a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RHI\VulkanRHI">
+      <UniqueIdentifier>{1036b126-8a3d-4319-a79b-57e0cce5ae9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty">
+      <UniqueIdentifier>{e04eff78-7f76-4a92-bbda-45e14713ddf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RHI\EmptyRHI">
+      <UniqueIdentifier>{314ba772-6cbd-41db-8ce1-f41b74909828}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{b9785f6c-df3b-4f8b-bdcb-09ec6f446734}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Platform">
+      <UniqueIdentifier>{f2677aeb-9008-48be-8471-fa8ce36ef58a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Platform\Windows">
+      <UniqueIdentifier>{d4447149-0340-418d-8a5c-675f8e56a2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Include">
+      <UniqueIdentifier>{d1680e14-0e31-426f-ad20-70b5969afe5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\GUI">
+      <UniqueIdentifier>{167b4297-c59c-46ef-8fc7-af4772c2eb27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RHI\OpenGLRHI">
+      <UniqueIdentifier>{9daa630c-e006-4114-b649-b07854372d9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework">
+      <UniqueIdentifier>{c9a5d862-563f-4e3c-92fa-7efeb752acc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Runtime">
+      <UniqueIdentifier>{40f01f61-f4da-4e0b-8dc9-3b0ed70ae17f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Runtime\Windows">
+      <UniqueIdentifier>{59add488-3fef-4981-a4db-0e7ad07f1b72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Runtime\Android">
+      <UniqueIdentifier>{f64c12ad-f962-4022-b7e9-b05d11862b1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Runtime\IOS">
+      <UniqueIdentifier>{1c5d765c-2bc4-44be-8f8c-9ab8fd210eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Editor">
+      <UniqueIdentifier>{ba9037a4-6216-497e-984d-c2da0a78251b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Editor\Windows">
+      <UniqueIdentifier>{44312e6a-b73f-4f37-a29d-ee8e4ae1ae3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Editor\MAC">
+      <UniqueIdentifier>{e928a806-3598-47c4-8410-f9caa231dbfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Component">
+      <UniqueIdentifier>{f53ec9b4-3994-4c55-a4cd-268705d80048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\DearUI">
+      <UniqueIdentifier>{85c1b7a0-e119-421e-b6af-e215cd07e8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Object">
+      <UniqueIdentifier>{2138614f-6ef9-47b2-80c1-792cd784a772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RHI\OpenRLRHI">
+      <UniqueIdentifier>{0f3b24d7-0170-4a45-8989-509744d0b2c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal">
+      <UniqueIdentifier>{89fb7a33-9fd6-45ad-b97d-48ed4e3a38a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\archives">
+      <UniqueIdentifier>{7cd89a99-ff90-4826-8e22-a6fcbd74cd0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\details">
+      <UniqueIdentifier>{883302b7-a3e8-428d-b03a-e150f8876728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\external">
+      <UniqueIdentifier>{7f690041-2618-48d0-bcb7-2694ec30b9e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\external\rapidjson">
+      <UniqueIdentifier>{72376b33-373a-45e1-b0ba-a3759a16d4d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\external\rapidxml">
+      <UniqueIdentifier>{ee8880f5-f760-4147-b3b0-fee4549e5757}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\external\rapidjson\error">
+      <UniqueIdentifier>{c924116b-fab8-4dcd-80a0-a0bcfa195065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\external\rapidjson\internal">
+      <UniqueIdentifier>{907751c9-539f-40fd-91ac-98c417487419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\external\rapidjson\msinttypes">
+      <UniqueIdentifier>{96a8a184-904f-4a7c-9a87-c44d030b04ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\types">
+      <UniqueIdentifier>{ecb9bad7-c9ca-4306-8838-68885bb64186}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\cereal\types\concepts">
+      <UniqueIdentifier>{251c04b8-632d-4554-a50d-81832716b626}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\DesignPattern">
+      <UniqueIdentifier>{9bbd6738-820f-4577-b5f7-c27e925e7316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\DesignPattern\ObserverPattern">
+      <UniqueIdentifier>{5daeea95-247b-4f51-a40b-eeb0b6c35e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Helper">
+      <UniqueIdentifier>{b1839dac-ebbe-4959-9a20-4ebe77be5774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\TheklaAtlas">
+      <UniqueIdentifier>{de375c1e-e05b-4a31-86d8-a10cec765ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\RectangleBinPack">
+      <UniqueIdentifier>{0bc831f1-7d75-4042-aa75-cde556417252}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\DesignPattern\Singleton">
+      <UniqueIdentifier>{e12d8931-68ee-4e56-a5ed-7a09dd92dc26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\UVAtlas">
+      <UniqueIdentifier>{198e6d02-0401-45b1-917b-2b55399c5ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Settings">
+      <UniqueIdentifier>{e4684052-c910-47d6-83ff-3bfadd01f47d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\LinearLeastSquaresStitch">
+      <UniqueIdentifier>{87d04195-3ceb-4fc8-be27-7d7db03d89f3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\OpenGLDevice.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLVertexShader.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLFragmentShader.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLProgram.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\BaseGL.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\Editor\Windows\WindowsEditor.cpp">
+      <Filter>Source\Framework\Editor\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\IComponent.cpp">
+      <Filter>Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLBuffer.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Include\BaseInclude.cpp">
+      <Filter>Source\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLVertexBufferLayout.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector2.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector3.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector4.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\DearUI\imgui.cpp">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\DearUI\imgui_demo.cpp">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\DearUI\imgui_draw.cpp">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Object.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\Camera.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\MathGlobal.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLFrameBuffer.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLTexture.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\GUIWrapper.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Matrix4x4.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLDevice.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLBuffer.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLVertexShader.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLProgram.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLFrameBuffer.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\BaseRL.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLTexture2D.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\Runtime\Windows\WindowsRuntime.cpp">
+      <Filter>Source\Framework\Runtime\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLPrimitive.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLShader.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLVertexBufferLayout.cpp">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\DearUI\ImGuizmo.cpp">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\DirectionLight.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\FileOperator.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\MeshImportor.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\Helper.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\AssetManager.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\StaticMesh.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\RLSL.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\Material.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\GLSL.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\Texture.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RHI\OpenGLRHI\GLShader.cpp">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\GLRenderableUnit.cpp">
+      <Filter>Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\RLRenderableUnit.cpp">
+      <Filter>Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DesignPattern\ObserverPattern\Subject.cpp">
+      <Filter>Source\DesignPattern\ObserverPattern</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\TextureOperator.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\GuillotineBinPack.cpp">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\MaxRectsBinPack.cpp">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\Rect.cpp">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\ShelfBinPack.cpp">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\ShelfNextFitBinPack.cpp">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\RectangleBinPack\SkylineBinPack.cpp">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\AtlasManager.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helper\FBXImportor.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\Scene.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\Prefab.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\FBX.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Asset\TextureInfo.cpp">
+      <Filter>Source\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Settings\LightmappingSetting.cpp">
+      <Filter>Source\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\SH.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\3rdParty\LinearLeastSquaresStitch\Stitch.cpp">
+      <Filter>3rdParty\LinearLeastSquaresStitch</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\日志.h" />
+    <ClInclude Include="Source\Asset\IAsset.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Vector3.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsPlatform.h">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Windows\WindowsPlatformCompilerPreSetup.h">
+      <Filter>Source\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\GenericPlatform.h">
+      <Filter>Source\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Platform\Platform.h">
+      <Filter>Source\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Include\BaseInclude.h">
+      <Filter>Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\OpenGLDevice.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Vector2.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLVertexShader.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLFragmentShader.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLProgram.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\BaseGL.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Framework\IFramework.h">
+      <Filter>Source\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Framework\Editor\Windows\WindowsEditor.h">
+      <Filter>Source\Framework\Editor\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component\IComponent.h">
+      <Filter>Source\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Vector4.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLBuffer.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLVertexBufferLayout.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\MathBase.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\imconfig.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\imgui.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\imgui_internal.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\stb_rect_pack.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\stb_textedit.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\stb_truetype.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\IObject.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Object.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Camera.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Matrix4x4.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\MathGlobal.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLFrameBuffer.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLTexture.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\GUIWrapper.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLDevice.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\BaseRL.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLBuffer.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLVertexShader.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLProgram.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLFrameBuffer.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLTexture2D.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\Runtime\Windows\WindowsRuntime.h">
+      <Filter>Source\Framework\Runtime\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLPrimitive.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLShader.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLVertexBufferLayout.h">
+      <Filter>Source\RHI\OpenRLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\DearUI\ImGuizmo.h">
+      <Filter>3rdParty\DearUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\DirectionLight.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\FileOperator.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\MeshImportor.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\Helper.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\AssetManager.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\StaticMesh.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\RLSL.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\Material.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\GLSL.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\Texture.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RHI\OpenGLRHI\GLShader.h">
+      <Filter>Source\RHI\OpenGLRHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\access.hpp">
+      <Filter>3rdParty\cereal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\cereal.hpp">
+      <Filter>3rdParty\cereal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\macros.hpp">
+      <Filter>3rdParty\cereal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\archives\adapters.hpp">
+      <Filter>3rdParty\cereal\archives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\archives\binary.hpp">
+      <Filter>3rdParty\cereal\archives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\archives\json.hpp">
+      <Filter>3rdParty\cereal\archives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\archives\portable_binary.hpp">
+      <Filter>3rdParty\cereal\archives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\archives\xml.hpp">
+      <Filter>3rdParty\cereal\archives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\details\helpers.hpp">
+      <Filter>3rdParty\cereal\details</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\details\polymorphic_impl.hpp">
+      <Filter>3rdParty\cereal\details</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\details\polymorphic_impl_fwd.hpp">
+      <Filter>3rdParty\cereal\details</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\details\static_object.hpp">
+      <Filter>3rdParty\cereal\details</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\details\traits.hpp">
+      <Filter>3rdParty\cereal\details</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\details\util.hpp">
+      <Filter>3rdParty\cereal\details</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\error\en.h">
+      <Filter>3rdParty\cereal\external\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\error\error.h">
+      <Filter>3rdParty\cereal\external\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\biginteger.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\diyfp.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\dtoa.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\ieee754.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\itoa.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\meta.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\pow10.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\regex.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\stack.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\strfunc.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\strtod.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\internal\swap.h">
+      <Filter>3rdParty\cereal\external\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\msinttypes\inttypes.h">
+      <Filter>3rdParty\cereal\external\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\msinttypes\stdint.h">
+      <Filter>3rdParty\cereal\external\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\allocators.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\document.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\encodedstream.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\encodings.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\filereadstream.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\filewritestream.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\fwd.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\istreamwrapper.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\memorybuffer.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\memorystream.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\ostreamwrapper.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\pointer.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\prettywriter.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\rapidjson.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\reader.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\schema.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\stream.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\stringbuffer.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidjson\writer.h">
+      <Filter>3rdParty\cereal\external\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml.hpp">
+      <Filter>3rdParty\cereal\external\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml_iterators.hpp">
+      <Filter>3rdParty\cereal\external\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml_print.hpp">
+      <Filter>3rdParty\cereal\external\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\rapidxml\rapidxml_utils.hpp">
+      <Filter>3rdParty\cereal\external\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\external\base64.hpp">
+      <Filter>3rdParty\cereal\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\concepts\pair_associative_container.hpp">
+      <Filter>3rdParty\cereal\types\concepts</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\array.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\base_class.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\bitset.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\boost_variant.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\chrono.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\common.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\complex.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\deque.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\forward_list.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\functional.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\list.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\map.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\memory.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\polymorphic.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\queue.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\set.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\stack.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\string.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\tuple.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\unordered_map.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\unordered_set.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\utility.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\valarray.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\cereal\types\vector.hpp">
+      <Filter>3rdParty\cereal\types</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component\GLRenderableUnit.h">
+      <Filter>Source\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component\RLRenderableUnit.h">
+      <Filter>Source\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DesignPattern\ObserverPattern\Obeserver.h">
+      <Filter>Source\DesignPattern\ObserverPattern</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DesignPattern\ObserverPattern\Subject.h">
+      <Filter>Source\DesignPattern\ObserverPattern</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\TextureOperator.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\TheklaAtlas\thekla_atlas.h">
+      <Filter>3rdParty\TheklaAtlas</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\GuillotineBinPack.h">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\MaxRectsBinPack.h">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\Rect.h">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\ShelfBinPack.h">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\ShelfNextFitBinPack.h">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\RectangleBinPack\SkylineBinPack.h">
+      <Filter>3rdParty\RectangleBinPack</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DesignPattern\SingletonPattern\Singleton.h">
+      <Filter>Source\DesignPattern\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\UVAtlas\UVAtlas.h">
+      <Filter>3rdParty\UVAtlas</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\AtlasManager.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Settings\LightmappingSetting.h">
+      <Filter>Source\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Helper\FBXImportor.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\Scene.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\Prefab.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\FBX.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Asset\TextureInfo.h">
+      <Filter>Source\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\SH.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\3rdParty\LinearLeastSquaresStitch\Sitich.h">
+      <Filter>3rdParty\LinearLeastSquaresStitch</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\3rdParty\cereal\external\rapidxml\license.txt">
+      <Filter>3rdParty\cereal\external\rapidxml</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\3rdParty\cereal\external\rapidxml\manual.html">
+      <Filter>3rdParty\cereal\external\rapidxml</Filter>
+    </None>
+  </ItemGroup>
+</Project>
