@@ -18,14 +18,7 @@ namespace Core
 		this->fileNameWithExt = mat.fileNameWithExt;
 		this->fullPathName = mat.fullPathName;
 		this->IsOccluder = mat.IsOccluder;
-		this->lightmapIndex = mat.lightmapIndex;
 		this->lightmapName = mat.lightmapName;
-		this->m_lightmapUVParam_x = mat.m_lightmapUVParam_x;
-		this->m_lightmapUVParam_y = mat.m_lightmapUVParam_y;
-		this->m_lightmapUVParam_z = mat.m_lightmapUVParam_z;
-		this->m_lightmapUVParam_w = mat.m_lightmapUVParam_w;
-		this->rlRayShaderName = mat.rlRayShaderName;
-		this->rlVertexShaderName = mat.rlVertexShaderName;
 		this->type = mat.type;
 	}
 
@@ -42,12 +35,6 @@ namespace Core
 			m_glProgram->AttachShader(glFragmentShader.lock()->GetGLShader());
 
 			m_glProgram->Link();
-
-			if (!rlVertexShader.expired())
-				rlVertexShader.lock()->BeginUse();
-
-			if (!rlRayShader.expired())
-				rlRayShader.lock()->BeginUse();
 
 			if (!albedoTexture.expired())
 				albedoTexture.lock()->BeginUse();
@@ -78,18 +65,10 @@ namespace Core
 
 	void Material::BeforeSave()
 	{
-		m_lightmapUVParam_x = lightmapUVParam.x;
-		m_lightmapUVParam_y = lightmapUVParam.y;
-		m_lightmapUVParam_z = lightmapUVParam.z;
-		m_lightmapUVParam_w = lightmapUVParam.w;
 	}
 
 	void Material::AfterLoad()
 	{
-		lightmapUVParam.x = m_lightmapUVParam_x;
-		lightmapUVParam.y = m_lightmapUVParam_y;
-		lightmapUVParam.z = m_lightmapUVParam_z;
-		lightmapUVParam.w = m_lightmapUVParam_w;
 	}
 
 	void Material::Activate()
@@ -138,34 +117,6 @@ namespace Core
 			m_glProgram->ActivateTextureSlot(slotIndex, lightmapSamplerName.c_str());
 			++slotIndex;
 			lightmapTexture.lock()->Activate();
-		}
-
-		if (!sh0Texture.expired())
-		{
-			m_glProgram->ActivateTextureSlot(slotIndex, sh0SamplerName.c_str());
-			++slotIndex;
-			sh0Texture.lock()->Activate() ;
-		}
-
-		if (!sh1Texture.expired())
-		{
-			m_glProgram->ActivateTextureSlot(slotIndex, sh1SamplerName.c_str());
-			++slotIndex;
-			sh1Texture.lock()->Activate();
-		}
-
-		if (!sh2Texture.expired())
-		{
-			m_glProgram->ActivateTextureSlot(slotIndex, sh2SamplerName.c_str());
-			++slotIndex;
-			sh2Texture.lock()->Activate();
-		}
-
-		if (!sh3Texture.expired())
-		{
-			m_glProgram->ActivateTextureSlot(slotIndex, sh3SamplerName.c_str());
-			++slotIndex;
-			sh3Texture.lock()->Activate();
 		}
 	}
 

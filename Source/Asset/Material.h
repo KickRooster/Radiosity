@@ -2,10 +2,8 @@
 #include <BaseInclude.h>
 #include <../3rdParty/cereal/archives/xml.hpp>
 #include "../RHI/OpenGLRHI/GLProgram.h"
-#include "../RHI/OpenRLRHI/RLProgram.h"
 #include "IAsset.h"
 #include "GLSL.h"
-#include "RLSL.h"
 #include "Texture.h"
 #include "../DesignPattern/ObserverPattern/Obeserver.h"
 #include "../Math/Vector4.h"
@@ -13,7 +11,7 @@
 
 namespace Core
 {
-	//	ÕâÊÇÒ»¸ö¿ÉÒÔ±»ÐòÁÐ»¯µÄ×Ô¶¨ÒåÀàµÄÀý×Ó.
+	//	ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	struct CustomSerializableClass
 	{
 		int x;
@@ -62,17 +60,9 @@ namespace Core
 
 		friend class cereal::access;
 
-		float m_lightmapUVParam_x;
-		float m_lightmapUVParam_y;
-		float m_lightmapUVParam_z;
-		float m_lightmapUVParam_w;
-
 	public:
 		std::weak_ptr<GLSL> glVertexShader;
 		std::weak_ptr<GLSL> glFragmentShader;
-
-		std::weak_ptr<RLSL> rlVertexShader;
-		std::weak_ptr<RLSL> rlRayShader;
 
 		std::weak_ptr<Texture> albedoTexture;
 		std::weak_ptr<Texture> normalMap;
@@ -81,23 +71,11 @@ namespace Core
 		std::weak_ptr<Texture> aoTexture;
 		std::weak_ptr<Texture> lightmapTexture;
 
-		std::weak_ptr<GLTexture> sh0Texture;
-		std::weak_ptr<GLTexture> sh1Texture;
-		std::weak_ptr<GLTexture> sh2Texture;
-		std::weak_ptr<GLTexture> sh3Texture;
-
 		Bool IsOccluder;
-		int32 lightmapIndex;
-		Vector4 lightmapUVParam;	//	x, uOffset
-									//	y, vOffset
-									//	z, uTilling
-									//	w, vTilling
 
-		//	TODO:	½«À´¿ÉÄÜ»»³Éid
+		//	TODO:	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½id
 		ctd::string glVertexShaderName;
 		ctd::string glFragmentShaderName;
-		ctd::string rlVertexShaderName;
-		ctd::string rlRayShaderName;
 
 		ctd::string albedoTextureName;
 		ctd::string normalMapName;
@@ -115,10 +93,6 @@ namespace Core
 		const ctd::string roughnessSamplerName = "roughnessSampler";
 		const ctd::string aoSamplerName = "aoSampler";
 		const ctd::string lightmapSamplerName = "lightmapSampler";
-		const ctd::string sh0SamplerName = "sh0";
-		const ctd::string sh1SamplerName = "sh1";
-		const ctd::string sh2SamplerName = "sh2";
-		const ctd::string sh3SamplerName = "sh3";
 		const ctd::string idName = "id";
 		const ctd::string albedoColorName = "albedoColor";
 		//const ctd::string bounceProbablilityName = "bounceProbablility";
@@ -139,15 +113,8 @@ namespace Core
 		void serialize(Archive & ar)
 		{
 			ar(IsOccluder,
-				lightmapIndex,
-				m_lightmapUVParam_x,
-				m_lightmapUVParam_y,
-				m_lightmapUVParam_z,
-				m_lightmapUVParam_w,
 				glVertexShaderName,
 				glFragmentShaderName,
-				rlVertexShaderName,
-				rlRayShaderName,
 				albedoTextureName,
 				normalMapName,
 				metallicTextureName,

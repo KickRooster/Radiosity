@@ -22,9 +22,6 @@ namespace Core
 		m_directionalLightMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
 		m_directionalLightMaterial->glFragmentShader.lock()->Attach(m_directionalLightMaterial.get());
 
-		m_directionalLightMaterial->rlVertexShader = m_assetManager->rlVertexShaderMap["default"];
-		m_directionalLightMaterial->rlRayShader = m_assetManager->rlRayShaderMap["light"];
-
 		m_directionalLightMaterial->lightmapName = "DummyLightmap";
 		m_directionalLightMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
 		m_directionalLightMaterial->lightmapTexture.lock()->Attach(m_directionalLightMaterial.get());
@@ -38,16 +35,14 @@ namespace Core
 		m_terrainMaterial->glVertexShader.lock()->Attach(m_terrainMaterial.get());
 		m_terrainMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
 		m_terrainMaterial->glFragmentShader.lock()->Attach(m_terrainMaterial.get());
-		m_terrainMaterial->rlVertexShader = m_assetManager->rlVertexShaderMap["default"];
-		m_terrainMaterial->rlRayShader = m_assetManager->rlRayShaderMap["default"];
-		m_terrainMaterial->albedoTexture = m_assetManager->textureMap["yellow"];
+		m_terrainMaterial->albedoTexture = m_assetManager->textureMap["default"];
 		m_terrainMaterial->albedoColor[0] = 1.0f;
 		m_terrainMaterial->albedoColor[1] = 1.0f;
 		m_terrainMaterial->albedoColor[2] = 1.0f;
 		m_terrainMaterial->albedoColor[3] = 1.0f;
-		m_terrainMaterial->normalMap = m_assetManager->textureMap["Cerberus_N"];
-		m_terrainMaterial->metallicTexture = m_assetManager->textureMap["Cerberus_M"];
-		m_terrainMaterial->roughnessTexture = m_assetManager->textureMap["Cerberus_R"];
+		m_terrainMaterial->normalMap = m_assetManager->textureMap["default"];
+		m_terrainMaterial->metallicTexture = m_assetManager->textureMap["default"];
+		m_terrainMaterial->roughnessTexture = m_assetManager->textureMap["default"];
 
 		m_terrainMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
 		m_terrainMaterial->lightmapTexture.lock()->Attach(m_terrainMaterial.get());
@@ -60,37 +55,11 @@ namespace Core
 		m_bakingMaterial->glVertexShader.lock()->Attach(m_bakingMaterial.get());
 		m_bakingMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["bake"];
 		m_bakingMaterial->glFragmentShader.lock()->Attach(m_bakingMaterial.get());
-
-		//////////////////////////////////////////////////////////////////////////
-		m_postprocessAverageMaterial = std::make_shared<Material>();
-
-		m_postprocessAverageMaterial->glVertexShader = m_assetManager->glVertexShaderMap["postprocess"];
-		m_postprocessAverageMaterial->glVertexShader.lock()->Attach(m_postprocessAverageMaterial.get());
-		m_postprocessAverageMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["postprocessAverage"];
-		m_postprocessAverageMaterial->glFragmentShader.lock()->Attach(m_postprocessAverageMaterial.get());
-
-		//////////////////////////////////////////////////////////////////////////
-		m_postprocessDilationMaterial = std::make_shared<Material>();
-
-		m_postprocessDilationMaterial->glVertexShader = m_assetManager->glVertexShaderMap["postprocess"];
-		m_postprocessDilationMaterial->glVertexShader.lock()->Attach(m_postprocessDilationMaterial.get());
-		m_postprocessDilationMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["postprocessDilation"];
-		m_postprocessDilationMaterial->glFragmentShader.lock()->Attach(m_postprocessDilationMaterial.get());
-
-		//////////////////////////////////////////////////////////////////////////
-		m_postprocessSH4Material = std::make_shared<Material>();
-
-		m_postprocessSH4Material->glVertexShader = m_assetManager->glVertexShaderMap["postprocess"];
-		m_postprocessSH4Material->glVertexShader.lock()->Attach(m_postprocessSH4Material.get());
-		m_postprocessSH4Material->glFragmentShader = m_assetManager->glFragmentShaderMap["postprocessSH4"];
-		m_postprocessSH4Material->glFragmentShader.lock()->Attach(m_postprocessSH4Material.get());
-
+		
 		//////////////////////////////////////////////////////////////////////////
 
 		m_directionLightMesh = std::make_shared<StaticMesh>();
-
-		m_directionLightMesh->generateLightmapUV = False;
-
+		
 		m_directionLightMesh->pPositions = new Vector4[5];
 		m_directionLightMesh->pNormals = new Vector3[5];
 		m_directionLightMesh->pBinormals = new Vector3[5];
@@ -323,7 +292,6 @@ namespace Core
 		m_postprocessMesh->pIndices[0] = 0;
 		m_postprocessMesh->pIndices[1] = 1;
 		m_postprocessMesh->pIndices[2] = 2;
-		m_postprocessMesh->generateLightmapUV = False;
 	}
 
 	void WindowsEditor::panelSceneObjects()
@@ -467,51 +435,6 @@ namespace Core
 					++index;
 				}
 				break;
-			case FileType_RLSL_Vertex:
-				for (map<string, shared_ptr<RLSL>>::iterator iter = m_assetManager->rlVertexShaderMap.begin();
-					iter != m_assetManager->rlVertexShaderMap.end();
-					++iter)
-				{
-					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), pfileSelections + index, ImGuiSelectableFlags_DontClosePopups))
-					{
-						selectedIndex = index;
-						selectedFileName = iter->first;
-						break;
-					}
-
-					++index;
-				}
-				break;
-			case FileType_RLSL_Ray:
-				for (map<string, shared_ptr<RLSL>>::iterator iter = m_assetManager->rlRayShaderMap.begin();
-					iter != m_assetManager->rlRayShaderMap.end();
-					++iter)
-				{
-					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), pfileSelections + index, ImGuiSelectableFlags_DontClosePopups))
-					{
-						selectedIndex = index;
-						selectedFileName = iter->first;
-						break;
-					}
-
-					++index;
-				}
-				break;
-			case FileType_RLSL_Frame:
-				for (map<string, shared_ptr<RLSL>>::iterator iter = m_assetManager->rlFrameShaderMap.begin();
-					iter != m_assetManager->rlFrameShaderMap.end();
-					++iter)
-				{
-					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), pfileSelections + index, ImGuiSelectableFlags_DontClosePopups))
-					{
-						selectedIndex = index;
-						selectedFileName = iter->first;
-						break;
-					}
-
-					++index;
-				}
-				break;
 			default:
 				break;
 			}
@@ -601,7 +524,7 @@ namespace Core
 			static AssetType selectedCategory = AssetType_None;
 			static AssetType selectedCategoryLastFrame = AssetType_None;
 
-			//	ÅäºÏIMGUI,ÐèÒªÓÃbool¶ø²»ÊÇBool.ÊýÄ¿Í¬CategoryÊýÄ¿Ò»ÖÂ.
+			//	ï¿½ï¿½ï¿½IMGUI,ï¿½ï¿½Òªï¿½ï¿½boolï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Bool.ï¿½ï¿½Ä¿Í¬Categoryï¿½ï¿½Ä¿Ò»ï¿½ï¿½.
 			static bool categorySelections[10] = { False, False, False, False, False, False, False, False , False};
 
 			ctd::string categoryName = "";
@@ -661,13 +584,7 @@ namespace Core
 				selectedCategory = AssetType_GLShader;
 				categoryName = "GLSL";
 			}
-
-			if (ImGui::Selectable("RLSL", &categorySelections[AssetType_RLShader]))
-			{
-				selectedCategory = AssetType_RLShader;
-				categoryName = "RLSL";
-			}
-
+			
 			if (selectedCategory != selectedCategoryLastFrame)
 			{
 				if (selectedCategoryLastFrame != AssetType_None)
@@ -747,44 +664,6 @@ namespace Core
 				}
 				for (map<string, shared_ptr<GLSL>>::iterator iter = m_assetManager->glFragmentShaderMap.begin();
 					iter != m_assetManager->glFragmentShaderMap.end();
-					++iter)
-				{
-					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), &fileSelections[index]))
-					{
-						selectedFileIndex = index;
-						break;
-					}
-
-					++index;
-				}
-				break;
-			case Core::AssetType_RLShader:
-				for (map<string, shared_ptr<RLSL>>::iterator iter = m_assetManager->rlVertexShaderMap.begin();
-					iter != m_assetManager->rlVertexShaderMap.end();
-					++iter)
-				{
-					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), &fileSelections[index]))
-					{
-						selectedFileIndex = index;
-						break;
-					}
-
-					++index;
-				}
-				for (map<string, shared_ptr<RLSL>>::iterator iter = m_assetManager->rlFrameShaderMap.begin();
-					iter != m_assetManager->rlFrameShaderMap.end();
-					++iter)
-				{
-					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), &fileSelections[index]))
-					{
-						selectedFileIndex = index;
-						break;
-					}
-
-					++index;
-				}
-				for (map<string, shared_ptr<RLSL>>::iterator iter = m_assetManager->rlFrameShaderMap.begin();
-					iter != m_assetManager->rlFrameShaderMap.end();
 					++iter)
 				{
 					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), &fileSelections[index]))
@@ -1211,48 +1090,6 @@ namespace Core
 				if (!selectedMaterial.expired())
 					ImGui::Button(selectedMaterial.lock()->glFragmentShaderName.c_str());
 
-				//	RLSL Vertex Shader
-				popupFileSelectingTick(
-					FileType_RLSL_Vertex,
-					"RL Vertex Shader...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->rlVertexShaderName = fileName;
-					selectedMaterial.lock()->rlVertexShader = m_assetManager->rlVertexShaderMap[fileName];
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->rlVertexShaderName.c_str());
-
-				//	RLSL Ray Shader
-				popupFileSelectingTick(
-					FileType_RLSL_Ray,
-					"RL Ray Shader...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->rlRayShaderName = fileName;
-					selectedMaterial.lock()->rlRayShader = m_assetManager->rlRayShaderMap[fileName];
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->rlRayShaderName.c_str());
-
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
 
@@ -1300,14 +1137,12 @@ namespace Core
 						{
 							selectedTexture.lock()->info->wrapMode = TextureWrapMode_Clamp;
 							selectedTexture.lock()->SetGLWrapMode(GLTextureWrapMode_Clamp);
-							selectedTexture.lock()->SetRLWrapMode(RLTextureWrapMode_Clamp);
 						}
 
 						if (ImGui::Selectable("Repeat"))
 						{
 							selectedTexture.lock()->info->wrapMode = TextureWrapMode_Repeat;
 							selectedTexture.lock()->SetGLWrapMode(GLTextureWrapMode_Repeat);
-							selectedTexture.lock()->SetRLWrapMode(RLTextureWrapMode_Repeat);
 						}
 
 						ImGui::EndCombo();
@@ -1319,14 +1154,12 @@ namespace Core
 						{
 							selectedTexture.lock()->info->filterMode = TextureFilterMode_Point;
 							selectedTexture.lock()->SetGLFilterMode(GLTextureFilterMode_Point);
-							selectedTexture.lock()->SetRLFilterMode(RLTextureFilterMode_Point);
 						}
 
 						if (ImGui::Selectable("Bilinear"))
 						{
 							selectedTexture.lock()->info->filterMode = TextureFilterMode_Bilinear;
 							selectedTexture.lock()->SetGLFilterMode(GLTextureFilterMode_Bilinear);
-							selectedTexture.lock()->SetRLFilterMode(RLTextureFilterMode_Bilinear);
 						}
 
 						ImGui::EndCombo();
@@ -1347,7 +1180,6 @@ namespace Core
 							selectedTexture.lock()->info->format = TextureFormat_RGBA32;
 
 						selectedTexture.lock()->UploadToGL();
-						selectedTexture.lock()->UploadToRL();
 					}
 
 					ImGui::EndChild();
@@ -1465,12 +1297,10 @@ namespace Core
 			std::shared_ptr<Material> material;
 			std::shared_ptr<Texture> lightmap;
 			std::shared_ptr<Texture> maskMap;
-			Vector4 lightmapParam;
 
 			if (m_assetManager->materialMap.find(pSelectedObject->materialName) != m_assetManager->materialMap.end())
 			{
 				material = m_assetManager->materialMap[pSelectedObject->materialName];
-				lightmapParam = material->lightmapUVParam;
 
 				if (m_assetManager->lightmapMap.find(material->lightmapName) != m_assetManager->lightmapMap.end())
 				{
@@ -1482,9 +1312,6 @@ namespace Core
 					maskMap = m_assetManager->maskMapMap[material->maskMapName];
 				}
 			}
-
-			if (staticMesh && lightmap && maskMap)
-				llss::Stitch(staticMesh, lightmap, maskMap, lightmapParam, pSelectedObject->id);
 		
 			pSelectedObject->stitched = True;
 		}
@@ -1513,22 +1340,12 @@ namespace Core
 			material->lightmapTexture.lock()->Attach(material.get());
 		}
 
-		material->IsOccluder = True;	//	TODO:	Õâ¸ö»¹Ã»±©Â¶ÔÚ±à¼­Æ÷ÖÐ
+		material->IsOccluder = True;	//	TODO:	ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Â¶ï¿½Ú±à¼­ï¿½ï¿½ï¿½ï¿½
 
 		defaultObject->glRenderableUnit->material = material;
 		defaultObject->glRenderableUnit->bakingMaterial = m_bakingMaterial;
 
-		defaultObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
-		defaultObject->rlRenderableUnit->staticMesh = m_assetManager->meshMap[prefab.lock()->staticMeshName];
-		defaultObject->rlRenderableUnit->material = material;
-
-		material->rlVertexShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
-		material->rlRayShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
-
-		defaultObject->rlRenderableUnit->lightingSettingsUniformBuffer = m_scene->GetRLUniformBuffer();
-		defaultObject->rlRenderableUnit->giUniformBuffer = m_rlGIUniformBuffer;
-
-		defaultObject->Initialize(m_GLDevice.get(), m_RLDevice.get());
+		defaultObject->Initialize(m_GLDevice.get());
 
 		return defaultObject;
 	}
@@ -1547,39 +1364,16 @@ namespace Core
 			material->lightmapTexture.lock()->Attach(material.get());
 		}
 
-		material->IsOccluder = True;	//	TODO:	Õâ¸ö»¹Ã»±©Â¶ÔÚ±à¼­Æ÷ÖÐ
+		material->IsOccluder = True;	//	TODO:	ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Â¶ï¿½Ú±à¼­ï¿½ï¿½ï¿½ï¿½
 
 		object->glRenderableUnit->material = material;
 		object->glRenderableUnit->bakingMaterial = m_bakingMaterial;
 
-		object->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
-		object->rlRenderableUnit->staticMesh = m_assetManager->meshMap[object->staticMeshName];
-		object->rlRenderableUnit->material = material;
-		material->rlVertexShader.lock()->Attach(object->rlRenderableUnit.get());
-		material->rlRayShader.lock()->Attach(object->rlRenderableUnit.get());
-
-		object->rlRenderableUnit->lightingSettingsUniformBuffer = m_scene->GetRLUniformBuffer();
-		object->rlRenderableUnit->giUniformBuffer = m_rlGIUniformBuffer;
-
 		object->name = object->staticMeshName;
 
-		object->Initialize(m_GLDevice.get(), m_RLDevice.get());
+		object->Initialize(m_GLDevice.get());
 
 		return object;
-	}
-
-	std::shared_ptr<Core::Object> WindowsEditor::createPostprocessAverageObject()
-	{
-		std::shared_ptr<Object> postprocessObject = std::make_shared<Object>();
-		postprocessObject->name = "PostprocessObject";
-
-		postprocessObject->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		postprocessObject->glRenderableUnit->material = m_postprocessAverageMaterial;
-		postprocessObject->glRenderableUnit->staticMesh = m_postprocessMesh;
-
-		postprocessObject->glRenderableUnit->BeginUse();
-
-		return postprocessObject;
 	}
 
 	std::shared_ptr<Core::Object> WindowsEditor::createDirectinalLight()
@@ -1591,15 +1385,7 @@ namespace Core
 		directonalLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();
 		directonalLight->glRenderableUnit->staticMesh = m_directionLightMesh;
 		directonalLight->glRenderableUnit->material = m_directionalLightMaterial;
-
-		directonalLight->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
-		directonalLight->rlRenderableUnit->staticMesh = m_directionLightMesh;
-		directonalLight->rlRenderableUnit->material = m_directionalLightMaterial;
-		directonalLight->rlRenderableUnit->material.lock()->rlVertexShader.lock()->Attach(directonalLight->rlRenderableUnit.get());
-		directonalLight->rlRenderableUnit->material.lock()->rlRayShader.lock()->Attach(directonalLight->rlRenderableUnit.get());
-		directonalLight->rlRenderableUnit->lightingSettingsUniformBuffer = m_scene->GetRLUniformBuffer();
-		directonalLight->rlRenderableUnit->giUniformBuffer = m_rlGIUniformBuffer;
-
+		
 		directonalLight->position = Vector3(0, 300.0f, 800.0f);
 		directonalLight->eulerAngle = Vector3(270.0f, 0, 0);
 
@@ -1615,15 +1401,7 @@ namespace Core
 		terrainObject->glRenderableUnit->staticMesh = m_terrainMesh;
 		terrainObject->glRenderableUnit->material = m_terrainMaterial;
 		terrainObject->glRenderableUnit->bakingMaterial = m_bakingMaterial;
-
-		terrainObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
-		terrainObject->rlRenderableUnit->staticMesh = m_terrainMesh;
-		terrainObject->rlRenderableUnit->material = m_terrainMaterial;
-		terrainObject->rlRenderableUnit->lightingSettingsUniformBuffer = m_scene->GetRLUniformBuffer();
-		terrainObject->rlRenderableUnit->giUniformBuffer = m_rlGIUniformBuffer;
-		terrainObject->rlRenderableUnit->material.lock()->rlVertexShader.lock()->Attach(terrainObject->rlRenderableUnit.get());
-		terrainObject->rlRenderableUnit->material.lock()->rlRayShader.lock()->Attach(terrainObject->rlRenderableUnit.get());
-
+		
 		return terrainObject;
 	}
 
@@ -1631,23 +1409,13 @@ namespace Core
 		:
 		m_assetManager(std::make_unique<AssetManager>()),
 		m_GLDevice(std::make_unique<OpenGLDevice>()),
-		m_RLDevice(std::make_unique<RLDevice>()),
 		m_guiWrapper(std::make_unique<GUIWrapper>()),
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_RLFrameBuffer(std::make_unique<RLFrameBuffer>()),
 		m_GLBakeFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_GLBakeColorAttach0(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_GLBakeColorAttach1(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
-		m_RLBakingObjectPosition(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
-		m_RLBakingObjectNormal(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
-		m_RLBakeFrameBuffer(std::make_unique<RLFrameBuffer>()),
-		m_RLBakeColorAttach(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_frameCount(0),
 		m_progressiveCountPerFrame(100),
-		m_isRenderingRL(False),
-		m_GIEnabled(True),
-		m_GLPostprocessFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_GLPostprocessColorAttach(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_GLBakingAccumulation(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_GLBakingPostprocessFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_GLBakingPostprocessColorAttach(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
@@ -1655,8 +1423,7 @@ namespace Core
 		m_GLDilationColorAttach(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_GLPackingBuffer(std::make_unique<GLBuffer>()),
 		m_baking(False),
-		debugingProgressiveCount(1),
-		m_altasManager(std::make_unique<AtlasManager>(m_assetManager))
+		debugingProgressiveCount(1)
 	{
 		m_GLBakeColorAttach0->LoadImage(
 			glBakingBufferSize,
@@ -1678,51 +1445,13 @@ namespace Core
 
 		memset(m_pPositionRawData, 0, glBakingBufferSize * glBakingBufferSize * sizeof(float) * 4);
 		memset(m_pNormalRawData, 0, glBakingBufferSize * glBakingBufferSize * sizeof(float) * 4);
-
-		m_RLBakingObjectPosition->LoadClientImage(glBakingBufferSize, glBakingBufferSize, m_pPositionRawData);
-		m_RLBakingObjectNormal->LoadClientImage(glBakingBufferSize, glBakingBufferSize, m_pNormalRawData);
-
-		m_RLBakeColorAttach->LoadImage(bakingRTSize, bakingRTSize, Null);
-		m_RLBakeFrameBuffer->Resize(bakingRTSize, bakingRTSize);
-		m_RLBakeFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLBakeColorAttach.get());
-
-		m_RLBakePackingBuffer = std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer);
-
-		m_RLBakePackingBuffer->AllocateMemorySpace(
-			bakingRTSize * bakingRTSize * m_RLBakeColorAttach->GetDataSizePerPixel(),
-			RLBufferUsage_StaticDraw);
-
+		
 		m_GLBakeViewTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 		m_GLBakeViewTexture->LoadImage(bakingRTSize, bakingRTSize, Null);
-
-		m_jitters.resize(LightmappingSetting::Instance()->progressivePassCount);
-
+		
 		ctd::vector<float> randomBarycentrics;
 		Helper::GenerateRandomNumbers(0.0f, 1.0f, LightmappingSetting::Instance()->progressivePassCount * 3, randomBarycentrics);
-
-		int32 barycentricIndex = 0;
-
-		for (int32 i = 0; i < LightmappingSetting::Instance()->progressivePassCount; ++i)
-		{
-			// Generate 3 random barycentric coordinates.
-			float gamma = randomBarycentrics[barycentricIndex++];
-			float beta = randomBarycentrics[barycentricIndex++];
-			float alpha;
-
-			if (gamma + beta > 1.0f)
-			{
-				// Subtract off some random value from beta.
-				beta = std::max(0.0f, beta - randomBarycentrics[barycentricIndex++]);
-			}
-
-			alpha = 1.0f - (gamma + beta);
-
-			m_jitters[i].x = gamma;
-			m_jitters[i].y = beta;
-			m_jitters[i].z = alpha;
-			m_jitters[i].w = 1.0f;
-		}
-
+		
 		m_GLBakingAccumulation->LoadImage(
 			glBakingBufferSize,
 			glBakingBufferSize,
@@ -1752,36 +1481,34 @@ namespace Core
 	{
 		m_assetManager->Scan();
 
-		m_RLDevice->Initialize(
-			m_assetManager->rlVertexShaderMap["environment"],
-			m_assetManager->rlRayShaderMap["environment"],
-			m_assetManager->rlFrameShaderMap["bake"],
-			m_assetManager->rlFrameShaderMap["perspective"]);
+		//m_RLDevice->Initialize(
+		//	m_assetManager->rlVertexShaderMap["environment"],
+		//	m_assetManager->rlRayShaderMap["environment"],
+		//	m_assetManager->rlFrameShaderMap["bake"],
+		//	m_assetManager->rlFrameShaderMap["perspective"]);
 
-		m_rlGIUniformBuffer = std::make_shared<RLBuffer>(RLBufferTarget_UniformBlockBuffer);
-		m_rlGIUniformBuffer->name = "GI";
-		m_rlGIUniformBuffer->AllocateMemorySpace(sizeof(GI), RLBufferUsage_DynamicDraw);
+		//m_rlGIUniformBuffer = std::make_shared<RLBuffer>(RLBufferTarget_UniformBlockBuffer);
+		//m_rlGIUniformBuffer->name = "GI";
+		//m_rlGIUniformBuffer->AllocateMemorySpace(sizeof(GI), RLBufferUsage_DynamicDraw);
 
 		if (m_assetManager->sceneMap.find(startSceneName) != m_assetManager->sceneMap.end())
 			m_scene = m_assetManager->sceneMap[startSceneName];
 		else
 			m_scene = std::make_shared<Scene>();
 
-		m_scene->Initialize(m_GLDevice.get(), m_RLDevice.get(), width, height);
+		m_scene->Initialize(m_GLDevice.get(), width, height);
 
 		createBuiltinResources();
 
 		std::shared_ptr<Object> lightObject = createDirectinalLight();
-		lightObject->Initialize(m_GLDevice.get(), m_RLDevice.get());
+		lightObject->Initialize(m_GLDevice.get());
 		m_scene->AddLight(lightObject, False);
 		
 		std::shared_ptr<Object> terrainObject = createTerrain();
-		terrainObject->Initialize(m_GLDevice.get(), m_RLDevice.get());
+		terrainObject->Initialize(m_GLDevice.get());
 		m_scene->AddObject(terrainObject, False);
 
-		m_postprocessAverageObject = createPostprocessAverageObject();
-
-		//	ÊµÀý»¯³¡¾°ÖÐÐòÁÐ»¯ºÃµÄ¶ÔÏó
+		//	Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ÃµÄ¶ï¿½ï¿½ï¿½
 		for (vector<std::shared_ptr<Object>>::iterator iter = m_scene->serializedObjects.begin();
 			iter != m_scene->serializedObjects.end();
 			++iter)
@@ -1811,29 +1538,9 @@ namespace Core
 		{
 			m_assetManager->ReloadGLShader();
 		}
-		if (ImGui::Button("RL Reload Shader"))
-		{
-			m_assetManager->ReloadRLShader();
-		}
 		if (ImGui::Button("Bake"))
 		{
 			m_baking = !m_baking;
-		}
-		if (ImGui::Button("Rendering RL"))
-		{
-			m_frameCount = 0;
-
-			m_isRenderingRL = !m_isRenderingRL;
-		}
-		if (ImGui::Button("GI Enabled"))
-		{
-			m_GIEnabled = !m_GIEnabled;
-
-			m_rlGIUniformBuffer->Activate();
-			m_GIUniformBufferData = (GI *)m_rlGIUniformBuffer->Map(RLBufferAccessFlag_ReadWrite);
-			m_GIUniformBufferData->enabled = m_GIEnabled;
-			m_rlGIUniformBuffer->Unmap();
-			m_rlGIUniformBuffer->Inactivate();
 		}
 
 		ImGui::InputInt("Progressive Count:", &debugingProgressiveCount);
@@ -1895,96 +1602,6 @@ namespace Core
 				m_pSelectedObject);
 		}
 
-		ImGui::End();
-
-		//////////////////////////////////////////////////////////////////////////
-
-		ImGui::SetNextWindowPos(ImVec2(600, 0));
-		ImGui::SetNextWindowSize(ImVec2(600, 600));
-		
-		ImGui::Begin("Ray Traced View");
-		ImVec2 rayTracedRegion = ImGui::GetContentRegionAvail();
-		
-		int32 rayTracedViewWidth = static_cast<int32>(rayTracedRegion.x);
-		int32 rayTracedViewHeight = static_cast<int32>(rayTracedRegion.y);
-		
-		if (rayTracedViewWidth != m_RLFrameBuffer->GetWidth() ||
-			rayTracedViewHeight != m_RLFrameBuffer->GetHeight())
-		{
-			if (rayTracedViewWidth <= 0)
-				rayTracedViewWidth = 128;
-		
-			if (rayTracedViewHeight <= 0)
-				rayTracedViewHeight = 128;
-		
-			m_RLColorAttach = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Bilinear);
-			m_RLColorAttach->LoadImage(rayTracedViewWidth, rayTracedViewHeight, Null);
-		
-			m_RLFrameBuffer->Resize(rayTracedViewWidth, rayTracedViewHeight);
-			m_RLFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLColorAttach.get());
-			
-			m_RLPackingBuffer = std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer);
-		
-			m_RLPackingBuffer->AllocateMemorySpace(
-				rayTracedViewWidth * rayTracedViewHeight * m_RLColorAttach->GetDataSizePerPixel(),
-				RLBufferUsage_StaticDraw);
-		
-			m_GLRayTracedViewTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_GLRayTracedViewTexture->LoadImage(rayTracedViewWidth, rayTracedViewHeight, Null);
-		
-			m_RLJitterTexture = std::make_unique<RLTexture2D>(RLIinternalFormat_RGB, RLPixelFormat_RGB, RLDataType_Float, RLTextureWrapMode_Repeat, RLTextureFilterMode_Point);
-			size_t jitterSize = rayTracedViewWidth * rayTracedViewHeight * 3;
-			std::vector<float> jitterData;
-			Helper::RandomizeRadial(1.2f, jitterSize, jitterData);
-			m_RLJitterTexture->LoadImage(rayTracedViewWidth, rayTracedViewHeight, &jitterData[0]);
-
-			m_RLDevice->SetJitterTexture(m_RLJitterTexture.get());
-
-			m_GLPostprocessColorAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_GLPostprocessColorAttach->LoadImage(
-				rayTracedViewWidth,
-				rayTracedViewHeight,
-				Null);
-
-			m_GLPostprocessFrameBuffer->Resize(rayTracedViewWidth, rayTracedViewHeight);
-			m_GLPostprocessFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPostprocessColorAttach.get());
-		}
-		
-		if (m_isRenderingRL && m_frameCount > 0 || m_frameCount == debugingProgressiveCount)// LightmappingSetting::Instance()->progressivePassCount)
-		{
-			m_RLPackingBuffer->Activate();
-			m_RLColorAttach->Activate();
-			m_RLColorAttach->GetTexImage();
-			m_RLColorAttach->Inactivate();
-			m_RLPackingBuffer->Inactivate();
-
-			m_RLPackingBuffer->Activate();
-			float * pPixels = static_cast<float *>(m_RLPackingBuffer->Map(RLBufferAccessFlag_ReadOnly));
-			m_GLRayTracedViewTexture->LoadImage(rayTracedViewWidth, rayTracedViewHeight, pPixels);
-			m_RLPackingBuffer->Unmap();
-			m_RLPackingBuffer->Inactivate();
-
-			//	ºó´¦Àí,½«µþ¼ÓµÄÎÆÀí´¦Àí
-			m_GLPostprocessFrameBuffer->Activate();
-			m_GLDevice->BeforePostprocess(0, 0, rayTracedViewWidth, rayTracedViewHeight);
-			m_postprocessAverageObject->glRenderableUnit->material.lock()->SetSampler(0, "raytracedSampler", m_GLRayTracedViewTexture.get());
-			Vector4 postprocessParam;
-			postprocessParam.x = 1.0f / m_frameCount;
-			postprocessParam.y = 0;
-			postprocessParam.z = 0;
-			postprocessParam.w = 0;
-			m_postprocessAverageObject->RenderAsPostprocess(m_GLDevice.get(), postprocessParam);
-			m_GLDevice->AfterPostprocess();
-			m_GLPostprocessFrameBuffer->Inactivate();
-
-			ImGui::Image(
-				reinterpret_cast<void *>(m_GLPostprocessColorAttach->GetID64()),
-				rayTracedRegion,
-				ImVec2(0, 0),
-				ImVec2(1.0f, 1.0f)
-			);
-		}
-		
 		ImGui::End();
 		
 		//////////////////////////////////////////////////////////////////////////
@@ -2052,7 +1669,7 @@ namespace Core
 		panelSceneObjects();
 		panelAssets(inputState);
 
-		m_scene->Tick(deltaTime, m_GLDevice.get(), m_RLDevice.get(), inputState);
+		m_scene->Tick(deltaTime, m_GLDevice.get(), inputState);
 	}
 
 	void WindowsEditor::Render(int32 width, int32 height)
@@ -2060,28 +1677,7 @@ namespace Core
 		m_GLFrameBuffer->Activate();
 		m_scene->Render(m_GLDevice.get(), m_GLFrameBuffer->GetWidth(), m_GLFrameBuffer->GetHeight());
 		m_GLFrameBuffer->Inactivate();
-
-		if (m_isRenderingRL)
-		{
-			m_RLFrameBuffer->Activate();
-			m_RLDevice->SetRenderMode(RLRenderMode_Normal);
-			m_scene->UpdateRLParameter(m_RLDevice.get(), m_jitters[m_frameCount]);
-
-			if (m_frameCount == 0)
-			{
-				m_RLDevice->SetViewport(0, 0, m_RLFrameBuffer->GetWidth(), m_RLFrameBuffer->GetHeight());
-				m_RLDevice->Clear();
-			}
-
-			m_RLDevice->ExecuteCommands();
-			m_RLFrameBuffer->Inactivate();
-
-			++m_frameCount;
-
-			if (m_frameCount == debugingProgressiveCount)// LightmappingSetting::Instance()->progressivePassCount)
-				m_isRenderingRL = False;
-		}
-
+		
 		m_guiWrapper->Render(width, height);
 	}
 
@@ -2095,26 +1691,20 @@ namespace Core
 			m_baking = False;
 			m_frameCount = 0;
 
-			m_altasManager->CleanUpAtlasList();
-
 			return;
 		}
 
 		int32 progressiveCountPerFrame = m_progressiveCountPerFrame;
 
-		//	±ÜÃâ³¬³öµü´ú·¶Î§.
+		//	ï¿½ï¿½ï¿½â³¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§.
 		if (m_frameCount + progressiveCountPerFrame > debugingProgressiveCount)
 			progressiveCountPerFrame = debugingProgressiveCount - m_frameCount;
-
-		static ctd::vector<BakingKeyFrameInfo> bakingKeyFrameInfos;
-
-		//	¿ÕÅÜÒ»´Î,ÌîÈë±ØÒªÊý¾Ý.
+		
+		//	ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½.
 		if (m_frameCount == 0)
 		{
-			bakingKeyFrameInfos.clear();
-
 			m_GLBakeFrameBuffer->Activate();
-			m_scene->BeginBaking(m_GLDevice.get(), m_RLDevice.get(), glBakingBufferSize, glBakingBufferSize);
+			m_scene->BeginBaking(m_GLDevice.get(), glBakingBufferSize, glBakingBufferSize);
 			m_GLDevice->DisableCullFace();
 			m_GLDevice->Clear();
 
@@ -2128,102 +1718,9 @@ namespace Core
 					m_scene->SkipOneObject();
 					continue;
 				}
-
-				BakingKeyFrameInfo bakingKeyFrameInfo;
-
-				//	°Ñ»ñÈ¡chartÔÚatlasÖÐµÄ´óÐ¡ÌáÇ°ÖÁ´Ë,
-				//	ÒòÎªÈç¹û·­×ªchart,Í¬Ê±ÐèÒª·­×ªlightmapUV,Õâ»áÓ°Ïìµ½ÓÃGLÊä³öÎ»ÖÃºÍ·¨ÏßattachµÄ²¿·Ö.
-				//	ËùÒÔÐèÒªÔÚGLÌá½»Ö®Ç°¸üÐÂ¶¥µãÐÅÏ¢µ½GPU.
-				int32 chartWidth = pCurrentObject->glRenderableUnit->staticMesh.lock()->GetLightmapAtlasWidth();
-				int32 chartHeight = pCurrentObject->glRenderableUnit->staticMesh.lock()->GetLightmapAtlasHeight();
-
-				//		 Up
-				//		 -- 
-				//	Left|At|Right
-				//		 --
-				//		Down
-				int32 upPaddingSize = LightmappingSetting::Instance()->paddingSize;
-				int32 downPaddingSize = LightmappingSetting::Instance()->paddingSize;
-				int32 leftPaddingSize = LightmappingSetting::Instance()->paddingSize;
-				int32 rightPaddingSize = LightmappingSetting::Instance()->paddingSize;
-
-				if (LightmappingSetting::Instance()->lightmapSize - chartWidth == 1)
-				{
-					leftPaddingSize = 0;
-				}
-				else if (LightmappingSetting::Instance()->lightmapSize - chartWidth == 0)
-				{
-					leftPaddingSize = 0;
-					rightPaddingSize = 0;
-				}
-
-				if (LightmappingSetting::Instance()->lightmapSize - chartHeight == 1)
-				{
-					upPaddingSize = 0;
-				}
-				else if (LightmappingSetting::Instance()->lightmapSize - chartHeight == 0)
-				{
-					upPaddingSize = 0;
-					downPaddingSize = 0;
-				}
-
-				Rect chartRect = m_altasManager->Insert(chartWidth + leftPaddingSize + rightPaddingSize, chartHeight + upPaddingSize + downPaddingSize);
-
-				bakingKeyFrameInfo.rectCount = m_altasManager->GetCurrentAtlasRectCount();
-
-				Bool rectRotated;
-				int32 packedChartWidth;
-				int32 packedChartHeight;
-
-				if (chartRect.width != chartWidth + leftPaddingSize + rightPaddingSize)
-				{
-					rectRotated = True;
-
-					packedChartWidth = chartHeight;
-					packedChartHeight = chartWidth;
-
-					pCurrentObject->glRenderableUnit->staticMesh.lock()->RotateUV1HalfPi();
-				}
-				else
-				{
-					rectRotated = False;
-
-					packedChartWidth = chartWidth;
-					packedChartHeight = chartHeight;
-				}
-
-				pCurrentObject->glRenderableUnit->material.lock()->lightmapIndex = m_altasManager->GetCurrentLightmapIndex();
-				pCurrentObject->glRenderableUnit->material.lock()->lightmapUVParam.x = (float)(chartRect.x + leftPaddingSize) / LightmappingSetting::Instance()->lightmapSize;
-				pCurrentObject->glRenderableUnit->material.lock()->lightmapUVParam.y = (float)(chartRect.y + upPaddingSize) / LightmappingSetting::Instance()->lightmapSize;
-				pCurrentObject->glRenderableUnit->material.lock()->lightmapUVParam.z = (float)(packedChartWidth) / LightmappingSetting::Instance()->lightmapSize;
-				pCurrentObject->glRenderableUnit->material.lock()->lightmapUVParam.w = (float)(packedChartHeight) / LightmappingSetting::Instance()->lightmapSize;
-
+				
 				m_GLDevice->Clear();
 				m_scene->BakeOneObject(m_GLDevice.get());
-
-				if (m_altasManager->AtlasChanged())
-				{
-					bakingKeyFrameInfo.atlasChanged = True;
-
-					if (!m_altasManager->IsFirstAtlas())
-					{
-						bakingKeyFrameInfo.isFirstAtlas = False;
-					}
-					else
-						bakingKeyFrameInfo.isFirstAtlas = True;
-				}
-				else
-					bakingKeyFrameInfo.atlasChanged = False;
-
-				bakingKeyFrameInfo.atlasIndex = m_altasManager->GetCurrentAtlasIndex();
-				bakingKeyFrameInfos.push_back(bakingKeyFrameInfo);
-
-				pCurrentObject->viewportRect.x = chartRect.x + leftPaddingSize;
-				pCurrentObject->viewportRect.y = chartRect.y + upPaddingSize;
-				pCurrentObject->viewportRect.width = chartRect.width - leftPaddingSize - rightPaddingSize;
-				pCurrentObject->viewportRect.height = chartRect.height - upPaddingSize - downPaddingSize;
-
-				m_altasManager->LateUpdate();
 			}
 
 			m_scene->EndBaking(m_GLDevice.get());
@@ -2231,7 +1728,7 @@ namespace Core
 			m_GLDevice->EnableCullFace();
 		}
 
-		//	äÖÈ¾GI
+		//	ï¿½ï¿½È¾GI
 		if (1)
 		{
 			if (m_frameCount == 0)
@@ -2239,21 +1736,11 @@ namespace Core
 				size_t size = bakingRTSize * bakingRTSize * 3;
 				std::vector<float> data;
 
-				m_RLRandomValuesTexture = std::make_unique<RLTexture2D>(RLIinternalFormat_RGB, RLPixelFormat_RGB, RLDataType_Float, RLTextureWrapMode_Repeat, RLTextureFilterMode_Point);
 				Helper::GenerateRandomNumbers(0, 1.0f, size, data);
-				m_RLRandomValuesTexture->LoadImage(bakingRTSize, bakingRTSize, &data[0]);
-
-				m_rlGIUniformBuffer->Activate();
-				m_GIUniformBufferData = (GI *)m_rlGIUniformBuffer->Map(RLBufferAccessFlag_ReadWrite);
-				m_GIUniformBufferData->texture = m_RLRandomValuesTexture->GetRawTexture();
-				m_GIUniformBufferData->enabled = m_GIEnabled;
-				m_rlGIUniformBuffer->Unmap();
-				m_rlGIUniformBuffer->Inactivate();
 			}
 
 			m_GLBakeFrameBuffer->Activate();
-			m_scene->BeginBaking(m_GLDevice.get(), m_RLDevice.get(), glBakingBufferSize, glBakingBufferSize);
-			m_RLDevice->SetRenderMode(RLRenderMode_Bake);
+			m_scene->BeginBaking(m_GLDevice.get(), glBakingBufferSize, glBakingBufferSize);
 			m_GLDevice->DisableCullFace();
 			m_GLDevice->Clear();
 
@@ -2275,109 +1762,15 @@ namespace Core
 				m_GLBakeColorAttach0->Fetch(m_pPositionRawData);
 				m_GLBakeColorAttach1->Fetch(m_pNormalRawData);
 
-				//m_RLBakingObjectPosition->LoadClientImage(glBakingBufferSize, glBakingBufferSize, m_pPositionRawData);
-				//m_RLBakingObjectNormal->LoadClientImage(glBakingBufferSize, glBakingBufferSize, m_pNormalRawData);
-
-				m_RLDevice->SetPositionTexture(m_RLBakingObjectPosition.get());
-				m_RLDevice->SetNormalTexture(m_RLBakingObjectNormal.get());
-
-				if (bakingKeyFrameInfos[bakingObjectIndex].atlasChanged)
-				{
-					if (!bakingKeyFrameInfos[bakingObjectIndex].isFirstAtlas)
-					{
-						//	Ä¿±êatlas¸Ä¶¯,°Ñcolor attachÖÐµÄÄÚÈÝ¶Á³ö²¢Ð´»ØÄÚ´æ.
-						m_RLBakePackingBuffer->Activate();
-						m_RLBakeColorAttach->Activate();
-						m_RLBakeColorAttach->GetTexImage();
-						m_RLBakeColorAttach->Inactivate();
-						m_RLBakePackingBuffer->Inactivate();
-
-						m_RLBakePackingBuffer->Activate();
-						float * pPixels = static_cast<float *>(m_RLBakePackingBuffer->Map(RLBufferAccessFlag_ReadOnly));
-						m_altasManager->AppendAtlasRawDataFloat(bakingKeyFrameInfos[bakingObjectIndex - 1].atlasIndex, bakingKeyFrameInfos[bakingObjectIndex - 1].rectCount, pPixels);
-						m_RLBakePackingBuffer->Unmap();
-						m_RLBakePackingBuffer->Inactivate();
-					}
-
-					m_RLBakeFrameBuffer->Activate();
-					m_RLDevice->SetViewport(0, 0, bakingRTSize, bakingRTSize);
-					m_RLDevice->Clear();
-					m_RLBakeFrameBuffer->Inactivate();
-				}
-
-				m_RLBakeFrameBuffer->Activate();
-				m_RLDevice->SetViewport(pCurrentObject->viewportRect.x, pCurrentObject->viewportRect.y, pCurrentObject->viewportRect.width, pCurrentObject->viewportRect.height);
-				for (int32 i = 0; i < progressiveCountPerFrame; ++i)
-				{
-					m_scene->UpdateRLPerStep(m_RLDevice.get(), m_jitters[m_frameCount + i]);
-					m_RLDevice->ExecuteCommands();
-				}
-				m_RLBakeFrameBuffer->Inactivate();
-
-				m_altasManager->LateUpdate();
-
 				++bakingObjectIndex;
-			}
-
-			//	°Ñµ±Ç°atlasÖÐµÄÄÚÈÝ¶Á»ØÄÚ´æ
-			{
-				m_RLBakePackingBuffer->Activate();
-				m_RLBakeColorAttach->Activate();
-				m_RLBakeColorAttach->GetTexImage();
-				m_RLBakeColorAttach->Inactivate();
-				m_RLBakePackingBuffer->Inactivate();
-
-				m_RLBakePackingBuffer->Activate();
-				float * pPixels = static_cast<float *>(m_RLBakePackingBuffer->Map(RLBufferAccessFlag_ReadOnly));
-				m_altasManager->AppendAtlasRawDataFloat(bakingKeyFrameInfos[bakingObjectIndex - 1].atlasIndex, bakingKeyFrameInfos[bakingObjectIndex - 1].rectCount, pPixels);
-				m_RLBakePackingBuffer->Unmap();
-				m_RLBakePackingBuffer->Inactivate();
 			}
 
 			m_scene->EndBaking(m_GLDevice.get());
 			m_GLBakeFrameBuffer->Inactivate();
 			m_GLDevice->EnableCullFace();
-
-			m_altasManager->ResetRectState();
-
-			//	¶ÔatlasÖÐµÄÄÚÈÝÅúÁ¿ºó´¦Àí
+			
 			//////////////////////////////////////////////////////////////////////////
-			//	°Ñµ±Ç°atlasÖÐµÄÄÚÈÝ¶Á»ØÄÚ´æ
-			for (int32 i = 0; i < m_altasManager->GetAtlasCount(); ++i)
-			{
-				m_GLBakingAccumulation->LoadImage(
-					glBakingBufferSize,
-					glBakingBufferSize,
-					m_altasManager->GetAtlas(i)->rawDataFloat.get());
-
-				//	ºó´¦Àí,½«µþ¼ÓµÄÎÆÀí´¦Àí&Dilation
-				m_GLBakingPostprocessFrameBuffer->Activate();
-				m_GLDevice->BeforePostprocess(0, 0, glBakingBufferSize, glBakingBufferSize);
-				m_postprocessAverageObject->glRenderableUnit->material.lock()->SetSampler(0, "raytracedSampler", m_GLBakingAccumulation.get());
-				Vector4 postprocessParam;
-				postprocessParam.x = 1.0f / (m_frameCount + progressiveCountPerFrame);
-				postprocessParam.y = 1.0f;	//	Flip
-				postprocessParam.z = 1.0f / glBakingBufferSize;
-				postprocessParam.w = 1.0f / glBakingBufferSize;
-				m_postprocessAverageObject->RenderAsPostprocess(m_GLDevice.get(), postprocessParam);
-				m_GLDevice->AfterPostprocess();
-				m_GLBakingPostprocessFrameBuffer->Inactivate();
-
-				//	Ð´»ØÄÚ´æ
-				m_GLBakingPostprocessFrameBuffer->Activate();
-				m_GLPackingBuffer->Activate(BufferTarget_PixelPackBuffer);
-				m_GLPackingBuffer->ReadPixels(0, 0, glBakingBufferSize, glBakingBufferSize, GLPixelFormat_BGRA, GLDataType_UnsignedByte, Null);
-				uint8 * pPostprocessColorAttach = static_cast<uint8 *>(m_GLPackingBuffer->Map(BufferTarget_PixelPackBuffer, AccessFlag_ReadOnly));
-				m_GLBakeViewTexture->LoadImage(glBakingBufferSize, glBakingBufferSize, pPostprocessColorAttach);
-				m_altasManager->SetRawData(i, pPostprocessColorAttach);
-				m_GLPackingBuffer->Unmap(BufferTarget_PixelPackBuffer);
-				m_GLPackingBuffer->Inactivate(BufferTarget_PixelPackBuffer);
-				m_GLBakingPostprocessFrameBuffer->Inactivate();
-			}
-			//////////////////////////////////////////////////////////////////////////
-
-			m_altasManager->SaveLightmap();
-
+			
 			if (m_frameCount == 0)
 				m_assetManager->ScanLightmap();
 
@@ -2390,11 +1783,11 @@ namespace Core
 				if ((*iter)->glRenderableUnit->bakingMaterial.expired())
 					continue;
 			
-				string lightmapName = LightmappingSetting::Instance()->GetLightmapName((*iter)->glRenderableUnit->material.lock()->lightmapIndex);
-				(*iter)->glRenderableUnit->material.lock()->lightmapName = lightmapName;
-			
-				(*iter)->glRenderableUnit->material.lock()->lightmapTexture = m_assetManager->lightmapMap[lightmapName];
-				(*iter)->glRenderableUnit->material.lock()->lightmapTexture.lock()->BeginUse();
+				//string lightmapName = LightmappingSetting::Instance()->GetLightmapName((*iter)->glRenderableUnit->material.lock()->lightmapIndex);
+				//(*iter)->glRenderableUnit->material.lock()->lightmapName = lightmapName;
+			//
+				//(*iter)->glRenderableUnit->material.lock()->lightmapTexture = m_assetManager->lightmapMap[lightmapName];
+				//(*iter)->glRenderableUnit->material.lock()->lightmapTexture.lock()->BeginUse();
 			}
 
 			m_frameCount += progressiveCountPerFrame;

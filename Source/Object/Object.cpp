@@ -22,7 +22,7 @@ namespace Core
 		++idSeed;
 	}
 
-	void Object::Initialize(OpenGLDevice * pDevice, RLDevice * pRLDevice)
+	void Object::Initialize(OpenGLDevice * pDevice)
 	{
 		float matrixTranslation[3];
 		float matrixRotation[3];
@@ -50,14 +50,10 @@ namespace Core
 		m_object2WorldITMatrix = Transpose(m_world2ObjectMatrix);
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
 
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_LightmapUVParam, sizeof(Vector4Dummy), &glRenderableUnit->material.lock()->lightmapUVParam);
-
 		glRenderableUnit->BeginUse();
-
-		rlRenderableUnit->Commit(id);
 	}
 
-	void Object::Tick(float deltaTime, OpenGLDevice * pDevice, RLDevice * pRLDevice)
+	void Object::Tick(float deltaTime, OpenGLDevice * pDevice)
 	{
 		m_world2ObjectMatrix = Inverse(m_object2WorldMatrix);
 		m_object2WorldITMatrix = Transpose(m_world2ObjectMatrix);
@@ -85,8 +81,7 @@ namespace Core
 	{
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_LightmapUVParam, sizeof(Vector4Dummy), &glRenderableUnit->material.lock()->lightmapUVParam);
-
+		
 		glRenderableUnit->Activate();
 		glRenderableUnit->material.lock()->SetAlbedoColor();
 		pDevice->DrawElements(

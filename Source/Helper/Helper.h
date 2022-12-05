@@ -1,6 +1,5 @@
 #pragma once
 #include <BaseInclude.h>
-#include "..\RHI\OpenRLRHI\RLShader.h"
 #include <random>
 
 #include VECTOR_INCLUDE_PATH

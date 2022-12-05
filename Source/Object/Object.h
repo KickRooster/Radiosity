@@ -1,11 +1,9 @@
 #pragma once
 #include <BaseInclude.h>
 #include "..\Math\Matrix4x4.h"
-#include "..\RHI\OpenRLRHI\RLDevice.h"
 #include "..\Asset\StaticMesh.h"
 #include "..\RHI\OpenGLRHI\OpenGLDevice.h"
 #include "..\Component\GLRenderableUnit.h"
-#include "..\Component\RLRenderableUnit.h"
 #include "../3rdParty/cereal/archives/xml.hpp"
 #include "..\3rdParty\RectangleBinPack\Rect.h"
 
@@ -47,13 +45,10 @@ namespace Core
 		Vector3 scale;
 
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
-		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;
-
-		rbp::Rect viewportRect;
 
 		Object();
-		void Initialize(OpenGLDevice * pDevice, RLDevice * pRLDevice);
-		void Tick(float deltaTime, OpenGLDevice * pDevice, RLDevice * pRLDevice);
+		void Initialize(OpenGLDevice * pDevice);
+		void Tick(float deltaTime, OpenGLDevice * pDevice);
 		void Render(OpenGLDevice * pDevice);
 		void RenderAsPostprocess(OpenGLDevice * pDevice, Vector4 & postprocessParam);
 		void Bake(OpenGLDevice * pDevice);

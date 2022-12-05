@@ -137,28 +137,6 @@ namespace Core
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraPos, sizeof(position), &position);
 	}
 
-	void Camera::UpdataRLParam(RLDevice * pRLDevice)
-	{
-		//pRLDevice->UpdateFrameParams(&m_viewMatrixInv, fovY);
-
-		Matrix4x4 rotationY = Matrix4x4Identify;
-		rotationY = Rotate(rotationY, Helper::Random(-PI, PI), Up);
-
-		Matrix4x4 rotationX = Matrix4x4Identify;
-		rotationX = Rotate(rotationX, Helper::Random(0, PI * 2), Right);
-
-		m_randowTextureMatrix = rotationX * rotationY;
-
-		m_randowTextureMatrix = Scale(m_randowTextureMatrix,
-			Vector3(
-				Helper::Random(0, 5.0f),
-				Helper::Random(0, 5.0f),
-				Helper::Random(0, 5.0f)
-			));
-
- 		pRLDevice->UpdateFrameParams(&m_randowTextureMatrix, &position, &GetForward(), &GetUp(), &GetRight(), fovY);
-	}
-
 	Matrix4x4 * Camera::GetViewPeojectionMatrix()
 	{
 		return &m_viewProjectionMatrix;

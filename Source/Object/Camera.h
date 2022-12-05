@@ -6,7 +6,6 @@
 #include "..\RHI\OpenGLRHI\GLBuffer.h"
 #include "..\RHI\OpenGLRHI\OpenGLDevice.h"
 #include "..\Math\Vector2.h"
-#include "..\RHI\OpenRLRHI\RLDevice.h"
 
 namespace Core
 {
@@ -45,7 +44,6 @@ namespace Core
 		void UpdateProjectionMatrix();
 		void Tick(float deltaTime, const InputState & inputState);
 		void UpdataGLParam(OpenGLDevice * pDevice);
-		void UpdataRLParam(RLDevice * pRLDevice);
 		Matrix4x4 * GetViewPeojectionMatrix();
 		Matrix4x4 * GetViewMatrix();
 		Matrix4x4 * GetPeojectionMatrix();

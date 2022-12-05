@@ -4,8 +4,6 @@
 #include <Vector2.h>
 #include "..\RHI\OpenGLRHI\GLBuffer.h"
 #include "..\RHI\OpenGLRHI\GLVertexBufferLayout.h"
-#include "..\RHI\OpenRLRHI\RLBuffer.h"
-#include "..\RHI\OpenRLRHI\RLVertexBufferLayout.h"
 #include "IAsset.h"
 #include "..\Math\Matrix4x4.h"
 
@@ -64,13 +62,6 @@ namespace Core
 		Bool m_lightmapUVRotated;
 
 		int32 m_controlPointCount;
-		float getArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
-		float getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
-		float getTriangleArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
-		float getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
-		void generateUV1UVAtlas();
-		void generateUV1Thekla();
-		void scaleUV1();
 		ErrorCode uploadToGPU();
 		void load();
 
@@ -89,11 +80,11 @@ namespace Core
 		const int32 uv6SlotIndex = 11;
 		const int32 uv7SlotIndex = 12;
 
-		Vector4 * pPositions;	//	Î»ÖÃ
-		Vector3 * pNormals;		//	·¨Ïß
-		Vector3 * pTangents;	//	ÇÐÏß
-		Vector3 * pBinormals;	//	¸±·¨Ïß
-		Vector4 * pColors;		//	ÑÕÉ«		//	TODO:	Òª¸Ä³Éuint8
+		Vector4 * pPositions;	//	Î»ï¿½ï¿½
+		Vector3 * pNormals;		//	ï¿½ï¿½ï¿½ï¿½
+		Vector3 * pTangents;	//	ï¿½ï¿½ï¿½ï¿½
+		Vector3 * pBinormals;	//	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		Vector4 * pColors;		//	ï¿½ï¿½É«		//	TODO:	Òªï¿½Ä³ï¿½uint8
 		Vector2 * pUV0s;		//	UV0
 		Vector2 * pUV1s;		//	UV1
 		Vector2 * pUV2s;		//	UV2
@@ -103,12 +94,11 @@ namespace Core
 		Vector2 * pUV6s;		//	UV6
 		Vector2 * pUV7s;		//	UV7
 
-		uint32 * pIndices;		//	Ë÷Òý
-		int32 * pFirstColocals;	//	Ã¿¸öË÷Òý¹éÔ¼µ½µÄË÷Òý
+		uint32 * pIndices;		//	ï¿½ï¿½ï¿½ï¿½
+		int32 * pFirstColocals;	//	Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 		int32 vertexCount;
 		int32 indexCount;
-		Bool generateLightmapUV;	
 
 		StaticMesh();
 		virtual void BeginUse() override;

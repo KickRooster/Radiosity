@@ -4,8 +4,8 @@ namespace Core
 {
 	GLenum glCheckError_(const ANSICHAR *file, int32 line)
 	{
-		//	注释掉了,有需求再打开.因为太耗时.
-		return GL_NO_ERROR;
+		//	注锟酵碉拷锟斤拷,锟斤拷锟斤拷锟斤拷锟劫达拷.锟斤拷为太锟斤拷时.
+		//return GL_NO_ERROR;
 
 		GLenum errorCode;
 

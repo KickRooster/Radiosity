@@ -1,11 +1,11 @@
 #pragma once
 #include <BaseInclude.h>
 #include <../3rdParty/cereal/archives/xml.hpp>
-//	ËùÓÐ×ÊÔ´ÀàµÄ»ùÀà.
-//	×ÊÔ´ÀàµÄ»ùÀàµÄ´æÔÚ,Ö÷ÒªÊÇÎªÁË·½±ãÍ³¼Æ×ÊÔ´ÄÚ´æÕ¼ÓÃ.
-//	¿ÉÒÔ¿¼ÂÇÌá¹©ÄÚ´æ¿éµÄÀà,Ò²µ±×÷×ÊÔ´.ÕâÑù¾ÍÄÜ¹ÜÀíµ½ËùÓÐµÄ¶ÑÄÚ´æ.
-//	¿ÉÐÐµÄ»°½¨Á¢ÆðÒýÓÃ¹ØÏµ,Í¬Ê±Èç¹û½øÒ»²½Ïë·ÖÎöÔ­ÉúÄÚ´æÇé¿ö,Ê¹ÓÃÌæ»»µô
-//	mallocµÄ·½·¨À´ÊµÏÖ.
+//	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½Ä»ï¿½ï¿½ï¿½.
+//	ï¿½ï¿½Ô´ï¿½ï¿½Ä»ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½,ï¿½ï¿½Òªï¿½ï¿½Îªï¿½Ë·ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Ú´ï¿½Õ¼ï¿½ï¿½.
+//	ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½ï¿½á¹©ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½,Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¶ï¿½ï¿½Ú´ï¿½.
+//	ï¿½ï¿½ï¿½ÐµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½Ïµ,Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½,Ê¹ï¿½ï¿½ï¿½æ»»ï¿½ï¿½
+//	mallocï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½.
 
 #include STRING_INCLUDE_PATH
 
@@ -17,9 +17,6 @@ namespace Core
 		FileType_Prefab,
 		FileType_GLSL_Vertex,
 		FileType_GLSL_Fragment,
-		FileType_RLSL_Vertex,
-		FileType_RLSL_Ray,
-		FileType_RLSL_Frame,
 		FileType_TextureInfo,
 		FileType_Texture,
 		FileType_Material,
@@ -35,7 +32,7 @@ namespace Core
 	public:
 		ctd::string fullPathName;
 		ctd::string fileName;
-		ctd::string fileNameWithExt;		//	ÎÄ¼þÃû,º¬À©Õ¹Ãû
+		ctd::string fileNameWithExt;		//	ï¿½Ä¼ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½
 		FileType type;
 
 		IAsset() : m_beingUsed(False) {}
