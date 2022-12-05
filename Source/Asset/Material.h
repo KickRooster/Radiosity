@@ -68,7 +68,6 @@ namespace Core
 		std::weak_ptr<Texture> normalMap;
 		std::weak_ptr<Texture> metallicTexture;
 		std::weak_ptr<Texture> roughnessTexture;
-		std::weak_ptr<Texture> aoTexture;
 		std::weak_ptr<Texture> lightmapTexture;
 
 		Bool IsOccluder;
@@ -81,7 +80,6 @@ namespace Core
 		ctd::string normalMapName;
 		ctd::string metallicTextureName;
 		ctd::string roughnessTextureName;
-		ctd::string aoTextureName;
 		ctd::string lightmapName;
 		ctd::string maskMapName;
 
@@ -91,7 +89,6 @@ namespace Core
 		const ctd::string normalSamplerName = "normalSampler";
 		const ctd::string metallicSamplerName = "metallicSampler";
 		const ctd::string roughnessSamplerName = "roughnessSampler";
-		const ctd::string aoSamplerName = "aoSampler";
 		const ctd::string lightmapSamplerName = "lightmapSampler";
 		const ctd::string idName = "id";
 		const ctd::string albedoColorName = "albedoColor";
@@ -119,7 +116,6 @@ namespace Core
 				normalMapName,
 				metallicTextureName,
 				roughnessTextureName,
-				aoTextureName,
 				lightmapName,
 				albedoColor
 			);

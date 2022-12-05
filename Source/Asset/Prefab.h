@@ -12,7 +12,6 @@ namespace Core
 	public:
 		ctd::string staticMeshName;
 		ctd::string materialName;
-		//Bool stitched;
 
 		virtual void BeginUse() override;
 		virtual void Reload() override;
@@ -25,7 +24,6 @@ namespace Core
 			ar(
 				staticMeshName,
 				materialName
-				//stitched
 			);
 		}
 	};

@@ -74,7 +74,9 @@ namespace Core
 		void panelAssets(InputState & inputState) ;
 		void menuBar();
 		void guizmoTick(const ImVec2 & regionTopLeft, const ImVec2 & regionSize, void * pViewMatrix, void * pProjectionMatrix, Object * pSelectedObject);
+		//	Create immediately.
 		std::shared_ptr<Object> createObject(std::weak_ptr<Prefab> prefab);
+		//	Create for serialized.
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createDirectinalLight();
 		std::shared_ptr<Object> createTerrain();

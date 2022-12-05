@@ -34,7 +34,6 @@ namespace Core
 	public:
 		static int32 idSeed;
 		int32 id;
-		Bool stitched;
 
 		ctd::string name;
 		ctd::string staticMeshName;
@@ -47,7 +46,7 @@ namespace Core
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
 
 		Object();
-		void Initialize(OpenGLDevice * pDevice);
+		void Initialize(OpenGLDevice * pDevice, Bool SerializedRTSAsLocal2World);
 		void Tick(float deltaTime, OpenGLDevice * pDevice);
 		void Render(OpenGLDevice * pDevice);
 		void RenderAsPostprocess(OpenGLDevice * pDevice, Vector4 & postprocessParam);

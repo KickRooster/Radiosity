@@ -149,7 +149,6 @@
     <ClCompile Include="Source\3rdParty\RectangleBinPack\ShelfBinPack.cpp" />
     <ClCompile Include="Source\3rdParty\RectangleBinPack\ShelfNextFitBinPack.cpp" />
     <ClCompile Include="Source\3rdParty\RectangleBinPack\SkylineBinPack.cpp" />
-    <ClCompile Include="Source\Asset\FBX.cpp" />
     <ClCompile Include="Source\Asset\Material.cpp" />
     <ClCompile Include="Source\Asset\GLSL.cpp" />
     <ClCompile Include="Source\Asset\Prefab.cpp" />
@@ -167,7 +166,6 @@
     <ClCompile Include="Source\Helper\FBXImportor.cpp" />
     <ClCompile Include="Source\Helper\FileOperator.cpp" />
     <ClCompile Include="Source\Helper\Helper.cpp" />
-    <ClCompile Include="Source\Helper\MeshImportor.cpp" />
     <ClCompile Include="Source\Helper\TextureOperator.cpp" />
     <ClCompile Include="Source\Include\BaseInclude.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -289,7 +287,6 @@
     <ClInclude Include="Source\3rdParty\RectangleBinPack\SkylineBinPack.h" />
     <ClInclude Include="Source\3rdParty\TheklaAtlas\thekla_atlas.h" />
     <ClInclude Include="Source\3rdParty\UVAtlas\UVAtlas.h" />
-    <ClInclude Include="Source\Asset\FBX.h" />
     <ClInclude Include="Source\Asset\IAsset.h" />
     <ClInclude Include="Source\Asset\Material.h" />
     <ClInclude Include="Source\Asset\GLSL.h" />
@@ -310,7 +307,6 @@
     <ClInclude Include="Source\Helper\AtlasManager.h" />
     <ClInclude Include="Source\Helper\FBXImportor.h" />
     <ClInclude Include="Source\Helper\FileOperator.h" />
-    <ClInclude Include="Source\Helper\MeshImportor.h" />
     <ClInclude Include="Source\Helper\TextureOperator.h" />
     <ClInclude Include="Source\Helper\Helper.h" />
     <ClInclude Include="Source\Include\BaseInclude.h" />

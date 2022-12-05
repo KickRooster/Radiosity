@@ -241,24 +241,6 @@ namespace Core
 		}
 	}
 
-	void AtlasManager::SaveMaskMap()
-	{
-		int32 atlasWidth = LightmappingSetting::Instance()->lightmapSize;
-		int32 atlasHeight = LightmappingSetting::Instance()->lightmapSize;
-
-		for (int32 i = 0; i < m_atlasList.size(); ++i)
-		{
-			ctd::string maskMapName = LightmappingSetting::Instance()->GetMaskMapName(i);
-
-			m_assetManager.lock()->SaveMaskMap(
-				maskMapName.c_str(),
-				channelCount == 4 ? TextureFormat_RGBA32 : TextureFormat_RGB24,
-				m_atlasList[i]->rawData.get(),
-				atlasWidth,
-				atlasHeight);
-		}
-	}
-
 	void AtlasManager::CleanUpRawData()
 	{
 		int32 atlasWidth = LightmappingSetting::Instance()->lightmapSize;

@@ -58,9 +58,6 @@ namespace Core
 		int32 m_atlasWidth;
 		int32 m_atlasHeight;
 
-		Bool m_lightmapUVGenerated;
-		Bool m_lightmapUVRotated;
-
 		int32 m_controlPointCount;
 		ErrorCode uploadToGPU();
 		void load();
@@ -126,7 +123,6 @@ namespace Core
 
 		int32 GetLightmapAtlasWidth()const;
 		int32 GetLightmapAtlasHeight() const;
-		void RotateUV1HalfPi();
 
 		void SetControlPointCount(int32 controlPointCount);
 

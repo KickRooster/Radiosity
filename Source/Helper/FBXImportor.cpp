@@ -118,7 +118,7 @@ namespace Core
 		std::unique_ptr<int32[]> materialIndexArray = std::make_unique<int32[]>(triangleCount);
 
 		//////////////////////////////////////////////////////////////////////////
-		//	´¦Àí²ÄÖÊ
+		//	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int32 materialCount = pMesh->GetElementMaterialCount();
 
 		if (materialCount > 0)
@@ -532,8 +532,8 @@ namespace Core
 		int32 materialCount = pMesh->GetElementMaterialCount();
 
 		//	XXX:
-		//		ÔÚ´Ëº¯ÊýµÄÍâÃæÒÑ¾­µ÷ÓÃÁËÒÀ¾Ý²ÄÖÊ»®·ÖmeshµÄ·½·¨
-		//		ÔÚ´Ë¼Ù¶¨µ±Ç°meshÄÚÖ»ÓÐ1ÖÖ²ÄÖÊ
+		//		ï¿½Ú´Ëºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½Ê»ï¿½ï¿½ï¿½meshï¿½Ä·ï¿½ï¿½ï¿½
+		//		ï¿½Ú´Ë¼Ù¶ï¿½ï¿½ï¿½Ç°meshï¿½ï¿½Ö»ï¿½ï¿½1ï¿½Ö²ï¿½ï¿½ï¿½
 		assert(materialCount == 1);
 
 		FbxGeometryElementMaterial* pRawMaterial = pMesh->GetElementMaterial(0);
@@ -959,50 +959,7 @@ namespace Core
 		}
 	}
 
-	ErrorCode FBXImportor::LoadMesh(const ANSICHAR * fileFullPathName, StaticMesh * pOutStaticMesh, Bool generateTangentsData)
-	{
-		FbxManager* pSDKManager = Null;
-		FbxScene* pScene = Null;
-		ErrorCode result;
-
-		initializeSdkObjects(pSDKManager, pScene);
-
-		result = loadScene(pSDKManager, pScene, fileFullPathName);
-
-		if (result != ErrorCode_OK)
-			return result;
-
-		FbxAxisSystem SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
-		FbxAxisSystem OurAxisSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eRightHanded);
-
-		if (SceneAxisSystem != OurAxisSystem)
-		{
-			OurAxisSystem.ConvertScene(pScene);
-		}
-
-		// Convert Unit System to what is used in this example, if needed
-		FbxSystemUnit SceneSystemUnit = pScene->GetGlobalSettings().GetSystemUnit();
-
-		if (SceneSystemUnit.GetScaleFactor() != 1.0)
-		{
-			//The unit in this example is centimeter.
-			FbxSystemUnit::cm.ConvertScene(pScene);
-		}
-
-		FbxGeometryConverter lGeomConverter(pSDKManager);
-		lGeomConverter.Triangulate(pScene, true);
-		lGeomConverter.SplitMeshesPerMaterial(pScene, true);
-
-		FbxNode * pRootNode = pScene->GetRootNode();
-
-		processNode(pRootNode, pOutStaticMesh, generateTangentsData);
-
-		pSDKManager->Destroy();
-
-		return result;
-	}
-
-	Core::ErrorCode FBXImportor::LoadFBX(const ANSICHAR * fileFullPathName, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
+	ErrorCode FBXImportor::LoadStaticMesh(const ANSICHAR * fileFullPathName, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
 	{
 		FbxManager* pSDKManager = Null;
 		FbxScene* pScene = Null;

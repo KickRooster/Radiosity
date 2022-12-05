@@ -107,23 +107,104 @@ namespace Core
 			shaderRef.lock()->type = FileType_GLSL_Fragment;
 	}
 
-	void AssetManager::processMesh(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
+	// void AssetManager::processMesh(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
+	// {
+	// 	weak_ptr<StaticMesh> staticMeshRef = meshMap[fileName];
+	//
+	// 	if (staticMeshRef.expired())
+	// 	{
+	// 		meshMap[fileName] = make_shared<StaticMesh>();
+	// 		staticMeshRef = meshMap[fileName];
+	// 	}
+	//
+	// 	staticMeshRef.lock()->fullPathName = fileFullPathName;
+	// 	staticMeshRef.lock()->fileName = fileName;
+	// 	staticMeshRef.lock()->fileNameWithExt = fileName;
+	// 	staticMeshRef.lock()->fileNameWithExt += extension;
+	// 	staticMeshRef.lock()->type = FileType_StaticMesh;
+	// }
+
+	void AssetManager::processStaticMesh(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
 	{
-		weak_ptr<StaticMesh> staticMeshRef = meshMap[fileName];
+		ctd::vector<std::unique_ptr<StaticMesh>> staticMeshes;
+		ctd::vector<std::unique_ptr<Material>> materials;
 
-		if (staticMeshRef.expired())
+		FBXImportor::Instance()->LoadStaticMesh(fileFullPathName, staticMeshes, materials, True);
+
+		vector<ctd::string> meshNames;
+		vector<ctd::string> materialNames;
+
+		for (int32 i = 0; i < staticMeshes.size(); ++i)
 		{
-			meshMap[fileName] = make_shared<StaticMesh>();
-			staticMeshRef = meshMap[fileName];
+			ctd::string meshName = staticMeshes[i]->fileName;
+
+			weak_ptr<StaticMesh> staticMeshRef = staticMeshMap[meshName];
+
+			if (staticMeshRef.expired())
+			{
+				staticMeshMap[meshName] = std::move(staticMeshes[i]);
+				staticMeshRef = staticMeshMap[meshName];
+			}
+
+			staticMeshRef.lock()->fullPathName = staticMeshFullPath;
+			staticMeshRef.lock()->fullPathName += "\\" + staticMeshRef.lock()->fileName + staticMeshExt;
+			staticMeshRef.lock()->fileNameWithExt = meshName;
+			staticMeshRef.lock()->fileNameWithExt += staticMeshExt;
+			staticMeshRef.lock()->type = FileType_StaticMesh;
+
+			meshNames.push_back(meshName);
 		}
+		
+		for (int32 i = 0; i < materials.size(); ++i)
+		{
+			ctd::string materialName = materials[i]->fileName;
 
-		staticMeshRef.lock()->fullPathName = fileFullPathName;
-		staticMeshRef.lock()->fileName = fileName;
-		staticMeshRef.lock()->fileNameWithExt = fileName;
-		staticMeshRef.lock()->fileNameWithExt += extension;
-		staticMeshRef.lock()->type = FileType_StaticMesh;
+			weak_ptr<Material> materialRef = materialMap[materialName];
+
+			if (materialRef.expired())
+			{
+				materialMap[materialName] = std::move(materials[i]);
+				materialRef = materialMap[materialName];
+			}
+
+			materialRef.lock()->fullPathName = materialFullPath;
+			materialRef.lock()->fullPathName += "\\" + materialRef.lock()->fileName + materialExt;
+			materialRef.lock()->fileNameWithExt = materialName;
+			materialRef.lock()->fileNameWithExt += materialExt;
+			materialRef.lock()->type = FileType_Material;
+
+			materialRef.lock()->glVertexShaderName = defaultGLVertexShaderName;
+			materialRef.lock()->glVertexShader = glVertexShaderMap[defaultGLVertexShaderName];
+			materialRef.lock()->glVertexShader.lock()->Attach(materialMap[materialName].get());
+
+			materialRef.lock()->glFragmentShaderName = defaultGLFragmentShaderName;
+			materialRef.lock()->glFragmentShader = glFragmentShaderMap[defaultGLFragmentShaderName];
+			materialRef.lock()->glFragmentShader.lock()->Attach(materialMap[materialName].get());
+			
+			materialRef.lock()->albedoTextureName = defaultAlbedoTextureName;
+			materialRef.lock()->albedoTexture = textureMap[defaultAlbedoTextureName];
+
+			materialNames.push_back(materialName);
+		}
+		
+		//	����prefab
+		for (int32 i = 0; i < meshNames.size(); ++i)
+		{
+			ctd::string prefabName = meshNames[i];
+
+			std::weak_ptr<Prefab> prefabRef = prefabMap[prefabName];
+
+			if (prefabRef.expired())
+			{
+				CreatePrefab(prefabName.c_str());
+				prefabRef = prefabMap[prefabName];
+			}
+
+			prefabRef.lock()->staticMeshName = meshNames[i];
+			prefabRef.lock()->materialName = materialNames[i];
+		}
 	}
-
+	
 	void AssetManager::processTextureInfo(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
 	{
 		weak_ptr<TextureInfo> textureInfoRef = textureInfoMap[fileName];
@@ -224,27 +305,6 @@ namespace Core
 		lightmapRef.lock()->type = FileType_Texture;
 	}
 
-	void AssetManager::processMaskMap(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
-	{
-		weak_ptr<Texture> maskMapRef = maskMapMap[fileName];
-
-		if (maskMapRef.expired())
-		{
-			maskMapMap[fileName] = make_shared<Texture>();
-			maskMapRef = maskMapMap[fileName];
-		}
-
-		maskMapRef.lock()->info = std::make_shared<TextureInfo>();
-		maskMapRef.lock()->info->format = TextureFormat_RGBA32;
-		maskMapRef.lock()->info->wrapMode = TextureWrapMode_Clamp;
-		maskMapRef.lock()->info->filterMode = TextureFilterMode_Point;
-		maskMapRef.lock()->fullPathName = fileFullPathName;
-		maskMapRef.lock()->fileName = fileName;
-		maskMapRef.lock()->fileNameWithExt = fileName;
-		maskMapRef.lock()->fileNameWithExt += extension;
-		maskMapRef.lock()->type = FileType_Texture;
-	}
-
 	void AssetManager::processMaterial(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
 	{
 		weak_ptr<Material> materialRef = materialMap[fileName];
@@ -291,108 +351,10 @@ namespace Core
 		if (textureMap.find(materialRef.lock()->roughnessTextureName) != textureMap.end())
 			materialRef.lock()->roughnessTexture = textureMap[materialRef.lock()->roughnessTextureName];
 
-		if (textureMap.find(materialRef.lock()->aoTextureName) != textureMap.end())
-			materialRef.lock()->aoTexture = textureMap[materialRef.lock()->aoTextureName];
-
 		if (textureMap.find(materialRef.lock()->lightmapName) != textureMap.end())
 			materialRef.lock()->lightmapTexture = textureMap[materialRef.lock()->lightmapName];
 	}
-
-	void AssetManager::processFBX(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
-	{
-		weak_ptr<FBX> fbxRef = fbxMap[fileName];
-
-		if (fbxRef.expired())
-		{
-			fbxMap[fileName] = make_shared<FBX>();
-			fbxRef = fbxMap[fileName];
-		}
-
-		fbxRef.lock()->fullPathName = fileFullPathName;
-		fbxRef.lock()->fileName = fileName;
-		fbxRef.lock()->fileNameWithExt = fileName;
-		fbxRef.lock()->fileNameWithExt += extension;
-		fbxRef.lock()->type = FileType_FBX;
-
-		ctd::vector<std::unique_ptr<StaticMesh>> staticMeshes;
-		ctd::vector<std::unique_ptr<Material>> materials;
-
-		FBXImportor::Instance()->LoadFBX(fileFullPathName, staticMeshes, materials, True);
-
-		vector<ctd::string> meshNames;
-		vector<ctd::string> materialNames;
-
-		for (int32 i = 0; i < staticMeshes.size(); ++i)
-		{
-			ctd::string meshName = staticMeshes[i]->fileName;
-
-			weak_ptr<StaticMesh> staticMeshRef = meshMap[meshName];
-
-			if (staticMeshRef.expired())
-			{
-				meshMap[meshName] = std::move(staticMeshes[i]);
-				staticMeshRef = meshMap[meshName];
-			}
-
-			staticMeshRef.lock()->fullPathName = meshFullPath;
-			staticMeshRef.lock()->fullPathName += "\\" + staticMeshRef.lock()->fileName + meshExt;
-			staticMeshRef.lock()->fileNameWithExt = meshName;
-			staticMeshRef.lock()->fileNameWithExt += meshExt;
-			staticMeshRef.lock()->type = FileType_StaticMesh;
-
-			meshNames.push_back(meshName);
-		}
-		
-		for (int32 i = 0; i < materials.size(); ++i)
-		{
-			ctd::string materialName = materials[i]->fileName;
-
-			weak_ptr<Material> materialRef = materialMap[materialName];
-
-			if (materialRef.expired())
-			{
-				materialMap[materialName] = std::move(materials[i]);
-				materialRef = materialMap[materialName];
-			}
-
-			materialRef.lock()->fullPathName = materialFullPath;
-			materialRef.lock()->fullPathName += "\\" + materialRef.lock()->fileName + materialExt;
-			materialRef.lock()->fileNameWithExt = materialName;
-			materialRef.lock()->fileNameWithExt += materialExt;
-			materialRef.lock()->type = FileType_Material;
-
-			materialRef.lock()->glVertexShaderName = defaultGLVertexShaderName;
-			materialRef.lock()->glVertexShader = glVertexShaderMap[defaultGLVertexShaderName];
-			materialRef.lock()->glVertexShader.lock()->Attach(materialMap[materialName].get());
-
-			materialRef.lock()->glFragmentShaderName = defaultGLFragmentShaderName;
-			materialRef.lock()->glFragmentShader = glFragmentShaderMap[defaultGLFragmentShaderName];
-			materialRef.lock()->glFragmentShader.lock()->Attach(materialMap[materialName].get());
-			
-			materialRef.lock()->albedoTextureName = defaultAlbedoTextureName;
-			materialRef.lock()->albedoTexture = textureMap[defaultAlbedoTextureName];
-
-			materialNames.push_back(materialName);
-		}
-		
-		//	����prefab
-		for (int32 i = 0; i < meshNames.size(); ++i)
-		{
-			ctd::string prefabName = meshNames[i];
-
-			std::weak_ptr<Prefab> prefabRef = prefabMap[prefabName];
-
-			if (prefabRef.expired())
-			{
-				CreatePrefab(prefabName.c_str());
-				prefabRef = prefabMap[prefabName];
-			}
-
-			prefabRef.lock()->staticMeshName = meshNames[i];
-			prefabRef.lock()->materialName = materialNames[i];
-		}
-	}
-
+	
 	void AssetManager::processFolder(AssetType assetType, const ANSICHAR * folderFullPathName, const ANSICHAR * extension0, ...)
 	{
 		string pattern(folderFullPathName);
@@ -440,7 +402,7 @@ namespace Core
 							processGLShader(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
 							break;
 						case AssetType_StaticMesh:
-							processMesh(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
+							processStaticMesh(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
 							break;
 						case AssetType_TextureInfo:
 							processTextureInfo(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
@@ -453,9 +415,6 @@ namespace Core
 							break;
 						case AssetType_Material:
 							processMaterial(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
-							break;
-						case AssetType_FBX:
-							processFBX(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
 							break;
 						}
 
@@ -503,12 +462,8 @@ namespace Core
 		processFolder(AssetType_TextureInfo, lightmapFullPath, textureInfoExt, Null);
 
 		processFolder(AssetType_Lightmap, lightmapFullPath, textureTGAExt, texturePNGExt, Null);
-
-		//	FBX�Ĵ���Ҫ����mesh��material, ��Ϊ����FBX֮��mesh��material�ᱻ���
-		//	FBX�Ĵ���Ҫ����shader,��Ϊ����FBX֮��ᴦ��material
-		processFolder(AssetType_FBX, fbxFullPath, fbxExt, Null);
-
-		processFolder(AssetType_StaticMesh, meshFullPath, fbxExt, Null);
+		
+		processFolder(AssetType_StaticMesh, staticMeshFullPath, staticMeshExt, Null);
 
 		processFolder(AssetType_Material, materialFullPath, materialExt, Null);
 #endif
@@ -569,35 +524,10 @@ namespace Core
 		}
 	}
 
-	void AssetManager::ReloadMaskMap()
-	{
-		for (ctd::map<ctd::string, std::shared_ptr<Texture>>::iterator iter = maskMapMap.begin();
-			iter != maskMapMap.end();
-			++iter)
-		{
-			iter->second->Reload();
-		}
-	}
-
 	void AssetManager::SaveLightmap(const ANSICHAR * name, TextureFormat textureFormat, uint8 * pPixels, int32 width, int32 height)
 	{
 		ctd::string fileFullPathName = lightmapFullPath;
 		fileFullPathName  += "\\";
-		fileFullPathName += name;
-		fileFullPathName += texturePNGExt;
-
-		TextureOperator::SavePNG(
-			fileFullPathName.c_str(),
-			textureFormat,
-			pPixels,
-			width,
-			height);
-	}
-
-	void AssetManager::SaveMaskMap(const ANSICHAR * name, TextureFormat textureFormat, uint8 * pPixels, int32 width, int32 height)
-	{
-		ctd::string fileFullPathName = maskMapFullPath;
-		fileFullPathName += "\\";
 		fileFullPathName += name;
 		fileFullPathName += texturePNGExt;
 

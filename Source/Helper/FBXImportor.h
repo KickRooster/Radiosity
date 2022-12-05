@@ -18,7 +18,6 @@ namespace Core
 		void processNode(FbxNode* pNode, StaticMesh * pOutStaticMesh, Bool generateTangentsData = True);
 		void processNode(FbxNode* pNode, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
 	public:
-		ErrorCode LoadMesh(const ANSICHAR * fileFullPathName, StaticMesh * pOutStaticMesh, Bool generateTangentsData = True);
-		ErrorCode LoadFBX(const ANSICHAR * fileFullPathName, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
+		ErrorCode LoadStaticMesh(const ANSICHAR * fileFullPathName, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
 	};
 }

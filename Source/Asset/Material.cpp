@@ -14,7 +14,6 @@ namespace Core
 		this->normalMapName = mat.normalMapName;
 		this->metallicTextureName = mat.metallicTextureName;
 		this->roughnessTextureName = mat.roughnessTextureName;
-		this->aoTextureName = mat.aoTextureName;
 		this->fileNameWithExt = mat.fileNameWithExt;
 		this->fullPathName = mat.fullPathName;
 		this->IsOccluder = mat.IsOccluder;
@@ -47,9 +46,6 @@ namespace Core
 
 			if (!roughnessTexture.expired())
 				roughnessTexture.lock()->BeginUse();
-
-			if (!aoTexture.expired())
-				aoTexture.lock()->BeginUse();
 
 			if (!lightmapTexture.expired())
 				lightmapTexture.lock()->BeginUse();
@@ -105,13 +101,6 @@ namespace Core
 			roughnessTexture.lock()->Activate();
 		}
 
-		if (!aoTexture.expired())
-		{
-			m_glProgram->ActivateTextureSlot(slotIndex, aoSamplerName.c_str());
-			++slotIndex;
-			aoTexture.lock()->Activate();
-		}
-
 		if (!lightmapTexture.expired())
 		{
 			m_glProgram->ActivateTextureSlot(slotIndex, lightmapSamplerName.c_str());
@@ -135,9 +124,6 @@ namespace Core
 
 		if (!roughnessTexture.expired())
 			roughnessTexture.lock()->Inactivate();
-
-		if (!aoTexture.expired())
-			aoTexture.lock()->Inactivate();
 
 		if (!lightmapTexture.expired())
 			lightmapTexture.lock()->Inactivate();

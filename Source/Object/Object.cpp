@@ -15,35 +15,39 @@ namespace Core
 		m_object2WorldITMatrix(Matrix4x4Identify),
 		position(Zero),
 		eulerAngle(Zero),
-		scale(Vector3(1.0f, 1.0f, 1.0f)),
-		stitched(False)
+		scale(Vector3(1.0f, 1.0f, 1.0f))
 	{
 		id = idSeed;
 		++idSeed;
 	}
 
-	void Object::Initialize(OpenGLDevice * pDevice)
+	void Object::Initialize(OpenGLDevice * pDevice,  Bool SerializedRTSAsLocal2World)
 	{
-		float matrixTranslation[3];
-		float matrixRotation[3];
-		float matrixScale[3];
+		if (SerializedRTSAsLocal2World)
+		{
+			float matrixTranslation[3];
+			float matrixRotation[3];
+			float matrixScale[3];
 
-		matrixTranslation[0] = position.x; 
-		matrixTranslation[1] = position.y;
-		matrixTranslation[2] = position.z;
+			matrixTranslation[0] = position.x; 
+			matrixTranslation[1] = position.y;
+			matrixTranslation[2] = position.z;
 
-		matrixRotation[0] = eulerAngle.x;
-		matrixRotation[1] = eulerAngle.y;
-		matrixRotation[2] = eulerAngle.z;
+			matrixRotation[0] = eulerAngle.x;
+			matrixRotation[1] = eulerAngle.y;
+			matrixRotation[2] = eulerAngle.z;
 
-		matrixScale[0] = scale.x;
-		matrixScale[1] = scale.y;
-		matrixScale[2] = scale.z;
+			matrixScale[0] = scale.x;
+			matrixScale[1] = scale.y;
+			matrixScale[2] = scale.z;
 
-		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, (float*)(&m_object2WorldMatrix));
-
-		m_object2WorldMatrix *= glRenderableUnit->staticMesh.lock()->GetLocal2World();
-
+			ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, (float*)(&m_object2WorldMatrix));
+		}
+		else
+		{
+			m_object2WorldMatrix = glRenderableUnit->staticMesh.lock()->GetLocal2World();
+		}
+		
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
 		
 		m_world2ObjectMatrix = Inverse(m_object2WorldMatrix);

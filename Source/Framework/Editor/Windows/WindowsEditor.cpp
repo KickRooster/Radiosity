@@ -361,8 +361,8 @@ namespace Core
 			switch (fileType)
 			{
 			case FileType_StaticMesh:
-				for (map<string, shared_ptr<StaticMesh>>::iterator iter = m_assetManager->meshMap.begin();
-					iter != m_assetManager->meshMap.end();
+				for (map<string, shared_ptr<StaticMesh>>::iterator iter = m_assetManager->staticMeshMap.begin();
+					iter != m_assetManager->staticMeshMap.end();
 					++iter)
 				{
 					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), pfileSelections + index, ImGuiSelectableFlags_DontClosePopups))
@@ -676,8 +676,8 @@ namespace Core
 				}
 				break;
 			case Core::AssetType_StaticMesh:
-				for (map<string, shared_ptr<StaticMesh>>::iterator iter = m_assetManager->meshMap.begin();
-					iter != m_assetManager->meshMap.end();
+				for (map<string, shared_ptr<StaticMesh>>::iterator iter = m_assetManager->staticMeshMap.begin();
+					iter != m_assetManager->staticMeshMap.end();
 					++iter)
 				{
 					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), &fileSelections[index]))
@@ -882,16 +882,6 @@ namespace Core
 					selectedFileLastFrameIndexInInspector = InvalidIndex;
 				}
 
-				//	AO Map
-				if (ImGui::RadioButton("AO Map", &radioIndex, 4))
-				{
-					ImGui::OpenPopup("AO Map...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-				}
-
 				//	GL Vertex Shader
 				if (ImGui::RadioButton("GL VS", &radioIndex, 5))
 				{
@@ -1025,29 +1015,7 @@ namespace Core
 
 				if (!selectedMaterial.expired())
 					ImGui::Button(selectedMaterial.lock()->roughnessTextureName.c_str());
-
-				//	AO Map
-				popupFileSelectingTick(
-					FileType_Texture,
-					"AO Map...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->aoTextureName = fileName;
-					selectedMaterial.lock()->aoTexture = m_assetManager->textureMap[fileName];
-					selectedMaterial.lock()->aoTexture.lock()->BeginUse();
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->aoTextureName.c_str());
-
+				
 				//	GL Vertex Shader
 				popupFileSelectingTick(
 					FileType_GLSL_Vertex,
@@ -1285,37 +1253,6 @@ namespace Core
 
 		ImGui::Begin("Matrix Inspector");
 
-		bool stitched = pSelectedObject->stitched == True ? true : false;
-
-		if (ImGui::Checkbox("Sitich Seams", &stitched) && pSelectedObject->stitched == False)
-		{
-			std::shared_ptr<StaticMesh> staticMesh;
-
-			if (m_assetManager->meshMap.find(pSelectedObject->staticMeshName) != m_assetManager->meshMap.end())
-				staticMesh = m_assetManager->meshMap[pSelectedObject->staticMeshName];
-
-			std::shared_ptr<Material> material;
-			std::shared_ptr<Texture> lightmap;
-			std::shared_ptr<Texture> maskMap;
-
-			if (m_assetManager->materialMap.find(pSelectedObject->materialName) != m_assetManager->materialMap.end())
-			{
-				material = m_assetManager->materialMap[pSelectedObject->materialName];
-
-				if (m_assetManager->lightmapMap.find(material->lightmapName) != m_assetManager->lightmapMap.end())
-				{
-					lightmap = m_assetManager->lightmapMap[material->lightmapName];
-				}
-
-				if (m_assetManager->maskMapMap.find(material->maskMapName) != m_assetManager->maskMapMap.end())
-				{
-					maskMap = m_assetManager->maskMapMap[material->maskMapName];
-				}
-			}
-		
-			pSelectedObject->stitched = True;
-		}
-
 		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix());
 
 	}
@@ -1329,7 +1266,7 @@ namespace Core
 		defaultObject->materialName = prefab.lock()->materialName;
 
 		defaultObject->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		defaultObject->glRenderableUnit->staticMesh = m_assetManager->meshMap[prefab.lock()->staticMeshName];
+		defaultObject->glRenderableUnit->staticMesh = m_assetManager->staticMeshMap[prefab.lock()->staticMeshName];
 
 		std::shared_ptr<Material> material = m_assetManager->materialMap[prefab.lock()->materialName];
 
@@ -1345,7 +1282,7 @@ namespace Core
 		defaultObject->glRenderableUnit->material = material;
 		defaultObject->glRenderableUnit->bakingMaterial = m_bakingMaterial;
 
-		defaultObject->Initialize(m_GLDevice.get());
+		defaultObject->Initialize(m_GLDevice.get(), False);
 
 		return defaultObject;
 	}
@@ -1353,7 +1290,7 @@ namespace Core
 	std::shared_ptr<Core::Object> WindowsEditor::createObject(std::shared_ptr<Object> object)
 	{
 		object->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		object->glRenderableUnit->staticMesh = m_assetManager->meshMap[object->staticMeshName];
+		object->glRenderableUnit->staticMesh = m_assetManager->staticMeshMap[object->staticMeshName];
 
 		std::shared_ptr<Material> material = m_assetManager->materialMap[object->materialName];
 
@@ -1371,7 +1308,7 @@ namespace Core
 
 		object->name = object->staticMeshName;
 
-		object->Initialize(m_GLDevice.get());
+		object->Initialize(m_GLDevice.get(), True);
 
 		return object;
 	}
@@ -1501,11 +1438,11 @@ namespace Core
 		createBuiltinResources();
 
 		std::shared_ptr<Object> lightObject = createDirectinalLight();
-		lightObject->Initialize(m_GLDevice.get());
+		lightObject->Initialize(m_GLDevice.get(), True);
 		m_scene->AddLight(lightObject, False);
 		
 		std::shared_ptr<Object> terrainObject = createTerrain();
-		terrainObject->Initialize(m_GLDevice.get());
+		terrainObject->Initialize(m_GLDevice.get(), True);
 		m_scene->AddObject(terrainObject, False);
 
 		//	ʵ�������������л��õĶ���
@@ -1711,7 +1648,6 @@ namespace Core
 			while (!m_scene->BakingFinished())
 			{
 				Object * pCurrentObject = m_scene->PoolBakingObject();
-				pCurrentObject->stitched = False;
 
 				if (pCurrentObject->glRenderableUnit->bakingMaterial.expired())
 				{

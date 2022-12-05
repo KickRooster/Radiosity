@@ -416,7 +416,6 @@ namespace Core
 		m_uv6Size(0),
 		m_uv7Size(0),
 		m_indexCount(0),
-		m_lightmapUVRotated(False),
 		pPositions(Null),
 		pNormals(Null),
 		pTangents(Null),
@@ -555,25 +554,6 @@ namespace Core
 	Core::int32 StaticMesh::GetLightmapAtlasHeight() const
 	{
 		return m_atlasHeight;
-	}
-
-	void StaticMesh::RotateUV1HalfPi()
-	{
-		if (!m_lightmapUVRotated)
-		{
-			for (int32 i = 0; i < vertexCount; ++i)
-			{
-				float temp = pUV1s[i].x;
-
-				pUV1s[i].x = pUV1s[i].y;
-				pUV1s[i].y = temp;
-			}
-
-			//	XXX:	��ͷ���Կ����ܲ��ܵ�������bufferһ����.
-			uploadToGPU();
-
-			m_lightmapUVRotated = True;
-		}
 	}
 
 	void StaticMesh::SetControlPointCount(int32 controlPointCount)

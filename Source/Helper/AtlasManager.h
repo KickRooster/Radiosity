@@ -44,7 +44,6 @@ namespace Core
 		int32 GetCurrentAtlasRectCount() const;
 		void LateUpdate();
 		void SaveLightmap();
-		void SaveMaskMap();
 		void CleanUpRawData();
 		void CleanUpAtlasList();
 		void ResetRectState();
