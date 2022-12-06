@@ -490,9 +490,16 @@ namespace Core
 			}
 		}
 
+		assert(vertexCount == indexCount);
+		
 		for (int32 i = 0; i < indexCount; ++i)
 		{
 			pStaticMesh->pIndices[i] = i;
+
+			int32 PrimitiveID = i / 3;
+
+			//	Store PrimitiveID in position.w
+			pStaticMesh->pPositions[i].w = static_cast<float>(PrimitiveID);
 		}
 
 		delete[] pControlPointIndices;
