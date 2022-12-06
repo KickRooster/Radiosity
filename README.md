@@ -1,3 +1,3 @@
-# OpenRL_Baker
-A semi-finished lightmap baker based on OpenRL.
+# Radiosity_Baker
+In processing...
 ![](https://github.com/Aix3D/OpenRL_Baker/blob/master/screenshot.png)
