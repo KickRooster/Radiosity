@@ -62,8 +62,8 @@ namespace Core
  		pDevice->BeforeRender(width, height);
 		m_camera->UpdataGLParam(pDevice);
 
-		Vector3 lightDir = Normalize(m_dirLightRef.lock()->GetYDirection());
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_LightParam, sizeof(lightDir), &lightDir);
+		//Vector3 lightDir = Normalize(m_dirLightRef.lock()->GetYDirection());
+		//pDevice->UploadGlobalShaderData(GLShaderDataAlias_LightParam, sizeof(lightDir), &lightDir);
 
 		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 			iter != objects.end();

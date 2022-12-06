@@ -1437,13 +1437,13 @@ namespace Core
 
 		createBuiltinResources();
 
-		std::shared_ptr<Object> lightObject = createDirectinalLight();
-		lightObject->Initialize(m_GLDevice.get(), True);
-		m_scene->AddLight(lightObject, False);
-		
-		std::shared_ptr<Object> terrainObject = createTerrain();
-		terrainObject->Initialize(m_GLDevice.get(), True);
-		m_scene->AddObject(terrainObject, False);
+		//std::shared_ptr<Object> lightObject = createDirectinalLight();
+		//lightObject->Initialize(m_GLDevice.get(), True);
+		//m_scene->AddLight(lightObject, False);
+		//
+		//std::shared_ptr<Object> terrainObject = createTerrain();
+		//terrainObject->Initialize(m_GLDevice.get(), True);
+		//m_scene->AddObject(terrainObject, False);
 
 		//	ʵ�������������л��õĶ���
 		for (vector<std::shared_ptr<Object>>::iterator iter = m_scene->serializedObjects.begin();

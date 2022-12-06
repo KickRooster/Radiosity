@@ -429,8 +429,7 @@ namespace Core
 		pUV5s(Null),
 		pUV6s(Null),
 		pUV7s(Null),
-		pIndices(Null),
-		pFirstColocals(Null)
+		pIndices(Null)
 	{
 	}
 
@@ -614,8 +613,5 @@ namespace Core
 
 		if (pIndices)
 			delete[] pIndices;
-
-		if (pFirstColocals)
-			delete[] pFirstColocals;
 	}
 }

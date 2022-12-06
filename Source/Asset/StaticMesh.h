@@ -16,13 +16,6 @@ namespace Core
 {
 	class StaticMesh : public IAsset
 	{
-	private:
-		struct ControlPointTriangleIndexPair
-		{
-			int32 controlPointIndex;
-			ctd::vector<int32> triangleIndices;
-		};
-
 	public:
 		const ErrorCode ErrorCode_InvalidData = 0;
 
@@ -51,7 +44,6 @@ namespace Core
 		int32 m_uv5Size;
 		int32 m_uv6Size;
 		int32 m_uv7Size;
-		int32 m_idSize;
 
 		int32 m_indexCount;
 		
@@ -92,7 +84,6 @@ namespace Core
 		Vector2 * pUV7s;		//	UV7
 
 		uint32 * pIndices;		//	����
-		int32 * pFirstColocals;	//	ÿ��������Լ��������
 
 		int32 vertexCount;
 		int32 indexCount;
