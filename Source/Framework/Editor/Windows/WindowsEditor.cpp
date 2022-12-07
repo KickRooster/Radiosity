@@ -15,17 +15,17 @@ namespace Core
 {
 	void WindowsEditor::createBuiltinResources()
 	{
-		m_directionalLightMaterial = std::make_shared<Material>();
+		m_arealLightMaterial = std::make_shared<Material>();
 
-		m_directionalLightMaterial->glVertexShader = m_assetManager->glVertexShaderMap["default"];
-		m_directionalLightMaterial->glVertexShader.lock()->Attach(m_directionalLightMaterial.get());
-		m_directionalLightMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
-		m_directionalLightMaterial->glFragmentShader.lock()->Attach(m_directionalLightMaterial.get());
+		m_arealLightMaterial->glVertexShader = m_assetManager->glVertexShaderMap["default"];
+		m_arealLightMaterial->glVertexShader.lock()->Attach(m_arealLightMaterial.get());
+		m_arealLightMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
+		m_arealLightMaterial->glFragmentShader.lock()->Attach(m_arealLightMaterial.get());
 
-		m_directionalLightMaterial->lightmapName = "DummyLightmap";
-		m_directionalLightMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
-		m_directionalLightMaterial->lightmapTexture.lock()->Attach(m_directionalLightMaterial.get());
-		m_directionalLightMaterial->IsOccluder = False;
+		m_arealLightMaterial->lightmapName = "DummyLightmap";
+		m_arealLightMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
+		m_arealLightMaterial->lightmapTexture.lock()->Attach(m_arealLightMaterial.get());
+		m_arealLightMaterial->IsOccluder = False;
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -58,122 +58,60 @@ namespace Core
 		
 		//////////////////////////////////////////////////////////////////////////
 
-		m_directionLightMesh = std::make_shared<StaticMesh>();
+		m_areaLightMesh = std::make_shared<StaticMesh>();
 		
-		m_directionLightMesh->pPositions = new Vector4[5];
-		m_directionLightMesh->pNormals = new Vector3[5];
-		m_directionLightMesh->pBinormals = new Vector3[5];
-		m_directionLightMesh->pTangents = new Vector3[5];
-		m_directionLightMesh->pUV0s = new Vector2[5];
-		m_directionLightMesh->vertexCount = 5;
+		m_areaLightMesh->pPositions = new Vector4[4];
+		m_areaLightMesh->pNormals = new Vector3[4];
+		m_areaLightMesh->pUV0s = new Vector2[4];
+		m_areaLightMesh->vertexCount = 4;
 
-		float lightScale = 20.0f;
+		float lightScale = 10.0f;
 
-		m_directionLightMesh->pPositions[0].x = -1.0f * lightScale;
-		m_directionLightMesh->pPositions[0].y = 0;
-		m_directionLightMesh->pPositions[0].z = 1.0f * lightScale;
-		m_directionLightMesh->pPositions[0].w = 1.0f;
-		m_directionLightMesh->pNormals[0].x = 0;
-		m_directionLightMesh->pNormals[0].y = 1.0f;
-		m_directionLightMesh->pNormals[0].z = 0;
-		m_directionLightMesh->pBinormals[0].x = 0;
-		m_directionLightMesh->pBinormals[0].y = 0;
-		m_directionLightMesh->pBinormals[0].z = 1.0f;
-		m_directionLightMesh->pTangents[0].x = 1.0f;
-		m_directionLightMesh->pTangents[0].y = 0;
-		m_directionLightMesh->pTangents[0].z = 0;
-		m_directionLightMesh->pUV0s[0].x = 0;
-		m_directionLightMesh->pUV0s[0].x = 0;
-		m_directionLightMesh->pUV0s[0].y = 0;
+		m_areaLightMesh->pPositions[0].x = -0.5f * lightScale;
+		m_areaLightMesh->pPositions[0].y = 0.5f * lightScale ;
+		m_areaLightMesh->pPositions[0].z = 0;
+		m_areaLightMesh->pPositions[0].w = 1.0f;
+		m_areaLightMesh->pNormals[0].x = 0;
+		m_areaLightMesh->pNormals[0].y = 0;
+		m_areaLightMesh->pNormals[0].z = 1.0f;
+		m_areaLightMesh->pUV0s[0] = Vector2(0, 1.0f);
 
-		m_directionLightMesh->pPositions[1].x = 1.0f * lightScale;
-		m_directionLightMesh->pPositions[1].y = 0;
-		m_directionLightMesh->pPositions[1].z = 1.0f * lightScale;
-		m_directionLightMesh->pPositions[1].w = 1.0f;
-		m_directionLightMesh->pNormals[1].x = 0;
-		m_directionLightMesh->pNormals[1].y = 1.0f;
-		m_directionLightMesh->pNormals[1].z = 0;
-		m_directionLightMesh->pBinormals[1].x = 0;
-		m_directionLightMesh->pBinormals[1].y = 0;
-		m_directionLightMesh->pBinormals[1].z = 1.0f;
-		m_directionLightMesh->pTangents[1].x = 1.0f;
-		m_directionLightMesh->pTangents[1].y = 0;
-		m_directionLightMesh->pTangents[1].z = 0;
-		m_directionLightMesh->pUV0s[1].x = 1.0f;
-		m_directionLightMesh->pUV0s[1].y = 0;
+		m_areaLightMesh->pPositions[1].x = 0.5f * lightScale;
+		m_areaLightMesh->pPositions[1].y = 0.5f * lightScale ;
+		m_areaLightMesh->pPositions[1].z = 0;
+		m_areaLightMesh->pPositions[1].w = 1.0f;
+		m_areaLightMesh->pNormals[1].x = 0;
+		m_areaLightMesh->pNormals[1].y = 0;
+		m_areaLightMesh->pNormals[1].z = 1.0f;
+		m_areaLightMesh->pUV0s[1] = Vector2(1.0f, 1.0f);
 
-		m_directionLightMesh->pPositions[2].x = 1.0f * lightScale;
-		m_directionLightMesh->pPositions[2].y = 0;
-		m_directionLightMesh->pPositions[2].z = -1.0f * lightScale;
-		m_directionLightMesh->pPositions[2].w = 1.0f;
-		m_directionLightMesh->pNormals[2].x = 0;
-		m_directionLightMesh->pNormals[2].y = 1.0f;
-		m_directionLightMesh->pNormals[2].z = 0;
-		m_directionLightMesh->pBinormals[2].x = 0;
-		m_directionLightMesh->pBinormals[2].y = 0;
-		m_directionLightMesh->pBinormals[2].z = 1.0f;
-		m_directionLightMesh->pTangents[2].x = 1.0f;
-		m_directionLightMesh->pTangents[2].y = 0;
-		m_directionLightMesh->pTangents[2].z = 0;
-		m_directionLightMesh->pUV0s[2].x = 1.0f;
-		m_directionLightMesh->pUV0s[2].y = 1.0f;
+		m_areaLightMesh->pPositions[2].x = 0.5f * lightScale;
+		m_areaLightMesh->pPositions[2].y = -0.5f * lightScale ;
+		m_areaLightMesh->pPositions[2].z = 0;
+		m_areaLightMesh->pPositions[2].w = 1.0f;
+		m_areaLightMesh->pNormals[2].x = 0;
+		m_areaLightMesh->pNormals[2].y = 0;
+		m_areaLightMesh->pNormals[2].z = 1.0f;
+		m_areaLightMesh->pUV0s[2] = Vector2(1.0f, 0);
 
-		m_directionLightMesh->pPositions[3].x = -1.0f * lightScale;
-		m_directionLightMesh->pPositions[3].y = 0;
-		m_directionLightMesh->pPositions[3].z = -1.0f * lightScale;
-		m_directionLightMesh->pPositions[3].w = 1.0f;
-		m_directionLightMesh->pNormals[3].x = 0;
-		m_directionLightMesh->pNormals[3].y = 1.0f;
-		m_directionLightMesh->pNormals[3].z = 0;
-		m_directionLightMesh->pBinormals[3].x = 0;
-		m_directionLightMesh->pBinormals[3].y = 0;
-		m_directionLightMesh->pBinormals[3].z = 1.0f;
-		m_directionLightMesh->pTangents[3].x = 1.0f;
-		m_directionLightMesh->pTangents[3].y = 0;
-		m_directionLightMesh->pTangents[3].z = 0;
-		m_directionLightMesh->pUV0s[3].x = 0;
-		m_directionLightMesh->pUV0s[3].y = 1.0f;
+		m_areaLightMesh->pPositions[3].x = -0.5f * lightScale;
+		m_areaLightMesh->pPositions[3].y = -0.5f * lightScale ;
+		m_areaLightMesh->pPositions[3].z = 0;
+		m_areaLightMesh->pPositions[3].w = 1.0f;
+		m_areaLightMesh->pNormals[3].x = 0;
+		m_areaLightMesh->pNormals[3].y = 0;
+		m_areaLightMesh->pNormals[3].z = 1.0f;
+		m_areaLightMesh->pUV0s[3] = Vector2(0, 0);
 
-		m_directionLightMesh->pPositions[4].x = 0;
-		m_directionLightMesh->pPositions[4].y = 10.0f * lightScale;
-		m_directionLightMesh->pPositions[4].z = 0;
-		m_directionLightMesh->pPositions[4].w = 1.0f;
-		m_directionLightMesh->pNormals[4].x = 0;
-		m_directionLightMesh->pNormals[4].y = 1.0f;
-		m_directionLightMesh->pNormals[4].z = 0;
-		m_directionLightMesh->pBinormals[4].x = 0;
-		m_directionLightMesh->pBinormals[4].y = 0;
-		m_directionLightMesh->pBinormals[4].z = 1.0f;
-		m_directionLightMesh->pTangents[4].x = 1.0f;
-		m_directionLightMesh->pTangents[4].y = 0;
-		m_directionLightMesh->pTangents[4].z = 0;
-		m_directionLightMesh->pUV0s[4].x = 0;
-		m_directionLightMesh->pUV0s[4].y = 1.0f;
-
-		m_directionLightMesh->pIndices = new uint32[18];
-		m_directionLightMesh->indexCount = 18;
-		m_directionLightMesh->pIndices[0] = 0;
-		m_directionLightMesh->pIndices[1] = 2;
-		m_directionLightMesh->pIndices[2] = 1;
-		m_directionLightMesh->pIndices[3] = 0;
-		m_directionLightMesh->pIndices[4] = 3;
-		m_directionLightMesh->pIndices[5] = 2;
-
-		m_directionLightMesh->pIndices[6] = 0;
-		m_directionLightMesh->pIndices[7] = 1;
-		m_directionLightMesh->pIndices[8] = 4;
-
-		m_directionLightMesh->pIndices[9] = 2;
-		m_directionLightMesh->pIndices[10] = 4;
-		m_directionLightMesh->pIndices[11] = 1;
-
-		m_directionLightMesh->pIndices[12] = 3;
-		m_directionLightMesh->pIndices[13] = 4;
-		m_directionLightMesh->pIndices[14] = 2;
-
-		m_directionLightMesh->pIndices[15] = 0;
-		m_directionLightMesh->pIndices[16] = 4;
-		m_directionLightMesh->pIndices[17] = 3;
+		m_areaLightMesh->indexCount = 6;
+		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
+		
+		m_areaLightMesh->pIndices[0] = 0;
+		m_areaLightMesh->pIndices[1] = 2;
+		m_areaLightMesh->pIndices[2] = 1;
+		m_areaLightMesh->pIndices[3] = 2;
+		m_areaLightMesh->pIndices[4] = 0;
+		m_areaLightMesh->pIndices[5] = 3;
 
 		//////////////////////////////////////////////////////////////////////////
 		float scale = 500.0f;
@@ -1313,20 +1251,20 @@ namespace Core
 		return object;
 	}
 
-	std::shared_ptr<Core::Object> WindowsEditor::createDirectinalLight()
+	std::shared_ptr<Core::Object> WindowsEditor::createAreaLight()
 	{
-		std::shared_ptr<Object> directonalLight = std::make_shared<Object>();
-		ctd::string name = "Directional Light";
-		directonalLight->name = name;
+		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
+		ctd::string name = "Area Light";
+		areaLight->name = name;
 
-		directonalLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		directonalLight->glRenderableUnit->staticMesh = m_directionLightMesh;
-		directonalLight->glRenderableUnit->material = m_directionalLightMaterial;
+		areaLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();
+		areaLight->glRenderableUnit->staticMesh = m_areaLightMesh;
+		areaLight->glRenderableUnit->material = m_arealLightMaterial;
 		
-		directonalLight->position = Vector3(0, 300.0f, 800.0f);
-		directonalLight->eulerAngle = Vector3(270.0f, 0, 0);
+		areaLight->position = Vector3(0, 2.0f, 25.0f);
+		areaLight->eulerAngle = Vector3(180.0f, 0, 0);
 
-		return directonalLight;
+		return areaLight;
 	}
 
 	std::shared_ptr<Core::Object> WindowsEditor::createTerrain()
@@ -1437,10 +1375,10 @@ namespace Core
 
 		createBuiltinResources();
 
-		//std::shared_ptr<Object> lightObject = createDirectinalLight();
-		//lightObject->Initialize(m_GLDevice.get(), True);
-		//m_scene->AddLight(lightObject, False);
-		//
+		std::shared_ptr<Object> lightObject = createAreaLight();
+		lightObject->Initialize(m_GLDevice.get(), True);
+		m_scene->AddLight(lightObject, False);
+		
 		//std::shared_ptr<Object> terrainObject = createTerrain();
 		//terrainObject->Initialize(m_GLDevice.get(), True);
 		//m_scene->AddObject(terrainObject, False);

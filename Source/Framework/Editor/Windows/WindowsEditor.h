@@ -59,10 +59,10 @@ namespace Core
 		Object * m_pSelectedObject;
 
 		//	Editor Builtin Resources
-		std::shared_ptr<Material> m_directionalLightMaterial;
+		std::shared_ptr<Material> m_arealLightMaterial;
 		std::shared_ptr<Material> m_terrainMaterial;
 		std::shared_ptr<Material> m_bakingMaterial;
-		std::shared_ptr<StaticMesh> m_directionLightMesh;
+		std::shared_ptr<StaticMesh> m_areaLightMesh;
 		std::shared_ptr<StaticMesh> m_terrainMesh;
 		std::shared_ptr<StaticMesh> m_postprocessMesh;
 
@@ -78,7 +78,7 @@ namespace Core
 		std::shared_ptr<Object> createObject(std::weak_ptr<Prefab> prefab);
 		//	Create for serialized.
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
-		std::shared_ptr<Object> createDirectinalLight();
+		std::shared_ptr<Object> createAreaLight();
 		std::shared_ptr<Object> createTerrain();
 
 	public:
