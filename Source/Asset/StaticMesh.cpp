@@ -35,13 +35,12 @@ namespace Core
 
 	float StaticMesh::getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2)
 	{
-		Vector2 v0Temp = v0 - v2;
-		Vector2 v1Temp = v1 - v2;
+		float crossValue = Cross(v0 - v2, v1 - v2);
 
-		return (v0Temp.x * v1Temp.y - v0Temp.y * v1Temp.x) * 0.5f;
+		return abs(crossValue) * 0.5f;
 	}
 
-	void StaticMesh::prepareDataForBaking(Vector3 Scale)
+	void StaticMesh::prepareCustomData(Vector3 Scale)
 	{
 		m_totalSurfaceArea = 0;
 		m_totalUVArea = 0;
@@ -57,6 +56,13 @@ namespace Core
 			delete[] m_pPrimitiveIDs ;
 		}
 		m_pPrimitiveIDs = new int32[vertexCount];
+
+		if (pUV1s)
+		{
+			delete[] pUV1s;
+		}
+		pUV1s = new Vector2[vertexCount];
+		memcpy(pUV1s, pUV0s, sizeof(Vector2) * vertexCount);
 
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
 		{
@@ -93,13 +99,6 @@ namespace Core
 
 		float maxU = 0;
 		float maxV = 0;
-
-		if (pUV1s)
-		{
-			delete[] pUV1s;
-		}
-		pUV1s = new Vector2[vertexCount];
-		memcpy(pUV1s, pUV0s, sizeof(Vector2) * vertexCount);
 		
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
@@ -113,8 +112,23 @@ namespace Core
 				maxV = pUV1s[i].y;
 		}
 
-		m_radiosityTextureWidth = static_cast<int32>(maxU * LightmappingSetting::Instance()->lightmapSize);
-		m_radiosityTextureHeight = static_cast<int32>(maxV * LightmappingSetting::Instance()->lightmapSize);
+		m_radiosityTextureWidth = ceil(maxU);
+		m_radiosityTextureHeight = ceil(maxV);
+
+		if (pCustomData)
+		{
+			delete[] pCustomData;
+		}
+
+		pCustomData = new Vector4[vertexCount];
+
+		for (int32 i = 0; i < vertexCount; ++i)
+		{
+			pCustomData[i].x = static_cast<float>(m_pPrimitiveIDs[i]);
+			pCustomData[i].y = m_pPrimitiveSurfaceAreas[i];
+			pCustomData[i].z = 0;
+			pCustomData[i].w = 0;
+		}
 	}
 	
 	ErrorCode StaticMesh::uploadToGPU()
@@ -148,6 +162,10 @@ namespace Core
 		int32 colorSize = pColors ? sizeof(pColors[0]) * vertexCount : 0;
 		vertexRawDataSize += colorSize;
 		vertexRawDataStride += colorSize / vertexCount;
+
+		int32 customDataSize = pColors ? sizeof(pCustomData[0]) * vertexCount : 0;
+		vertexRawDataSize += customDataSize;
+		vertexRawDataStride += customDataSize / vertexCount;
 
 		int32 uv0Size = pUV0s ? sizeof(pUV0s[0]) * vertexCount : 0;
 		vertexRawDataSize += uv0Size;
@@ -189,6 +207,7 @@ namespace Core
 			tangentSize != m_tangentSize ||
 			binormalSize != m_binormalSize ||
 			colorSize != m_colorSize ||
+			customDataSize != m_customDataSize ||
 			uv0Size != m_uv0Size ||
 			uv1Size != m_uv1Size ||
 			uv2Size != m_uv2Size ||
@@ -211,6 +230,7 @@ namespace Core
 		m_tangentSize = tangentSize;
 		m_binormalSize = binormalSize;
 		m_colorSize = colorSize;
+		m_customDataSize = customDataSize;
 		m_uv0Size = uv0Size;
 		m_uv1Size = uv1Size;
 		m_uv2Size = uv2Size;
@@ -252,6 +272,12 @@ namespace Core
 			{
 				memcpy(m_pVertexRawData + offset, pColors + i, sizeof(pColors[0]));
 				offset += GetComponentCount(pColors[0]);
+			}
+
+			if (customDataSize > 0)
+			{
+				memcpy(m_pVertexRawData + offset, pCustomData + i, sizeof(pCustomData[0]));
+				offset += GetComponentCount(pCustomData[0]);
 			}
 
 			if (uv0Size > 0)
@@ -372,6 +398,19 @@ namespace Core
 				reinterpret_cast<GLvoid *>(pointerOffset));
 
 			pointerOffset += sizeof(pColors[0]);
+		}
+
+		if (customDataSize > 0)
+		{
+			m_pVertexBufferLayout->SetSlotElement(
+				customDataSlotIndex,
+				GetComponentCount(pCustomData[0]),
+				GLDataType_Float,
+				False,
+				vertexRawDataStride,
+				reinterpret_cast<GLvoid *>(pointerOffset));
+
+			pointerOffset += sizeof(pCustomData[0]);
 		}
 
 		if (uv0Size > 0)
@@ -495,6 +534,8 @@ namespace Core
 
 	void StaticMesh::load()
 	{
+		//	TODO:	get from scale from object scale
+		prepareCustomData(Vector3(1.0, 1.0, 1.0));
 		uploadToGPU();
 	}
 
@@ -510,6 +551,7 @@ namespace Core
 		m_tangentSize(0),
 		m_binormalSize(0),
 		m_colorSize(0),
+		m_customDataSize(0),
 		m_uv0Size(0),
 		m_uv1Size(0),
 		m_uv2Size(0),
@@ -528,6 +570,7 @@ namespace Core
 		pTangents(Null),
 		pBinormals(Null),
 		pColors(Null),
+		pCustomData(Null),
 		pUV0s(Null),
 		pUV1s(Null),
 		pUV2s(Null),

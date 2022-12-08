@@ -36,6 +36,7 @@ namespace Core
 		int32 m_tangentSize;
 		int32 m_binormalSize;
 		int32 m_colorSize;
+		int32 m_customDataSize;
 		int32 m_uv0Size;
 		int32 m_uv1Size;
 		int32 m_uv2Size;
@@ -59,7 +60,7 @@ namespace Core
 		float getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
 		float getTriangleArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
 		float getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
-		void prepareDataForBaking(Vector3 Scale);
+		void prepareCustomData(Vector3 Scale);
 		ErrorCode uploadToGPU();
 		void load();
 
@@ -69,20 +70,22 @@ namespace Core
 		const int32 tangentSlotIndex = 2;
 		const int32 binormalSlotIndex = 3;
 		const int32 colorSlotIndex = 4;
-		const int32 uv0SlotIndex = 5;
-		const int32 uv1SlotIndex = 6;
-		const int32 uv2SlotIndex = 7;
-		const int32 uv3SlotIndex = 8;
-		const int32 uv4SlotIndex = 9;
-		const int32 uv5SlotIndex = 10;
-		const int32 uv6SlotIndex = 11;
-		const int32 uv7SlotIndex = 12;
+		const int32 customDataSlotIndex = 5;
+		const int32 uv0SlotIndex = 6;
+		const int32 uv1SlotIndex = 7;
+		const int32 uv2SlotIndex = 8;
+		const int32 uv3SlotIndex = 9;
+		const int32 uv4SlotIndex = 10;
+		const int32 uv5SlotIndex = 11;
+		const int32 uv6SlotIndex = 12;
+		const int32 uv7SlotIndex = 13;
 
 		Vector4 * pPositions;	//	λ��
 		Vector3 * pNormals;		//	����
 		Vector3 * pTangents;	//	����
 		Vector3 * pBinormals;	//	������
 		Vector4 * pColors;		//	��ɫ		//	TODO:	Ҫ�ĳ�uint8
+		Vector4 * pCustomData;
 		Vector2 * pUV0s;		//	UV0
 		Vector2 * pUV1s;		//	UV1
 		Vector2 * pUV2s;		//	UV2
