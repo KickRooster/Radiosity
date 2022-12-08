@@ -31,14 +31,14 @@ namespace Core
 	class AssetManager
 	{
 	private:
-		const ANSICHAR * sceneFullPath = "C:\\Projects\\Template0\\Assets\\Scenes";
-		const ANSICHAR * prefabFullPath = "C:\\Projects\\Template0\\Assets\\Prefabs";
-		const ANSICHAR * glShaderFullPath = "C:\\Projects\\Template0\\Assets\\Shaders\\GLSL";
-		const ANSICHAR * staticMeshFullPath = "C:\\Projects\\Template0\\Assets\\StaticMeshes";
-		const ANSICHAR * textureFullPath = "C:\\Projects\\Template0\\Assets\\Textures";
-		const ANSICHAR * lightmapFullPath = "C:\\Projects\\Template0\\Assets\\Lightmaps";
-		const ANSICHAR * maskMapFullPath = "C:\\Projects\\Template0\\Assets\\MaskMaps";
-		const ANSICHAR * materialFullPath = "C:\\Projects\\Template0\\Assets\\Materials";
+		const ANSICHAR * sceneFullPath = "C:\\Radiosity\\Assets\\Scenes";
+		const ANSICHAR * prefabFullPath = "C:\\Radiosity\\Assets\\Prefabs";
+		const ANSICHAR * glShaderFullPath = "C:\\Radiosity\\Assets\\Shaders\\GLSL";
+		const ANSICHAR * staticMeshFullPath = "C:\\Radiosity\\Assets\\StaticMeshes";
+		const ANSICHAR * textureFullPath = "C:\\Radiosity\\Assets\\Textures";
+		const ANSICHAR * lightmapFullPath = "C:\\Radiosity\\Assets\\Lightmaps";
+		const ANSICHAR * maskMapFullPath = "C:\\Radiosity\\Assets\\MaskMaps";
+		const ANSICHAR * materialFullPath = "C:\\Radiosity\\Assets\\Materials";
 
 		const ANSICHAR * defaultGLVertexShaderName = "default";
 		const ANSICHAR * defaultGLFragmentShaderName = "default";
