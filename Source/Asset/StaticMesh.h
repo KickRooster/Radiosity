@@ -46,11 +46,20 @@ namespace Core
 		int32 m_uv7Size;
 
 		int32 m_indexCount;
-		
-		int32 m_atlasWidth;
-		int32 m_atlasHeight;
-
 		int32 m_controlPointCount;
+
+		float m_totalSurfaceArea;
+		float m_totalUVArea;
+		int32 m_radiosityTextureWidth;
+		int32 m_radiosityTextureHeight;
+		float* m_pPrimitiveSurfaceAreas;
+		int32* m_pPrimitiveIDs;
+		
+		float getArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
+		float getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
+		float getTriangleArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
+		float getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
+		void prepareDataForBaking(Vector3 Scale);
 		ErrorCode uploadToGPU();
 		void load();
 
@@ -84,7 +93,7 @@ namespace Core
 		Vector2 * pUV7s;		//	UV7
 
 		uint32 * pIndices;		//	����
-
+		
 		int32 vertexCount;
 		int32 indexCount;
 
@@ -112,8 +121,8 @@ namespace Core
 		int32 GetUV6Size() const;
 		int32 GetUV7Size() const;
 
-		int32 GetLightmapAtlasWidth()const;
-		int32 GetLightmapAtlasHeight() const;
+		int32 GetRadiosityTextureWidth()const;
+		int32 GetRadiosityTextureHeight() const;
 
 		void SetControlPointCount(int32 controlPointCount);
 

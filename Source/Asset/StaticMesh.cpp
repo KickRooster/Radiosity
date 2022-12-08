@@ -14,6 +14,109 @@ using namespace ctd;
 
 namespace Core
 {
+	float StaticMesh::getArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2)
+	{
+		Vector3 crossValue = Cross(v1 - v0, v2 - v0);
+
+		return abs(crossValue.length()) * 0.5f;
+	}
+
+	float StaticMesh::getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2)
+	{
+		return abs(Cross(v1 - v0, v2 - v0)) * 0.5f;
+	}
+
+	float StaticMesh::getTriangleArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2)
+	{
+		Vector3 crossValue = Cross(v1 - v0, v2 - v0);
+
+		return abs(crossValue.length()) * 0.5f;
+	}
+
+	float StaticMesh::getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2)
+	{
+		Vector2 v0Temp = v0 - v2;
+		Vector2 v1Temp = v1 - v2;
+
+		return (v0Temp.x * v1Temp.y - v0Temp.y * v1Temp.x) * 0.5f;
+	}
+
+	void StaticMesh::prepareDataForBaking(Vector3 Scale)
+	{
+		m_totalSurfaceArea = 0;
+		m_totalUVArea = 0;
+
+		if (m_pPrimitiveSurfaceAreas)
+		{
+			delete[] m_pPrimitiveSurfaceAreas;
+		}
+		m_pPrimitiveSurfaceAreas = new float[vertexCount];
+
+		if (m_pPrimitiveIDs)
+		{
+			delete[] m_pPrimitiveIDs ;
+		}
+		m_pPrimitiveIDs = new int32[vertexCount];
+
+		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
+		{
+			m_pPrimitiveIDs[triangleIndex * 3] = triangleIndex;
+			m_pPrimitiveIDs[triangleIndex * 3 + 1] = triangleIndex;
+			m_pPrimitiveIDs[triangleIndex * 3 + 2] = triangleIndex;
+			
+			Vector3 pos0 = pPositions[triangleIndex * 3 + 0];
+			Vector3 pos1 = pPositions[triangleIndex * 3 + 1];
+			Vector3 pos2 = pPositions[triangleIndex * 3 + 2];
+
+			pos0 *= Scale;
+			pos1 *= Scale;
+			pos2 *= Scale;
+			
+			float triangleSurfaceArea = getTriangleArea(pos0, pos1, pos2);
+
+			m_pPrimitiveSurfaceAreas[triangleIndex * 3] = triangleSurfaceArea;
+			m_pPrimitiveSurfaceAreas[triangleIndex * 3 + 1] = triangleSurfaceArea;
+			m_pPrimitiveSurfaceAreas[triangleIndex * 3 + 2] = triangleSurfaceArea;
+
+			m_totalSurfaceArea += triangleSurfaceArea;
+
+			Vector2 uv0 = pUV1s[triangleIndex * 3 + 0];
+			Vector2 uv1 = pUV1s[triangleIndex * 3 + 1];
+			Vector2 uv2 = pUV1s[triangleIndex * 3 + 2];
+
+			float uvArea = getTriangleArea(uv0, uv1, uv2);
+
+			m_totalUVArea += uvArea;
+		}
+
+		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit / (m_totalUVArea / m_totalSurfaceArea);
+
+		float maxU = 0;
+		float maxV = 0;
+
+		if (pUV1s)
+		{
+			delete[] pUV1s;
+		}
+		pUV1s = new Vector2[vertexCount];
+		memcpy(pUV1s, pUV0s, sizeof(Vector2) * vertexCount);
+		
+		for (int32 i = 0; i < vertexCount; ++i)
+		{
+			pUV1s[i].x *= UVScale;
+			pUV1s[i].y *= UVScale;
+
+			if (pUV1s[i].x * UVScale > maxU)
+				maxU = pUV1s[i].x;
+
+			if (pUV1s[i].y > maxV)
+				maxV = pUV1s[i].y;
+		}
+
+		m_radiosityTextureWidth = static_cast<int32>(maxU * LightmappingSetting::Instance()->lightmapSize);
+		m_radiosityTextureHeight = static_cast<int32>(maxV * LightmappingSetting::Instance()->lightmapSize);
+	}
+	
 	ErrorCode StaticMesh::uploadToGPU()
 	{
 		if (!pIndices ||
@@ -416,6 +519,10 @@ namespace Core
 		m_uv6Size(0),
 		m_uv7Size(0),
 		m_indexCount(0),
+		m_totalSurfaceArea(0),
+		m_totalUVArea(0),
+		m_pPrimitiveSurfaceAreas(Null),
+		m_pPrimitiveIDs(Null),
 		pPositions(Null),
 		pNormals(Null),
 		pTangents(Null),
@@ -470,7 +577,7 @@ namespace Core
 		return m_pVertexRawData;
 	}
 
-	Core::int32 StaticMesh::GetVertexRawDataSize() const
+	int32 StaticMesh::GetVertexRawDataSize() const
 	{
 		return m_vertexRawDataSize;
 	}
@@ -545,14 +652,14 @@ namespace Core
 		return m_uv7Size;
 	}
 
-	Core::int32 StaticMesh::GetLightmapAtlasWidth() const
+	int32 StaticMesh::GetRadiosityTextureWidth() const
 	{
-		return m_atlasWidth;
+		return m_radiosityTextureWidth;
 	}
 
-	Core::int32 StaticMesh::GetLightmapAtlasHeight() const
+	int32 StaticMesh::GetRadiosityTextureHeight() const
 	{
-		return m_atlasHeight;
+		return m_radiosityTextureHeight;
 	}
 
 	void StaticMesh::SetControlPointCount(int32 controlPointCount)

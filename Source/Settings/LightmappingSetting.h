@@ -17,9 +17,10 @@ namespace Core
 		static const uint32 maxChartNumber;
 		static const float maxStrechSize ;
 		static const float gutter ;
-		static const float uvScale;
-		static const int32 paddingSize ;	//	°ü¹üÔÚatlasÍâµÄpadding size.
+		static const int32 paddingSize ;	//	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½atlasï¿½ï¿½ï¿½padding size.
 		static const int32 progressivePassCount ;
+		//	approximate amount of lightmap pixels per world unit. Affects the amount and resolution of generated lightmaps.
+		static float TexelsPerUnit;
 
 		const ctd::string GetLightmapName(int32 lightmapIndex)
 		{

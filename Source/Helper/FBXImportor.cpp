@@ -489,22 +489,17 @@ namespace Core
 				oldControlPointIndex2NewControlPointIndexMap[oldControlPointIndex] = i;
 			}
 		}
-
-		assert(vertexCount == indexCount);
 		
 		for (int32 i = 0; i < indexCount; ++i)
 		{
 			pStaticMesh->pIndices[i] = i;
-
-			int32 PrimitiveID = i / 3;
-
-			//	Store PrimitiveID in position.w
-			pStaticMesh->pPositions[i].w = static_cast<float>(PrimitiveID);
 		}
 
 		delete[] pControlPointIndices;
 
 		outStaticMeshes.push_back(std::move(pStaticMesh));
+
+		assert(vertexCount == indexCount);
 	}
 	
 	void FBXImportor::processNode(FbxNode* pNode, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
