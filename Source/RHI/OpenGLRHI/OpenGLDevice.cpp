@@ -1,4 +1,6 @@
 #include "OpenGLDevice.h"
+
+#include "../../Object/Camera.h"
 #include "..\..\Math\MathGlobal.h"
 #include "..\..\Math\Vector4.h"
 #pragma comment (lib, "glew32.lib") 
@@ -25,12 +27,11 @@ namespace Core
 	{
 		queryLimts();
 
-		registerShaderGlobalData(GLShaderDataAlias_CameraMatrices_0, sizeof(Matrix4x4Identify));
+		registerShaderGlobalData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatrices, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatricesIT, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_LightmapUVParam, sizeof(Vector4Dummy));
 		registerShaderGlobalData(GLShaderDataAlias_PostprocessParam, sizeof(Vector4Dummy));
-		registerShaderGlobalData(GLShaderDataAlias_CameraPos, sizeof(Vector3Dummy));
 		registerShaderGlobalData(GLShaderDataAlias_LightParam, sizeof(Vector3Dummy));
 
 		glFrontFace(GL_CCW);
@@ -76,6 +77,36 @@ namespace Core
 	void OpenGLDevice::BeforeRender(int32 width, int32 height, float a /* = 1.0f */)
 	{
 		glClearColor(0, 0.2f, 0.4f, a);
+		glCheckError();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCheckError();
+
+		glViewport(0, 0, width, height);
+		glCheckError();
+
+		glFrontFace(GL_CCW);
+		glCheckError();
+
+		glEnable(GL_CULL_FACE);
+		glCheckError();
+
+		glCullFace(GL_BACK);
+		glCheckError();
+
+		glEnable(GL_DEPTH_TEST);
+		glCheckError();
+
+		glDepthFunc(GL_LESS);
+		glCheckError();
+	}
+
+	void OpenGLDevice::BeginVisibisityPass(int32 width, int32 height)
+	{
+		glClearColor(0, 0, 0, 1);
+		glCheckError();
+
+		glClearDepth(1.0);
 		glCheckError();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

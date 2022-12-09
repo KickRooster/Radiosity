@@ -32,43 +32,29 @@ namespace Core
 		std::unique_ptr<GLTexture> m_GLColorAttach;			//	uint8
 
 		Bool m_baking;
-		const int32 glBakingBufferSize = 1024;
-		std::unique_ptr<GLFrameBuffer> m_GLBakeFrameBuffer;
-		std::unique_ptr<GLTexture> m_GLBakeColorAttach0;		//	float
-		std::unique_ptr<GLTexture> m_GLBakeColorAttach1;		//	float
-		
-		std::unique_ptr<GLTexture> m_GLBakeViewTexture;			//	uint8
 
+		//	Visibility Pass
+		const int32 PrimitiveIDTextureWidth = 1024;
+		const int32 PrimitiveIDTextureHeight = 1024;
 		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
 		std::unique_ptr<GLTexture> m_primitiveIDTexture;
+		float * m_pPrimitiveIDRawData;
 
+		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
 		std::unique_ptr<GLTexture> m_RadiorityTexture;
 		std::unique_ptr<GLTexture> m_residualTexture;
+		//float* m_pRadiosityRawData;
+		//float* m_residualRawData;
 		
 		int32 m_frameCount;
-		int32 m_progressiveCountPerFrame;
-
-		std::unique_ptr<GLTexture> m_GLBakingAccumulation;					//	float
-		std::unique_ptr<GLFrameBuffer> m_GLBakingPostprocessFrameBuffer;
-		std::unique_ptr<GLTexture> m_GLBakingPostprocessColorAttach;		//	uint8
-		std::unique_ptr<GLFrameBuffer> m_GLDilationFrameBuffer;
-		std::unique_ptr<GLTexture> m_GLDilationColorAttach;		//	uint8
-		std::unique_ptr<GLBuffer> m_GLPackingBuffer;
 		
-		const int32 bakingRTSize = LightmappingSetting::Instance()->lightmapSize;
-
-		float * m_pPositionRawData;
-		float * m_pNormalRawData;
-
 		Object * m_pSelectedObject;
 
 		//	Editor Builtin Resources
 		std::shared_ptr<Material> m_arealLightMaterial;
-		std::shared_ptr<Material> m_terrainMaterial;
-		std::shared_ptr<Material> m_bakingMaterial;
+		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<StaticMesh> m_areaLightMesh;
-		std::shared_ptr<StaticMesh> m_terrainMesh;
 		std::shared_ptr<StaticMesh> m_postprocessMesh;
 
 		void createBuiltinResources();
@@ -84,7 +70,6 @@ namespace Core
 		//	Create for serialized.
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createAreaLight();
-		std::shared_ptr<Object> createTerrain();
 
 	public:
 		WindowsEditor();

@@ -50,7 +50,8 @@ namespace Core
 		void Tick(float deltaTime, OpenGLDevice * pDevice);
 		void Render(OpenGLDevice * pDevice);
 		void RenderAsPostprocess(OpenGLDevice * pDevice, Vector4 & postprocessParam);
-		void Bake(OpenGLDevice * pDevice);
+		void BeforeBaking();
+		void DrawID(OpenGLDevice * pDevice);
 		Matrix4x4 * GetObject2WorldMatrix() ;
 		Vector3 GetZDirection();
 		Vector3 GetYDirection();

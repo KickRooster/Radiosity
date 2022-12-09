@@ -19,8 +19,6 @@ namespace Core
 		std::weak_ptr<Object> m_areaLightRef;
 		std::weak_ptr<Object> m_beingBakingObjectRef;
 
-		int32 m_objectCursor;
-
 	public:
 		ctd::vector<std::shared_ptr<Object>> objects;
 		ctd::vector<std::shared_ptr<Object>> serializedObjects;
@@ -34,12 +32,6 @@ namespace Core
 		void Initialize(OpenGLDevice * pDevice, int32 width, int32 height);
 		void Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState);
 		void Render(OpenGLDevice * pDevice, int32 width, int32 height);
-		void BeginBaking(OpenGLDevice * pGLDevice, int32 width, int32 height);
-		Bool BakingFinished()const;
-		Object * PoolBakingObject() const;
-		void SkipOneObject();
-		Bool BakeOneObject(OpenGLDevice * pDevice);
-		void EndBaking(OpenGLDevice * pDevice);
 		Camera * GetCamera();
 		void AddObject(std::shared_ptr<Object> object, Bool needSerialization = True);
 		void AddLight(std::shared_ptr<Object> object, Bool needSerialization = True);

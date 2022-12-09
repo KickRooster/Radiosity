@@ -40,23 +40,16 @@ namespace Core
 		return abs(crossValue) * 0.5f;
 	}
 
-	void StaticMesh::prepareCustomData(Vector3 Scale)
+	void StaticMesh::PrepareCustomDataAndPrimitiveMap(Matrix4x4 Object2World)
 	{
 		m_totalSurfaceArea = 0;
 		m_totalUVArea = 0;
 
-		if (m_pPrimitiveSurfaceAreas)
-		{
-			delete[] m_pPrimitiveSurfaceAreas;
-		}
-		m_pPrimitiveSurfaceAreas = new float[vertexCount];
+		float* pPrimitiveSurfaceAreas = new float[vertexCount];
+		int32* pPrimitiveIDs = new int32[vertexCount];
 
-		if (m_pPrimitiveIDs)
-		{
-			delete[] m_pPrimitiveIDs ;
-		}
-		m_pPrimitiveIDs = new int32[vertexCount];
-
+		PrimitiveMap.empty();
+		
 		if (pUV1s)
 		{
 			delete[] pUV1s;
@@ -66,23 +59,27 @@ namespace Core
 		
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
 		{
-			m_pPrimitiveIDs[triangleIndex * 3] = triangleIndex;
-			m_pPrimitiveIDs[triangleIndex * 3 + 1] = triangleIndex;
-			m_pPrimitiveIDs[triangleIndex * 3 + 2] = triangleIndex;
+			pPrimitiveIDs[triangleIndex * 3] = triangleIndex;
+			pPrimitiveIDs[triangleIndex * 3 + 1] = triangleIndex;
+			pPrimitiveIDs[triangleIndex * 3 + 2] = triangleIndex;
 			
-			Vector3 pos0 = pPositions[triangleIndex * 3 + 0];
-			Vector3 pos1 = pPositions[triangleIndex * 3 + 1];
-			Vector3 pos2 = pPositions[triangleIndex * 3 + 2];
+			Vector4 pos0 = pPositions[triangleIndex * 3 + 0];
+			Vector4 pos1 = pPositions[triangleIndex * 3 + 1];
+			Vector4 pos2 = pPositions[triangleIndex * 3 + 2];
 
-			pos0 *= Scale;
-			pos1 *= Scale;
-			pos2 *= Scale;
+			Vector4 WorldPos0 = Object2World * pos0;
+			Vector4 WorldPos1 = Object2World * pos1;
+			Vector4 WorldPos2 = Object2World * pos2;
+
+			Vector3 WorldPos0XYZ = Vector3(WorldPos0.x, WorldPos0.y, WorldPos0.z);
+			Vector3 WorldPos1XYZ = Vector3(WorldPos1.x, WorldPos1.y, WorldPos1.z);
+			Vector3 WorldPos2XYZ = Vector3(WorldPos2.x, WorldPos2.y, WorldPos2.z);
 			
-			float triangleSurfaceArea = getTriangleArea(pos0, pos1, pos2);
+			float triangleSurfaceArea = getTriangleArea(WorldPos0XYZ, WorldPos1XYZ, WorldPos2XYZ);
 
-			m_pPrimitiveSurfaceAreas[triangleIndex * 3] = triangleSurfaceArea;
-			m_pPrimitiveSurfaceAreas[triangleIndex * 3 + 1] = triangleSurfaceArea;
-			m_pPrimitiveSurfaceAreas[triangleIndex * 3 + 2] = triangleSurfaceArea;
+			pPrimitiveSurfaceAreas[triangleIndex * 3] = triangleSurfaceArea;
+			pPrimitiveSurfaceAreas[triangleIndex * 3 + 1] = triangleSurfaceArea;
+			pPrimitiveSurfaceAreas[triangleIndex * 3 + 2] = triangleSurfaceArea;
 
 			m_totalSurfaceArea += triangleSurfaceArea;
 
@@ -93,20 +90,19 @@ namespace Core
 			float uvArea = getTriangleArea(uv0, uv1, uv2);
 
 			m_totalUVArea += uvArea;
-
-			Vector3 P0P1 = pos1 - pos0;
-			Vector3 P0P2 = pos2 - pos0;
-			Vector3 PrimitiveNormal = Cross(P0P1, P0P2);
+			
 			Primitive Primitive;
-			Primitive.ID = triangleIndex;
+			Primitive.ID = static_cast<float>(triangleIndex);
+			Vector3 P0P1 = WorldPos1XYZ - WorldPos0XYZ;
+			Vector3 P0P2 = WorldPos2XYZ - WorldPos0XYZ;
+			Vector3 PrimitiveNormal = Cross(P0P1, P0P2);
 			Primitive.Normal = Normalize(PrimitiveNormal);
 			Primitive.SurfaceArea = triangleSurfaceArea;
-			Vector3 ZeroBarycentricPosition = pos0 / 3.0f + pos1 / 3.0f + pos2 /3.0f;
+			Vector3 ZeroBarycentricPosition = WorldPos0XYZ / 3.0f + WorldPos1XYZ / 3.0f + WorldPos2XYZ /3.0f;
 			Primitive.ShootPosition.x = ZeroBarycentricPosition.x;
 			Primitive.ShootPosition.y = ZeroBarycentricPosition.y;
 			Primitive.ShootPosition.z = ZeroBarycentricPosition.z;
 			Primitive.ShootPosition.w = 1.0f;
-			Primitive.ShootPosition = m_local2World * Primitive.ShootPosition;
 			//int32 TexelCount = ceil(LightmappingSetting::Instance()->TexelsPerUnit * triangleSurfaceArea);
 
 			PrimitiveMap[triangleIndex] = Primitive;
@@ -141,11 +137,14 @@ namespace Core
 
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
-			pCustomData[i].x = static_cast<float>(m_pPrimitiveIDs[i]);
-			pCustomData[i].y = m_pPrimitiveSurfaceAreas[i];
+			pCustomData[i].x = static_cast<float>(pPrimitiveIDs[i]);
+			pCustomData[i].y = pPrimitiveSurfaceAreas[i];
 			pCustomData[i].z = 0;
 			pCustomData[i].w = 0;
 		}
+
+		delete[] pPrimitiveSurfaceAreas;
+		delete[] pPrimitiveIDs;
 	}
 	
 	ErrorCode StaticMesh::uploadToGPU()
@@ -180,7 +179,7 @@ namespace Core
 		vertexRawDataSize += colorSize;
 		vertexRawDataStride += colorSize / vertexCount;
 
-		int32 customDataSize = pColors ? sizeof(pCustomData[0]) * vertexCount : 0;
+		int32 customDataSize = pCustomData ? sizeof(pCustomData[0]) * vertexCount : 0;
 		vertexRawDataSize += customDataSize;
 		vertexRawDataStride += customDataSize / vertexCount;
 
@@ -551,8 +550,6 @@ namespace Core
 
 	void StaticMesh::load()
 	{
-		//	TODO:	get from scale from object scale
-		prepareCustomData(Vector3(1.0, 1.0, 1.0));
 		uploadToGPU();
 	}
 
@@ -580,8 +577,6 @@ namespace Core
 		m_indexCount(0),
 		m_totalSurfaceArea(0),
 		m_totalUVArea(0),
-		m_pPrimitiveSurfaceAreas(Null),
-		m_pPrimitiveIDs(Null),
 		pPositions(Null),
 		pNormals(Null),
 		pTangents(Null),
@@ -732,11 +727,17 @@ namespace Core
 		m_local2World = local2World;
 	}
 
-	Core::Matrix4x4 StaticMesh::GetLocal2World() const
+	Matrix4x4 StaticMesh::GetLocal2World() const
 	{
 		return m_local2World;
 	}
 
+	void StaticMesh::BeforeBaking(Matrix4x4 Object2World)
+	{
+		PrepareCustomDataAndPrimitiveMap(Object2World);
+		uploadToGPU();
+	}
+	
 	StaticMesh::~StaticMesh()
 	{
 		if (pPositions)
@@ -753,6 +754,11 @@ namespace Core
 
 		if (pColors)
 			delete[] pColors;
+
+		if (pCustomData)
+		{
+			delete[] pCustomData;
+		}
 
 		if (pUV0s)
 			delete[] pUV0s;

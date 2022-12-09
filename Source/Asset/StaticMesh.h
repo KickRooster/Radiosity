@@ -68,14 +68,12 @@ namespace Core
 		float m_totalUVArea;
 		int32 m_radiosityTextureWidth;
 		int32 m_radiosityTextureHeight;
-		float* m_pPrimitiveSurfaceAreas;
-		int32* m_pPrimitiveIDs;
 		
 		float getArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
 		float getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
 		float getTriangleArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
 		float getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
-		void prepareCustomData(Vector3 Scale);
+		void PrepareCustomDataAndPrimitiveMap(Matrix4x4 Object2World);
 		ErrorCode uploadToGPU();
 		void load();
 
@@ -143,12 +141,14 @@ namespace Core
 
 		int32 GetRadiosityTextureWidth()const;
 		int32 GetRadiosityTextureHeight() const;
-
+		
 		void SetControlPointCount(int32 controlPointCount);
 
 		void SetLocal2World(Matrix4x4 local2World);
 		Matrix4x4 GetLocal2World() const;
 
+		void BeforeBaking(Matrix4x4 Object2World);
+		
 		virtual ~StaticMesh();
 	};
 }

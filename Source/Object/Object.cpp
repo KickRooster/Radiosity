@@ -109,18 +109,23 @@ namespace Core
 		glRenderableUnit->Inactivate();
 	}
 
-	void Object::Bake(OpenGLDevice * pDevice)
+	void Object::BeforeBaking()
+	{
+		glRenderableUnit.get()->staticMesh.lock().get()->BeforeBaking(m_object2WorldMatrix);
+	}
+	
+	void Object::DrawID(OpenGLDevice * pDevice)
 	{
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
 
-		glRenderableUnit->ActivateBaking();
+		glRenderableUnit->ActivateDrawingID();
 		pDevice->DrawElements(
 			GLTopology_Triangles,
 			glRenderableUnit->staticMesh.lock()->indexCount,
 			GLDataType_UnsignedInt,
 			Null);
-		glRenderableUnit->InactivateBaking();
+		glRenderableUnit->InactivateDrawingID();
 	}
 
 	Matrix4x4 * Object::GetObject2WorldMatrix()

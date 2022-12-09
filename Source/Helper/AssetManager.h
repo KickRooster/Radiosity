@@ -33,7 +33,7 @@ namespace Core
 	private:
 		const ANSICHAR * sceneFullPath = "C:\\Radiosity\\Assets\\Scenes";
 		const ANSICHAR * prefabFullPath = "C:\\Radiosity\\Assets\\Prefabs";
-		const ANSICHAR * glShaderFullPath = "C:\\Radiosity\\Assets\\Shaders\\GLSL";
+		const ANSICHAR * glShaderFullPath = "C:\\Radiosity\\Assets\\Shaders";
 		const ANSICHAR * staticMeshFullPath = "C:\\Radiosity\\Assets\\StaticMeshes";
 		const ANSICHAR * textureFullPath = "C:\\Radiosity\\Assets\\Textures";
 		const ANSICHAR * lightmapFullPath = "C:\\Radiosity\\Assets\\Lightmaps";

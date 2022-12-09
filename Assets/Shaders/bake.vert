@@ -12,9 +12,12 @@
 		layout(location = 10) in vec2 texCoord5;
 		layout(location = 11) in vec2 texCoord6;
 		layout(location = 12) in vec2 texCoord7;
-		layout (std140, binding = 0) uniform CameraMatrices_0
+		layout (std140, binding = 0) uniform CameraUniformData
 		{
+			mat4 viewMatrix;
 			mat4 viewProjectionMatrix;
+			vec4 position;
+			vec4 NearFar;
 		};
 		layout (std140, binding = 1) uniform ObjectMatrices
 		{

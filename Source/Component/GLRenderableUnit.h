@@ -10,14 +10,14 @@ namespace Core
 	public:
 		std::weak_ptr<StaticMesh> staticMesh;
 		std::weak_ptr<Material> material;
-		std::weak_ptr<Material> bakingMaterial;
+		std::weak_ptr<Material> DrawIDMaterial;
 
 		GLRenderableUnit();
 		void BeginUse();
 		void Activate();
 		void Inactivate();
-		void ActivateBaking();
-		void InactivateBaking();
+		void ActivateDrawingID();
+		void InactivateDrawingID();
 		~GLRenderableUnit();
 	};
 }

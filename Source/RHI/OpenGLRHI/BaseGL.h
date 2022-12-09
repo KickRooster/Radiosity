@@ -24,12 +24,11 @@ namespace Core
 	//	ȫ�Ӹ���Ƶ�ʶ���.
 	enum GLShaderDataAlias : int32
 	{
-		GLShaderDataAlias_CameraMatrices_0,
+		GLShaderDataAlias_CameraUniformData,
 		GLShaderDataAlias_ObjectMatrices,
 		GLShaderDataAlias_ObjectMatricesIT,
 		GLShaderDataAlias_LightmapUVParam,
 		GLShaderDataAlias_PostprocessParam,
-		GLShaderDataAlias_CameraPos,
 		GLShaderDataAlias_LightParam,
 	};
 

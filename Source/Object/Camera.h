@@ -9,6 +9,14 @@
 
 namespace Core
 {
+	struct CameraUniformData
+	{
+		Matrix4x4 ViewMatrix;
+		Matrix4x4 ViewProjectionMatrix;
+		Vector4 Position;
+		Vector4 NearFar;	//	near,far,
+	};
+	
 	class Camera
 	{
 	private:

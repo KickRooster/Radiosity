@@ -124,8 +124,13 @@ namespace Core
 
 	void Camera::UpdataGLParam(OpenGLDevice * pDevice)
 	{
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraMatrices_0, sizeof(m_viewProjectionMatrix), &m_viewProjectionMatrix);
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraPos, sizeof(position), &position);
+		CameraUniformData CameraUniformData;
+		CameraUniformData.ViewMatrix = m_viewMatrix;
+		CameraUniformData.ViewProjectionMatrix = m_viewProjectionMatrix;
+		CameraUniformData.Position = Vector4(position.x, position.y, position.z, 1.0f);
+		CameraUniformData.NearFar.x = zNear;
+		CameraUniformData.NearFar.y = zFar;
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData), &CameraUniformData);
 	}
 
 	Matrix4x4 * Camera::GetViewPeojectionMatrix()

@@ -83,45 +83,8 @@ namespace Core
 
 		pDevice->AfterRender();
 	}
-
-	void Scene::BeginBaking(OpenGLDevice * pGLDevice, int32 width, int32 height)
-	{
-		m_objectCursor = 0;
-		pGLDevice->BeforeRender(width, height, 0);
-
-		m_camera->UpdataGLParam(pGLDevice);
-	}
-
-	Core::Bool Scene::BakingFinished() const
-	{
-		return m_objectCursor == objects.size();
-	}
-
-	Core::Object * Scene::PoolBakingObject() const
-	{
-		return objects[m_objectCursor].get();
-	}
-
-	void Scene::SkipOneObject()
-	{
-		++m_objectCursor;
-	}
-
-	Bool Scene::BakeOneObject(OpenGLDevice * pDevice)
-	{
-		objects[m_objectCursor]->Bake(pDevice);
-
-		++m_objectCursor;
-
-		return True;
-	}
-
-	void Scene::EndBaking(OpenGLDevice * pDevice)
-	{
-		pDevice->AfterRender();
-	}
 	
-	Core::Camera * Scene::GetCamera()
+	Camera * Scene::GetCamera()
 	{
 		return m_camera.get();
 	}

@@ -29,32 +29,11 @@ namespace Core
 
 		//////////////////////////////////////////////////////////////////////////
 
-		m_terrainMaterial = std::make_shared<Material>();
-
-		m_terrainMaterial->glVertexShader = m_assetManager->glVertexShaderMap["default"];
-		m_terrainMaterial->glVertexShader.lock()->Attach(m_terrainMaterial.get());
-		m_terrainMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
-		m_terrainMaterial->glFragmentShader.lock()->Attach(m_terrainMaterial.get());
-		m_terrainMaterial->albedoTexture = m_assetManager->textureMap["default"];
-		m_terrainMaterial->albedoColor[0] = 1.0f;
-		m_terrainMaterial->albedoColor[1] = 1.0f;
-		m_terrainMaterial->albedoColor[2] = 1.0f;
-		m_terrainMaterial->albedoColor[3] = 1.0f;
-		m_terrainMaterial->normalMap = m_assetManager->textureMap["default"];
-		m_terrainMaterial->metallicTexture = m_assetManager->textureMap["default"];
-		m_terrainMaterial->roughnessTexture = m_assetManager->textureMap["default"];
-
-		m_terrainMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
-		m_terrainMaterial->lightmapTexture.lock()->Attach(m_terrainMaterial.get());
-		m_terrainMaterial->IsOccluder = True;
-		
-		//////////////////////////////////////////////////////////////////////////
-
-		m_bakingMaterial = std::make_shared<Material>();
-		m_bakingMaterial->glVertexShader = m_assetManager->glVertexShaderMap["bake"];
-		m_bakingMaterial->glVertexShader.lock()->Attach(m_bakingMaterial.get());
-		m_bakingMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["bake"];
-		m_bakingMaterial->glFragmentShader.lock()->Attach(m_bakingMaterial.get());
+		m_DrawIDMaterial = std::make_shared<Material>();
+		m_DrawIDMaterial->glVertexShader = m_assetManager->glVertexShaderMap["drawID"];
+		m_DrawIDMaterial->glVertexShader.lock()->Attach(m_DrawIDMaterial.get());
+		m_DrawIDMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["drawID"];
+		m_DrawIDMaterial->glFragmentShader.lock()->Attach(m_DrawIDMaterial.get());
 		
 		//////////////////////////////////////////////////////////////////////////
 
@@ -130,92 +109,7 @@ namespace Core
 		m_areaLightMesh->pIndices[3] = 3;
 		m_areaLightMesh->pIndices[4] = 4;
 		m_areaLightMesh->pIndices[5] = 5;
-
-		//////////////////////////////////////////////////////////////////////////
-		float scale = 500.0f;
-
-		m_terrainMesh = std::make_shared<StaticMesh>();
-		m_terrainMesh->pPositions = new Vector4[4];
-		m_terrainMesh->pNormals = new Vector3[4];
-		m_terrainMesh->pBinormals = new Vector3[4];
-		m_terrainMesh->pTangents = new Vector3[4];
-		m_terrainMesh->pUV0s = new Vector2[4];
-		m_terrainMesh->vertexCount = 4;
-
-		m_terrainMesh->pPositions[0].x = -1.0f * scale;
-		m_terrainMesh->pPositions[0].y = 0;
-		m_terrainMesh->pPositions[0].z = 1.0f * scale;
-		m_terrainMesh->pPositions[0].w = 1.0f;
-		m_terrainMesh->pNormals[0].x = 0;
-		m_terrainMesh->pNormals[0].y = 1.0f;
-		m_terrainMesh->pNormals[0].z = 0;
-		m_terrainMesh->pBinormals[0].x = 0;
-		m_terrainMesh->pBinormals[0].y = 0;
-		m_terrainMesh->pBinormals[0].z = 1.0f;
-		m_terrainMesh->pTangents[0].x = 1.0f;
-		m_terrainMesh->pTangents[0].y = 0;
-		m_terrainMesh->pTangents[0].z = 0;
-		m_terrainMesh->pUV0s[0].x = 0;
-		m_terrainMesh->pUV0s[0].x = 0;
-		m_terrainMesh->pUV0s[0].y = 0;
-
-		m_terrainMesh->pPositions[1].x = 1.0f * scale;
-		m_terrainMesh->pPositions[1].y = 0;
-		m_terrainMesh->pPositions[1].z = 1.0f * scale;
-		m_terrainMesh->pPositions[1].w = 1.0f;
-		m_terrainMesh->pNormals[1].x = 0;
-		m_terrainMesh->pNormals[1].y = 1.0f;
-		m_terrainMesh->pNormals[1].z = 0;
-		m_terrainMesh->pBinormals[1].x = 0;
-		m_terrainMesh->pBinormals[1].y = 0;
-		m_terrainMesh->pBinormals[1].z = 1.0f;
-		m_terrainMesh->pTangents[1].x = 1.0f;
-		m_terrainMesh->pTangents[1].y = 0;
-		m_terrainMesh->pTangents[1].z = 0;
-		m_terrainMesh->pUV0s[1].x = 1.0f;
-		m_terrainMesh->pUV0s[1].y = 0;
-
-		m_terrainMesh->pPositions[2].x = 1.0f * scale;
-		m_terrainMesh->pPositions[2].y = 0;
-		m_terrainMesh->pPositions[2].z = -1.0f * scale;
-		m_terrainMesh->pPositions[2].w = 1.0f;
-		m_terrainMesh->pNormals[2].x = 0;
-		m_terrainMesh->pNormals[2].y = 1.0f;
-		m_terrainMesh->pNormals[2].z = 0;
-		m_terrainMesh->pBinormals[2].x = 0;
-		m_terrainMesh->pBinormals[2].y = 0;
-		m_terrainMesh->pBinormals[2].z = 1.0f;
-		m_terrainMesh->pTangents[2].x = 1.0f;
-		m_terrainMesh->pTangents[2].y = 0;
-		m_terrainMesh->pTangents[2].z = 0;
-		m_terrainMesh->pUV0s[2].x = 1.0f;
-		m_terrainMesh->pUV0s[2].y = 1.0f;
-
-		m_terrainMesh->pPositions[3].x = -1.0f * scale;
-		m_terrainMesh->pPositions[3].y = 0;
-		m_terrainMesh->pPositions[3].z = -1.0f * scale;
-		m_terrainMesh->pPositions[3].w = 1.0f;
-		m_terrainMesh->pNormals[3].x = 0;
-		m_terrainMesh->pNormals[3].y = 1.0f;
-		m_terrainMesh->pNormals[3].z = 0;
-		m_terrainMesh->pBinormals[3].x = 0;
-		m_terrainMesh->pBinormals[3].y = 0;
-		m_terrainMesh->pBinormals[3].z = 1.0f;
-		m_terrainMesh->pTangents[3].x = 1.0f;
-		m_terrainMesh->pTangents[3].y = 0;
-		m_terrainMesh->pTangents[3].z = 0;
-		m_terrainMesh->pUV0s[3].x = 0;
-		m_terrainMesh->pUV0s[3].y = 1.0f;
-
-		m_terrainMesh->pIndices = new uint32[6];
-		m_terrainMesh->indexCount = 6;
-		m_terrainMesh->pIndices[0] = 0;
-		m_terrainMesh->pIndices[1] = 1;
-		m_terrainMesh->pIndices[2] = 2;
-		m_terrainMesh->pIndices[3] = 0;
-		m_terrainMesh->pIndices[4] = 2;
-		m_terrainMesh->pIndices[5] = 3;
-
+		
 		//////////////////////////////////////////////////////////////////////////
 		m_postprocessMesh = std::make_shared<StaticMesh>();
 		m_postprocessMesh->pPositions = new Vector4[3];
@@ -1236,7 +1130,7 @@ namespace Core
 		material->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
 
 		defaultObject->glRenderableUnit->material = material;
-		defaultObject->glRenderableUnit->bakingMaterial = m_bakingMaterial;
+		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 
 		defaultObject->Initialize(m_GLDevice.get(), False);
 
@@ -1260,7 +1154,7 @@ namespace Core
 		material->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
 
 		object->glRenderableUnit->material = material;
-		object->glRenderableUnit->bakingMaterial = m_bakingMaterial;
+		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 
 		object->name = object->staticMeshName;
 
@@ -1285,103 +1179,33 @@ namespace Core
 		return areaLight;
 	}
 
-	std::shared_ptr<Core::Object> WindowsEditor::createTerrain()
-	{
-		std::shared_ptr<Object> terrainObject = std::make_shared<Object>();
-		terrainObject->name = "Terrain";
-
-		terrainObject->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		terrainObject->glRenderableUnit->staticMesh = m_terrainMesh;
-		terrainObject->glRenderableUnit->material = m_terrainMaterial;
-		terrainObject->glRenderableUnit->bakingMaterial = m_bakingMaterial;
-		
-		return terrainObject;
-	}
-
 	WindowsEditor::WindowsEditor()
 		:
 		m_assetManager(std::make_unique<AssetManager>()),
 		m_GLDevice(std::make_unique<OpenGLDevice>()),
 		m_guiWrapper(std::make_unique<GUIWrapper>()),
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_GLBakeFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_GLBakeColorAttach0(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
-		m_GLBakeColorAttach1(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_frameCount(0),
-		m_progressiveCountPerFrame(100),
-		m_GLBakingAccumulation(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
-		m_GLBakingPostprocessFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_GLBakingPostprocessColorAttach(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
-		m_GLDilationFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_GLDilationColorAttach(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
-		m_GLPackingBuffer(std::make_unique<GLBuffer>()),
 		m_baking(False)
 	{
-		m_GLBakeColorAttach0->LoadImage(
-			glBakingBufferSize,
-			glBakingBufferSize,
-			Null);
+		//	Visibility Pass
+		m_primitiveIDTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+		m_primitiveIDTexture->LoadImage(
+		PrimitiveIDTextureWidth,
+		PrimitiveIDTextureHeight,
+		Null);
 
-		m_GLBakeColorAttach1->LoadImage(
-			glBakingBufferSize,
-			glBakingBufferSize,
-			Null);
-
-		m_GLBakeFrameBuffer->Resize(glBakingBufferSize, glBakingBufferSize);
-
-		m_GLBakeFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLBakeColorAttach0.get());
-		m_GLBakeFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLBakeColorAttach1.get());
-
-		m_pPositionRawData = new float[glBakingBufferSize * glBakingBufferSize * sizeof(float) * 4];
-		m_pNormalRawData = new float[glBakingBufferSize * glBakingBufferSize * sizeof(float) * 4];
-
-		memset(m_pPositionRawData, 0, glBakingBufferSize * glBakingBufferSize * sizeof(float) * 4);
-		memset(m_pNormalRawData, 0, glBakingBufferSize * glBakingBufferSize * sizeof(float) * 4);
+		m_visibilityPassFrameBuffer = std::make_unique<GLFrameBuffer>();
+		m_visibilityPassFrameBuffer->Resize(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+		m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_primitiveIDTexture.get());
 		
-		m_GLBakeViewTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-		m_GLBakeViewTexture->LoadImage(bakingRTSize, bakingRTSize, Null);
-		
-		ctd::vector<float> randomBarycentrics;
-		Helper::GenerateRandomNumbers(0.0f, 1.0f, LightmappingSetting::Instance()->progressivePassCount * 3, randomBarycentrics);
-		
-		m_GLBakingAccumulation->LoadImage(
-			glBakingBufferSize,
-			glBakingBufferSize,
-			Null);
-
-		m_GLBakingPostprocessColorAttach->LoadImage(
-			glBakingBufferSize,
-			glBakingBufferSize,
-			Null);
-
-		m_GLDilationColorAttach->LoadImage(
-			glBakingBufferSize,
-			glBakingBufferSize,
-			Null);
-
-		m_GLBakingPostprocessFrameBuffer->Resize(glBakingBufferSize, glBakingBufferSize);
-		m_GLBakingPostprocessFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLBakingPostprocessColorAttach.get());
-
-		m_GLDilationFrameBuffer->Resize(glBakingBufferSize, glBakingBufferSize);
-		m_GLDilationFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLDilationColorAttach.get());
-
-		m_GLPackingBuffer->Recreate(BufferTarget_PixelPackBuffer, BufferUsage_StreamRead,
-			glBakingBufferSize * glBakingBufferSize * m_GLBakingPostprocessColorAttach->GetDataSizePerPixel());
+		m_pPrimitiveIDRawData = new float[PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4];
+		memset(m_pPrimitiveIDRawData, 0, PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4);
 	}
 
 	void WindowsEditor::Initialize(int32 width, int32 height)
 	{
 		m_assetManager->Scan();
-
-		//m_RLDevice->Initialize(
-		//	m_assetManager->rlVertexShaderMap["environment"],
-		//	m_assetManager->rlRayShaderMap["environment"],
-		//	m_assetManager->rlFrameShaderMap["bake"],
-		//	m_assetManager->rlFrameShaderMap["perspective"]);
-
-		//m_rlGIUniformBuffer = std::make_shared<RLBuffer>(RLBufferTarget_UniformBlockBuffer);
-		//m_rlGIUniformBuffer->name = "GI";
-		//m_rlGIUniformBuffer->AllocateMemorySpace(sizeof(GI), RLBufferUsage_DynamicDraw);
 
 		if (m_assetManager->sceneMap.find(startSceneName) != m_assetManager->sceneMap.end())
 			m_scene = m_assetManager->sceneMap[startSceneName];
@@ -1395,10 +1219,6 @@ namespace Core
 		std::shared_ptr<Object> lightObject = createAreaLight();
 		lightObject->Initialize(m_GLDevice.get(), True);
 		m_scene->AddLight(lightObject, False);
-		
-		//std::shared_ptr<Object> terrainObject = createTerrain();
-		//terrainObject->Initialize(m_GLDevice.get(), True);
-		//m_scene->AddObject(terrainObject, False);
 
 		//	ʵ�������������л��õĶ���
 		for (vector<std::shared_ptr<Object>>::iterator iter = m_scene->serializedObjects.begin();
@@ -1497,6 +1317,21 @@ namespace Core
 		ImGui::End();
 		
 		//////////////////////////////////////////////////////////////////////////
+		ImGui::SetNextWindowPos(ImVec2(600, 0));
+		ImGui::SetNextWindowSize(ImVec2(600, 600));
+		
+		ImGui::Begin("Pfofile View");
+		ImVec2 rayTracedRegion = ImGui::GetContentRegionAvail();
+		
+		ImGui::Image(
+			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
+			rayTracedRegion,
+			ImVec2(0, 1.0f),
+			ImVec2(1.0f, 0));
+
+		ImGui::End();
+		
+		//////////////////////////////////////////////////////////////////////////
 		ImGui::SetNextWindowPos(ImVec2(0, 600));
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
@@ -1504,7 +1339,7 @@ namespace Core
 		ImVec2 colorAttach0Region = ImGui::GetContentRegionAvail();
 		
 		ImGui::Image(
-			reinterpret_cast<void *>(m_GLBakeColorAttach0->GetID64()),
+			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
 			colorAttach0Region,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -1518,7 +1353,7 @@ namespace Core
 		ImVec2 colorAttach1Region = ImGui::GetContentRegionAvail();
 		
 		ImGui::Image(
-			reinterpret_cast<void *>(m_GLBakeColorAttach1->GetID64()),
+			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
 			colorAttach1Region,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -1534,10 +1369,10 @@ namespace Core
 		ImVec2 bakeViewRegion = ImGui::GetContentRegionAvail();
 		
 		ImGui::Image(
-			reinterpret_cast<void *>(m_GLBakeViewTexture->GetID64()),
+			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
 			bakeViewRegion,
-			ImVec2(0, 0),
-			ImVec2(1.0f, 1.0f));
+			ImVec2(0, 1.0f),
+			ImVec2(1.0f, 0));
 		
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
@@ -1550,10 +1385,10 @@ namespace Core
 		ImVec2 debugViewRegion = ImGui::GetContentRegionAvail();
 
 		ImGui::Image(
-			reinterpret_cast<void *>(m_GLDilationColorAttach->GetID64()),
+			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
 			debugViewRegion,
-			ImVec2(0, 0),
-			ImVec2(1.0f, 1.0f));
+			ImVec2(0, 1.0f),
+			ImVec2(1.0f, 0));
 
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
@@ -1578,35 +1413,28 @@ namespace Core
 		if (!m_baking)
 			return;
 
+		//	TODO:	这里需要"聚合"的封装,目前只实现对单个对象的bake.
+		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
+		
 		if (m_frameCount == 0)
 		{
-			//	TODO:	这里需要"聚合"的封装,目前只实现对单个对象的bake.
-			int32 RadiosityTextureWith = m_scene->GetBeingBakingObject()->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
-			int32 RadiosityTextureHeight = m_scene->GetBeingBakingObject()->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
+			BeingBakingObject->BeforeBaking();
+			
+			int32 RadiosityTextureWith = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
 
-			m_primitiveIDTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_residualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-						
-			m_primitiveIDTexture->LoadImage(
-			RadiosityTextureWith,
-			RadiosityTextureHeight,
-			Null);
-
 			m_RadiorityTexture->LoadImage(
 			RadiosityTextureWith,
 			RadiosityTextureHeight,
 			Null);
 
+			m_residualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_residualTexture->LoadImage(
 			RadiosityTextureWith,
 			RadiosityTextureHeight,
 			Null);
-
-			m_visibilityPassFrameBuffer = std::make_unique<GLFrameBuffer>();
-			m_visibilityPassFrameBuffer->Resize(RadiosityTextureWith, RadiosityTextureHeight);
-			m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_primitiveIDTexture.get());
-
+			
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWith, RadiosityTextureHeight);
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture.get());
@@ -1614,99 +1442,47 @@ namespace Core
 			
 			//	shoot from light
 			Object* AreaLight = m_scene->GetAreaLight();
-
+			AreaLight->BeforeBaking();
+			
 			Camera BakeCamera;
 			BakeCamera.zNear = 1.0f;
 			BakeCamera.zFar = 6000.0f;
 			BakeCamera.ascept = 1.0f;
+			BakeCamera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
+			BakeCamera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 			BakeCamera.fovY = 120.0f * Deg2Rad;
 			
 			for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
 					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
 					++iter)
 			{
+				m_visibilityPassFrameBuffer->Activate();
+				m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+				
 				BakeCamera.position = iter->second.ShootPosition;
-				BakeCamera.lookAt = BakeCamera.position + iter->second.Normal;
-
+				BakeCamera.lookAt = iter->second.Normal;
 				BakeCamera.UpdateMatrix();
 				BakeCamera.UpdataGLParam(m_GLDevice.get());
-			} 
-		}
-		
-		int32 progressiveCountPerFrame = m_progressiveCountPerFrame;
 
-		//	���ⳬ��������Χ.
-		//if (m_frameCount + progressiveCountPerFrame > debugingProgressiveCount)
-		//	progressiveCountPerFrame = debugingProgressiveCount - m_frameCount;
-		
-		//	����һ��,�����Ҫ����.
-		if (m_frameCount == 0)
-		{
-			m_GLBakeFrameBuffer->Activate();
-			m_scene->BeginBaking(m_GLDevice.get(), glBakingBufferSize, glBakingBufferSize);
-			m_GLDevice->DisableCullFace();
-			m_GLDevice->Clear();
+				//m_scene->GetCamera()->UpdataGLParam(m_GLDevice.get());
 
-			while (!m_scene->BakingFinished())
-			{
-				Object * pCurrentObject = m_scene->PoolBakingObject();
+				//BeingBakingObject->Render(m_GLDevice.get());
 
-				if (pCurrentObject->glRenderableUnit->bakingMaterial.expired())
-				{
-					m_scene->SkipOneObject();
-					continue;
-				}
+				BeingBakingObject->DrawID(m_GLDevice.get());
 				
-				m_GLDevice->Clear();
-				m_scene->BakeOneObject(m_GLDevice.get());
-			}
+				m_visibilityPassFrameBuffer->Inactivate();
 
-			m_scene->EndBaking(m_GLDevice.get());
-			m_GLBakeFrameBuffer->Inactivate();
-			m_GLDevice->EnableCullFace();
+				m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
+				
+				m_baking = False;
+				
+				return ;
+			}
 		}
 
 		//	��ȾGI
-		if (1)
+		if (0)
 		{
-			if (m_frameCount == 0)
-			{
-				size_t size = bakingRTSize * bakingRTSize * 3;
-				std::vector<float> data;
-
-				Helper::GenerateRandomNumbers(0, 1.0f, size, data);
-			}
-
-			m_GLBakeFrameBuffer->Activate();
-			m_scene->BeginBaking(m_GLDevice.get(), glBakingBufferSize, glBakingBufferSize);
-			m_GLDevice->DisableCullFace();
-			m_GLDevice->Clear();
-
-			int32 bakingObjectIndex = 0;
-
-			while (!m_scene->BakingFinished())
-			{
-				Object * pCurrentObject = m_scene->PoolBakingObject();
-
-				if (pCurrentObject->glRenderableUnit->bakingMaterial.expired())
-				{
-					m_scene->SkipOneObject();
-					continue;
-				}
-
-				m_GLDevice->Clear();
-				m_scene->BakeOneObject(m_GLDevice.get());
-
-				m_GLBakeColorAttach0->Fetch(m_pPositionRawData);
-				m_GLBakeColorAttach1->Fetch(m_pNormalRawData);
-
-				++bakingObjectIndex;
-			}
-
-			m_scene->EndBaking(m_GLDevice.get());
-			m_GLBakeFrameBuffer->Inactivate();
-			m_GLDevice->EnableCullFace();
-			
 			//////////////////////////////////////////////////////////////////////////
 			
 			if (m_frameCount == 0)
@@ -1718,8 +1494,8 @@ namespace Core
 				iter != m_scene->objects.end();
 				++iter)
 			{
-				if ((*iter)->glRenderableUnit->bakingMaterial.expired())
-					continue;
+				//if ((*iter)->glRenderableUnit->bakingMaterial.expired())
+				//	continue;
 			
 				//string lightmapName = LightmappingSetting::Instance()->GetLightmapName((*iter)->glRenderableUnit->material.lock()->lightmapIndex);
 				//(*iter)->glRenderableUnit->material.lock()->lightmapName = lightmapName;
@@ -1727,14 +1503,11 @@ namespace Core
 				//(*iter)->glRenderableUnit->material.lock()->lightmapTexture = m_assetManager->lightmapMap[lightmapName];
 				//(*iter)->glRenderableUnit->material.lock()->lightmapTexture.lock()->BeginUse();
 			}
-
-			m_frameCount += progressiveCountPerFrame;
 		}
 	}
 
 	WindowsEditor::~WindowsEditor()
 	{
-		delete[] m_pPositionRawData;
-		delete[] m_pNormalRawData;
+		delete[] m_pPrimitiveIDRawData;
 	}
 }

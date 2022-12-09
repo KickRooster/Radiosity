@@ -14,8 +14,8 @@ namespace Core
 		if (!material.expired())
 			material.lock()->BeginUse();
 
-		if (!bakingMaterial.expired())
-			bakingMaterial.lock()->BeginUse();
+		if (!DrawIDMaterial.expired())
+			DrawIDMaterial.lock()->BeginUse();
 	}
 
 	void GLRenderableUnit::Activate()
@@ -36,24 +36,24 @@ namespace Core
 			material.lock()->Inactivate();
 	}
 
-	void GLRenderableUnit::ActivateBaking()
+	void GLRenderableUnit::ActivateDrawingID()
 	{
 		if (!staticMesh.expired())
 			staticMesh.lock()->Activate();
 
-		if (!bakingMaterial.expired())
-			bakingMaterial.lock()->Activate();
+		if (!DrawIDMaterial.expired())
+			DrawIDMaterial.lock()->Activate();
 	}
 
-	void GLRenderableUnit::InactivateBaking()
+	void GLRenderableUnit::InactivateDrawingID()
 	{
 		if (!staticMesh.expired())
 			staticMesh.lock()->Inactivate();
 
-		if (!bakingMaterial.expired())
-			bakingMaterial.lock()->Inactivate();
+		if (!DrawIDMaterial.expired())
+			DrawIDMaterial.lock()->Inactivate();
 	}
-
+	
 	GLRenderableUnit::~GLRenderableUnit()
 	{
 

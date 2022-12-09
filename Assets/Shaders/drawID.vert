@@ -13,9 +13,12 @@
 		layout(location = 11) in vec2 texCoord5;
 		layout(location = 12) in vec2 texCoord6;
 		layout(location = 13) in vec2 texCoord7;
-		layout (std140, binding = 0) uniform CameraMatrices_0
+		layout (std140, binding = 0) uniform CameraUniformData
 		{
+			mat4 viewMatrix;
 			mat4 viewProjectionMatrix;
+			vec4 position;
+			vec4 NearFar;
 		};
 		layout (std140, binding = 1) uniform ObjectMatrices
 		{
@@ -37,9 +40,19 @@
 		out vec2 uv7;
 		void main()
 		{
+    		// transform the geometry to camera space    
+    		vec4 mpos = viewMatrix * object2World * vPos;
+    		// project to a point on a unit hemisphere      
+    		vec3 hemi_pt = normalize(mpos.xyz);      
+    		// Compute (f-n), but let the hardware divide z by this
+   			// in the w component (so premultiply x and y)
+    		float f_minus_n = NearFar.y - NearFar.x; 
+    		gl_Position.xy = hemi_pt.xy * f_minus_n;
+    		// compute depth proj. independently, using OpenGL orthographic
+    		gl_Position.z = (-2.0 * mpos.z - NearFar.y - NearFar.x);
+    		gl_Position.w = f_minus_n;
 
-		    gl_Position = viewProjectionMatrix * object2World * vPos;
-		    normal = vNormal;
+			normal = vNormal;
 		    tangent = vTangent;
 		    binormal = vBinormal;
 		    color = vColor;

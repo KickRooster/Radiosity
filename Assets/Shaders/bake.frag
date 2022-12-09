@@ -15,9 +15,12 @@
 		out vec4 out_Color;
 
 		uniform sampler2D albedoSampler;
-		layout (std140, binding = 0) uniform CameraMatrices_0
+		layout (std140, binding = 0) uniform CameraUniformData
 		{
+			mat4 viewMatrix;
 			mat4 viewProjectionMatrix;
+			vec4 position;
+			vec4 NearFar;
 		};
 		layout (std140, binding = 1) uniform ObjectMatrices
 		{
