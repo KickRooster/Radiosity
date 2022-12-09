@@ -1,5 +1,5 @@
 		#version 450 core
-	
+		
 		in vec3 normal;
 		in vec3 tangent;
 		in vec3 binormal;
@@ -27,7 +27,6 @@
 
 		void main()
 		{
-			 vec3 albedo = texture(albedoSampler, vec2(uv0.x, uv0.y)).xyz;
-			 out_Color.xyz = albedo;
+			 out_Color.xyz = vec3(customData.x, customData.x, customData.x);
 			 out_Color.w = 1.0;
 		};

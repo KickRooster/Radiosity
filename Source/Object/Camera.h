@@ -40,7 +40,7 @@ namespace Core
 		Vector3 eularAngle;
 
 		Camera();
-		void Initialize(OpenGLDevice * pDevice, int32 width, int32 height);
+		void UpdateMatrix();
 		void UpdateProjectionMatrix();
 		void Tick(float deltaTime, const InputState & inputState);
 		void UpdataGLParam(OpenGLDevice * pDevice);

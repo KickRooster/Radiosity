@@ -13,7 +13,7 @@
 		layout(location = 11) in vec2 texCoord5;
 		layout(location = 12) in vec2 texCoord6;
 		layout(location = 13) in vec2 texCoord7;
-		layout (std140, binding = 0) uniform CameraMatrices
+		layout (std140, binding = 0) uniform CameraViewProjectionMatrix
 		{
 			mat4 viewProjectionMatrix;
 		};
@@ -21,7 +21,7 @@
 		{
 			mat4 object2World;
 		};
-
+	
 		out vec3 normal;
 		out vec3 tangent;
 		out vec3 binormal;
@@ -37,7 +37,7 @@
 		out vec2 uv7;
 		void main()
 		{
-	
+
 		    gl_Position = viewProjectionMatrix * object2World * vPos;
 		    normal = vNormal;
 		    tangent = vTangent;

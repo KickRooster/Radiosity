@@ -18,7 +18,7 @@ namespace Core
 	{
 		Vector3 crossValue = Cross(v1 - v0, v2 - v0);
 
-		return abs(crossValue.length()) * 0.5f;
+		return abs(length(crossValue)) * 0.5f;
 	}
 
 	float StaticMesh::getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2)
@@ -30,7 +30,7 @@ namespace Core
 	{
 		Vector3 crossValue = Cross(v1 - v0, v2 - v0);
 
-		return abs(crossValue.length()) * 0.5f;
+		return abs(length(crossValue)) * 0.5f;
 	}
 
 	float StaticMesh::getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2)
@@ -63,7 +63,7 @@ namespace Core
 		}
 		pUV1s = new Vector2[vertexCount];
 		memcpy(pUV1s, pUV0s, sizeof(Vector2) * vertexCount);
-
+		
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
 		{
 			m_pPrimitiveIDs[triangleIndex * 3] = triangleIndex;
@@ -93,10 +93,27 @@ namespace Core
 			float uvArea = getTriangleArea(uv0, uv1, uv2);
 
 			m_totalUVArea += uvArea;
+
+			Vector3 P0P1 = pos1 - pos0;
+			Vector3 P0P2 = pos2 - pos0;
+			Vector3 PrimitiveNormal = Cross(P0P1, P0P2);
+			Primitive Primitive;
+			Primitive.ID = triangleIndex;
+			Primitive.Normal = Normalize(PrimitiveNormal);
+			Primitive.SurfaceArea = triangleSurfaceArea;
+			Vector3 ZeroBarycentricPosition = pos0 / 3.0f + pos1 / 3.0f + pos2 /3.0f;
+			Primitive.ShootPosition.x = ZeroBarycentricPosition.x;
+			Primitive.ShootPosition.y = ZeroBarycentricPosition.y;
+			Primitive.ShootPosition.z = ZeroBarycentricPosition.z;
+			Primitive.ShootPosition.w = 1.0f;
+			Primitive.ShootPosition = m_local2World * Primitive.ShootPosition;
+			//int32 TexelCount = ceil(LightmappingSetting::Instance()->TexelsPerUnit * triangleSurfaceArea);
+
+			PrimitiveMap[triangleIndex] = Primitive;
 		}
 
 		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit / (m_totalUVArea / m_totalSurfaceArea);
-
+		
 		float maxU = 0;
 		float maxV = 0;
 		

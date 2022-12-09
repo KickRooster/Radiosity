@@ -42,7 +42,16 @@ namespace Core
 
 	void Scene::Initialize(OpenGLDevice * pDevice, int32 width, int32 height)
 	{
-		m_camera->Initialize(pDevice, width, height);
+		m_camera->zNear = 1.0f;
+		m_camera->zFar = 6000.0f;
+		m_camera->ascept = width / (float)height;
+		m_camera->fovY = 120.0f * Deg2Rad;
+
+		m_camera->position = Vector3(0, 0, 50.0f);
+		m_camera->lookAt = Vector3(0, 0, -1.0f);
+		m_camera->eularAngle = Vector3(0, 0, 0);
+		
+		m_camera->UpdateMatrix();
 	}
 
 	void Scene::Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState)
@@ -121,6 +130,8 @@ namespace Core
 	{
 		objects.push_back(object);
 
+		m_beingBakingObjectRef = object;
+
 		if (needSerialization)
 			serializedObjects.push_back(object);
 	}
@@ -129,12 +140,22 @@ namespace Core
 	{
 		objects.push_back(object);
 
-		m_dirLightRef = object; 
+		m_areaLightRef = object; 
 
 		if (needSerialization)
 			serializedObjects.push_back(object);
 	}
 
+	Object* Scene::GetAreaLight() const
+	{
+		return m_areaLightRef.lock().get();
+	}
+
+	Object* Scene::GetBeingBakingObject() const
+	{
+		return m_beingBakingObjectRef.lock().get();	
+	}
+	
 	Scene::~Scene()
 	{
 

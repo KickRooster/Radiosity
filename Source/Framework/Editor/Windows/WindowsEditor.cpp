@@ -59,59 +59,77 @@ namespace Core
 		//////////////////////////////////////////////////////////////////////////
 
 		m_areaLightMesh = std::make_shared<StaticMesh>();
-		
-		m_areaLightMesh->pPositions = new Vector4[4];
-		m_areaLightMesh->pNormals = new Vector3[4];
-		m_areaLightMesh->pUV0s = new Vector2[4];
-		m_areaLightMesh->vertexCount = 4;
 
+		m_areaLightMesh->vertexCount = 6;
+		m_areaLightMesh->pPositions = new Vector4[m_areaLightMesh->vertexCount];
+		m_areaLightMesh->pNormals = new Vector3[m_areaLightMesh->vertexCount];
+		m_areaLightMesh->pUV0s = new Vector2[m_areaLightMesh->vertexCount];
+		
 		float lightScale = 10.0f;
 
 		m_areaLightMesh->pPositions[0].x = -0.5f * lightScale;
-		m_areaLightMesh->pPositions[0].y = 0.5f * lightScale ;
+		m_areaLightMesh->pPositions[0].y = -0.5f * lightScale ;
 		m_areaLightMesh->pPositions[0].z = 0;
 		m_areaLightMesh->pPositions[0].w = 1.0f;
 		m_areaLightMesh->pNormals[0].x = 0;
 		m_areaLightMesh->pNormals[0].y = 0;
 		m_areaLightMesh->pNormals[0].z = 1.0f;
-		m_areaLightMesh->pUV0s[0] = Vector2(0, 1.0f);
+		m_areaLightMesh->pUV0s[0] = Vector2(0, 0);
 
 		m_areaLightMesh->pPositions[1].x = 0.5f * lightScale;
-		m_areaLightMesh->pPositions[1].y = 0.5f * lightScale ;
+		m_areaLightMesh->pPositions[1].y = -0.5f * lightScale ;
 		m_areaLightMesh->pPositions[1].z = 0;
 		m_areaLightMesh->pPositions[1].w = 1.0f;
 		m_areaLightMesh->pNormals[1].x = 0;
 		m_areaLightMesh->pNormals[1].y = 0;
 		m_areaLightMesh->pNormals[1].z = 1.0f;
-		m_areaLightMesh->pUV0s[1] = Vector2(1.0f, 1.0f);
+		m_areaLightMesh->pUV0s[1] = Vector2(1.0, 0);
 
 		m_areaLightMesh->pPositions[2].x = 0.5f * lightScale;
-		m_areaLightMesh->pPositions[2].y = -0.5f * lightScale ;
+		m_areaLightMesh->pPositions[2].y = 0.5f * lightScale ;
 		m_areaLightMesh->pPositions[2].z = 0;
 		m_areaLightMesh->pPositions[2].w = 1.0f;
 		m_areaLightMesh->pNormals[2].x = 0;
 		m_areaLightMesh->pNormals[2].y = 0;
 		m_areaLightMesh->pNormals[2].z = 1.0f;
-		m_areaLightMesh->pUV0s[2] = Vector2(1.0f, 0);
+		m_areaLightMesh->pUV0s[2] = Vector2(1.0f, 1.0f);
 
-		m_areaLightMesh->pPositions[3].x = -0.5f * lightScale;
-		m_areaLightMesh->pPositions[3].y = -0.5f * lightScale ;
+		m_areaLightMesh->pPositions[3].x = 0.5f * lightScale;
+		m_areaLightMesh->pPositions[3].y = 0.5f * lightScale ;
 		m_areaLightMesh->pPositions[3].z = 0;
 		m_areaLightMesh->pPositions[3].w = 1.0f;
 		m_areaLightMesh->pNormals[3].x = 0;
 		m_areaLightMesh->pNormals[3].y = 0;
 		m_areaLightMesh->pNormals[3].z = 1.0f;
-		m_areaLightMesh->pUV0s[3] = Vector2(0, 0);
+		m_areaLightMesh->pUV0s[3] = Vector2(1.0f, 1.0f);
+
+		m_areaLightMesh->pPositions[4].x = -0.5f * lightScale;
+		m_areaLightMesh->pPositions[4].y = 0.5f * lightScale ;
+		m_areaLightMesh->pPositions[4].z = 0;
+		m_areaLightMesh->pPositions[4].w = 1.0f;
+		m_areaLightMesh->pNormals[4].x = 0;
+		m_areaLightMesh->pNormals[4].y = 0;
+		m_areaLightMesh->pNormals[4].z = 1.0f;
+		m_areaLightMesh->pUV0s[4] = Vector2(0, 1.0f);
+
+		m_areaLightMesh->pPositions[5].x = -0.5f * lightScale;
+		m_areaLightMesh->pPositions[5].y = -0.5f * lightScale ;
+		m_areaLightMesh->pPositions[5].z = 0;
+		m_areaLightMesh->pPositions[5].w = 1.0f;
+		m_areaLightMesh->pNormals[5].x = 0;
+		m_areaLightMesh->pNormals[5].y = 0;
+		m_areaLightMesh->pNormals[5].z = 1.0f;
+		m_areaLightMesh->pUV0s[5] = Vector2(0, 0);
 
 		m_areaLightMesh->indexCount = 6;
 		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
 		
 		m_areaLightMesh->pIndices[0] = 0;
-		m_areaLightMesh->pIndices[1] = 2;
-		m_areaLightMesh->pIndices[2] = 1;
-		m_areaLightMesh->pIndices[3] = 2;
-		m_areaLightMesh->pIndices[4] = 0;
-		m_areaLightMesh->pIndices[5] = 3;
+		m_areaLightMesh->pIndices[1] = 1;
+		m_areaLightMesh->pIndices[2] = 2;
+		m_areaLightMesh->pIndices[3] = 3;
+		m_areaLightMesh->pIndices[4] = 4;
+		m_areaLightMesh->pIndices[5] = 5;
 
 		//////////////////////////////////////////////////////////////////////////
 		float scale = 500.0f;
@@ -1297,8 +1315,7 @@ namespace Core
 		m_GLDilationFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_GLDilationColorAttach(std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_GLPackingBuffer(std::make_unique<GLBuffer>()),
-		m_baking(False),
-		debugingProgressiveCount(1)
+		m_baking(False)
 	{
 		m_GLBakeColorAttach0->LoadImage(
 			glBakingBufferSize,
@@ -1418,14 +1435,14 @@ namespace Core
 			m_baking = !m_baking;
 		}
 
-		ImGui::InputInt("Progressive Count:", &debugingProgressiveCount);
+		//ImGui::InputInt("Progressive Count:", &debugingProgressiveCount);
 
-		ctd::string bakingInfo = "Progressive[";
-		bakingInfo += to_string(m_frameCount);
-		bakingInfo += "/";
-		bakingInfo += to_string(debugingProgressiveCount);// LightmappingSetting::Instance()->progressivePassCount);
-		bakingInfo += "]";
-		ImGui::Text(bakingInfo.c_str());
+		//ctd::string bakingInfo = "Progressive[";
+		//bakingInfo += to_string(m_frameCount);
+		//bakingInfo += "/";
+		//bakingInfo += to_string(debugingProgressiveCount);// LightmappingSetting::Instance()->progressivePassCount);
+		//bakingInfo += "]";
+		//ImGui::Text(bakingInfo.c_str());
 
 		ImGui::End();
 
@@ -1561,19 +1578,66 @@ namespace Core
 		if (!m_baking)
 			return;
 
-		if (m_frameCount == debugingProgressiveCount)
+		if (m_frameCount == 0)
 		{
-			m_baking = False;
-			m_frameCount = 0;
+			//	TODO:	这里需要"聚合"的封装,目前只实现对单个对象的bake.
+			int32 RadiosityTextureWith = m_scene->GetBeingBakingObject()->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight = m_scene->GetBeingBakingObject()->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
 
-			return;
+			m_primitiveIDTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_residualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+						
+			m_primitiveIDTexture->LoadImage(
+			RadiosityTextureWith,
+			RadiosityTextureHeight,
+			Null);
+
+			m_RadiorityTexture->LoadImage(
+			RadiosityTextureWith,
+			RadiosityTextureHeight,
+			Null);
+
+			m_residualTexture->LoadImage(
+			RadiosityTextureWith,
+			RadiosityTextureHeight,
+			Null);
+
+			m_visibilityPassFrameBuffer = std::make_unique<GLFrameBuffer>();
+			m_visibilityPassFrameBuffer->Resize(RadiosityTextureWith, RadiosityTextureHeight);
+			m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_primitiveIDTexture.get());
+
+			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
+			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWith, RadiosityTextureHeight);
+			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture.get());
+			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_residualTexture.get());
+			
+			//	shoot from light
+			Object* AreaLight = m_scene->GetAreaLight();
+
+			Camera BakeCamera;
+			BakeCamera.zNear = 1.0f;
+			BakeCamera.zFar = 6000.0f;
+			BakeCamera.ascept = 1.0f;
+			BakeCamera.fovY = 120.0f * Deg2Rad;
+			
+			for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
+					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
+					++iter)
+			{
+				BakeCamera.position = iter->second.ShootPosition;
+				BakeCamera.lookAt = BakeCamera.position + iter->second.Normal;
+
+				BakeCamera.UpdateMatrix();
+				BakeCamera.UpdataGLParam(m_GLDevice.get());
+			} 
 		}
-
+		
 		int32 progressiveCountPerFrame = m_progressiveCountPerFrame;
 
 		//	���ⳬ��������Χ.
-		if (m_frameCount + progressiveCountPerFrame > debugingProgressiveCount)
-			progressiveCountPerFrame = debugingProgressiveCount - m_frameCount;
+		//if (m_frameCount + progressiveCountPerFrame > debugingProgressiveCount)
+		//	progressiveCountPerFrame = debugingProgressiveCount - m_frameCount;
 		
 		//	����һ��,�����Ҫ����.
 		if (m_frameCount == 0)

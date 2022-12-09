@@ -6,7 +6,7 @@
 #include "Vector3.h"
 #include "Vector2.h"
 
-//	²»Ïë±©Â¶³öÀ´µÄÈ«¾Ö±äÁ¿,Ð´ÔÚÁíÒ»¸önamespaceÀï.
+//	ï¿½ï¿½ï¿½ë±©Â¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½,Ð´ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½namespaceï¿½ï¿½.
 namespace Hidden
 {
 	const float ComparisonThreshold = 0.0000001f;
@@ -15,6 +15,8 @@ namespace Hidden
 namespace Core
 {
 	Matrix4x4 Perspective(float fovY, float aspect, float zNear, float zFar);
+
+	Matrix4x4 Ortho();
 
 	Matrix4x4 Translate(const Matrix4x4 & m, const Vector3 & v);
 
@@ -40,13 +42,13 @@ namespace Core
 
 	float Length(const Vector3 & v);
 
-	//	radians,»¡¶È
-	//	degree,½Ç¶È
+	//	radians,ï¿½ï¿½ï¿½ï¿½
+	//	degree,ï¿½Ç¶ï¿½
 
-	//	»¡¶È×ª½Ç¶È
+	//	ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç¶ï¿½
 	const float Rad2Deg = 57.2957795f;
 
-	//	½Ç¶È×ª»¡¶È	
+	//	ï¿½Ç¶ï¿½×ªï¿½ï¿½ï¿½ï¿½	
 	const float Deg2Rad = 0.0174532925f;
 
 	const Vector3 Up = Vector3(0, 1.0f, 0);

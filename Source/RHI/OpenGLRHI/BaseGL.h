@@ -20,8 +20,8 @@ namespace Core
 		GLDataType_UnsignedInt = GL_UNSIGNED_INT,
 	};
 
-	//	不区分是全局的uniform buffer还是逐实例的uniform buffer
-	//	全视更新频率而定.
+	//	锟斤拷锟斤拷锟斤拷锟斤拷全锟街碉拷uniform buffer锟斤拷锟斤拷锟斤拷实锟斤拷锟斤拷uniform buffer
+	//	全锟接革拷锟斤拷频锟绞讹拷锟斤拷.
 	enum GLShaderDataAlias : int32
 	{
 		GLShaderDataAlias_CameraMatrices,

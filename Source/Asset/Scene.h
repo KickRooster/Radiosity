@@ -12,13 +12,12 @@ namespace Core
 	class Scene : public IAsset
 	{
 	private:
-
-	private:
 		friend class cereal::access;
 
 		std::unique_ptr<Camera> m_camera;
 
-		std::weak_ptr<Object> m_dirLightRef;
+		std::weak_ptr<Object> m_areaLightRef;
+		std::weak_ptr<Object> m_beingBakingObjectRef;
 
 		int32 m_objectCursor;
 
@@ -44,6 +43,8 @@ namespace Core
 		Camera * GetCamera();
 		void AddObject(std::shared_ptr<Object> object, Bool needSerialization = True);
 		void AddLight(std::shared_ptr<Object> object, Bool needSerialization = True);
+		Object* GetAreaLight() const;
+		Object* GetBeingBakingObject() const;
 
 		template <class Archive>
 		void serialize(Archive & ar)

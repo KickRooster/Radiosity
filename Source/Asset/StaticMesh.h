@@ -14,6 +14,21 @@
 
 namespace Core
 {
+	//	TODO:	we can approximate these large elements with oriented discs 
+	struct ShootArea
+	{
+		float Differential;
+		Vector3 WorldPosition;
+	};
+	
+	struct Primitive
+	{
+		float ID;
+		float SurfaceArea;
+		Vector3 Normal;
+		Vector4 ShootPosition;
+	};
+	
 	class StaticMesh : public IAsset
 	{
 	public:
@@ -99,6 +114,8 @@ namespace Core
 		
 		int32 vertexCount;
 		int32 indexCount;
+
+		std::map<int32, Primitive> PrimitiveMap;
 
 		StaticMesh();
 		virtual void BeginUse() override;

@@ -24,17 +24,8 @@ namespace Core
 		
 	}
 
-	void Camera::Initialize(OpenGLDevice * pDevice, int32 width, int32 height)
+	void Camera::UpdateMatrix()
 	{
-		zNear = 1.0f;
-		zFar = 6000.0f;
-		ascept = width / (float)height;
-		fovY = 90.0f * Deg2Rad;
-
-		position = Vector3(0, 0, 50.0f);
-		lookAt = Vector3(0, 0, -1.0f);
-		eularAngle = Vector3(0, 0, 0);
-
 		m_perspectiveMatrix = Perspective(fovY, ascept, zNear, zFar);
 
 		m_viewMatrix = LookAt(position, position + lookAt, Up);

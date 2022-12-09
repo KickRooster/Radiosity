@@ -38,6 +38,13 @@ namespace Core
 		std::unique_ptr<GLTexture> m_GLBakeColorAttach1;		//	float
 		
 		std::unique_ptr<GLTexture> m_GLBakeViewTexture;			//	uint8
+
+		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
+		std::unique_ptr<GLTexture> m_primitiveIDTexture;
+
+		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
+		std::unique_ptr<GLTexture> m_RadiorityTexture;
+		std::unique_ptr<GLTexture> m_residualTexture;
 		
 		int32 m_frameCount;
 		int32 m_progressiveCountPerFrame;
@@ -48,9 +55,7 @@ namespace Core
 		std::unique_ptr<GLFrameBuffer> m_GLDilationFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLDilationColorAttach;		//	uint8
 		std::unique_ptr<GLBuffer> m_GLPackingBuffer;
-
-		int32 debugingProgressiveCount;
-
+		
 		const int32 bakingRTSize = LightmappingSetting::Instance()->lightmapSize;
 
 		float * m_pPositionRawData;

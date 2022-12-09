@@ -13,7 +13,7 @@
 
 using namespace Core;
 
-// 全局变量: 
+// 脠芦戮脰卤盲脕驴: 
 HWND g_hwnd;
 bool         g_MousePressed[3] = { false, false, false };
 SDL_Cursor*  g_MouseCursors[ImGuiMouseCursor_::ImGuiMouseCursor_Count_] = { 0 };
@@ -159,7 +159,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		if (g_frameCount == 0)
 		{
-			//	第一帧
+			//	碌脷脪禄脰隆
 			g_tickCountPrev = tickCount;
 		}
 
