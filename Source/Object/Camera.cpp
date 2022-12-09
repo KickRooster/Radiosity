@@ -124,7 +124,7 @@ namespace Core
 
 	void Camera::UpdataGLParam(OpenGLDevice * pDevice)
 	{
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraMatrices, sizeof(m_viewProjectionMatrix), &m_viewProjectionMatrix);
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraMatrices_0, sizeof(m_viewProjectionMatrix), &m_viewProjectionMatrix);
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraPos, sizeof(position), &position);
 	}
 

@@ -13,7 +13,7 @@
 		layout(location = 11) in vec2 texCoord5;
 		layout(location = 12) in vec2 texCoord6;
 		layout(location = 13) in vec2 texCoord7;
-		layout (std140, binding = 0) uniform CameraMatrices
+		layout (std140, binding = 0) uniform CameraMatrices_0
 		{
 			mat4 viewProjectionMatrix;
 		};

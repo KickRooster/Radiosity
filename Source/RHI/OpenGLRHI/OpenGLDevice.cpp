@@ -25,7 +25,7 @@ namespace Core
 	{
 		queryLimts();
 
-		registerShaderGlobalData(GLShaderDataAlias_CameraMatrices, sizeof(Matrix4x4Identify));
+		registerShaderGlobalData(GLShaderDataAlias_CameraMatrices_0, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatrices, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatricesIT, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_LightmapUVParam, sizeof(Vector4Dummy));
