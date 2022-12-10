@@ -30,6 +30,6 @@
 
 		void main()
 		{
-			 out_Color.xyz = vec3(customData.x / 100.0, customData.x / 100.0, customData.x / 100.0);
+			 out_Color.xyz = vec3(customData.x, customData.x, customData.x);
 			 out_Color.w = 1.0;
 		};

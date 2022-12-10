@@ -3,6 +3,7 @@
 #include "../../../Helper/TextureOperator.h"
 #include "../3rdParty/LinearLeastSquaresStitch/Sitich.h"
 #include "../../../Helper/Helper.h"
+#include <queue>
 
 #include STRING_INCLUDE_PATH
 #include VECTOR_INCLUDE_PATH
@@ -1415,71 +1416,87 @@ namespace Core
 
 		//	TODO:	这里需要"聚合"的封装,目前只实现对单个对象的bake.
 		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
+
+		static queue<Primitive> RemainingPrimitives;
 		
 		if (m_frameCount == 0)
 		{
 			BeingBakingObject->BeforeBaking();
 			
-			int32 RadiosityTextureWith = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
+			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
 
 			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_RadiorityTexture->LoadImage(
-			RadiosityTextureWith,
+			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			Null);
 
 			m_residualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_residualTexture->LoadImage(
-			RadiosityTextureWith,
+			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			Null);
 			
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
-			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWith, RadiosityTextureHeight);
+			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture.get());
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_residualTexture.get());
 			
-			//	shoot from light
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
-			
-			Camera BakeCamera;
-			BakeCamera.zNear = 1.0f;
-			BakeCamera.zFar = 6000.0f;
-			BakeCamera.ascept = 1.0f;
-			BakeCamera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
-			BakeCamera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
-			BakeCamera.fovY = 120.0f * Deg2Rad;
 			
 			for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
 					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
 					++iter)
 			{
-				m_visibilityPassFrameBuffer->Activate();
-				m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
-				
-				BakeCamera.position = iter->second.ShootPosition;
-				BakeCamera.lookAt = iter->second.Normal;
-				BakeCamera.UpdateMatrix();
-				BakeCamera.UpdataGLParam(m_GLDevice.get());
-
-				//m_scene->GetCamera()->UpdataGLParam(m_GLDevice.get());
-
-				//BeingBakingObject->Render(m_GLDevice.get());
-
-				BeingBakingObject->DrawID(m_GLDevice.get());
-				
-				m_visibilityPassFrameBuffer->Inactivate();
-
-				m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
-				
-				m_baking = False;
-				
-				return ;
+				RemainingPrimitives.push(iter->second);
 			}
 		}
 
+		Camera BakeCamera;
+		BakeCamera.zNear = 1.0f;
+		BakeCamera.zFar = 6000.0f;
+		BakeCamera.ascept = 1.0f;
+		BakeCamera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
+		BakeCamera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
+		BakeCamera.fovY = 120.0f * Deg2Rad;
+
+		if (!RemainingPrimitives.empty())
+		{
+			Primitive Primitive = RemainingPrimitives.front();
+
+			m_visibilityPassFrameBuffer->Activate();
+			m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+				
+			BakeCamera.position = Primitive.ShootPosition;
+			BakeCamera.lookAt = Primitive.Normal;
+			BakeCamera.UpdateMatrix();
+			BakeCamera.UpdataGLParam(m_GLDevice.get());
+
+			BeingBakingObject->DrawID(m_GLDevice.get());
+				
+			m_visibilityPassFrameBuffer->Inactivate();
+
+			//m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
+			
+			RemainingPrimitives.pop();
+			
+			if (RemainingPrimitives.empty())
+			{
+				//	pick next emmiter
+			}
+		}
+		
+		++m_frameCount;
+
+		if (RemainingPrimitives.empty())
+		{
+			m_frameCount = 0;
+		}
+		
+		m_baking = False;
+		
 		//	��ȾGI
 		if (0)
 		{
