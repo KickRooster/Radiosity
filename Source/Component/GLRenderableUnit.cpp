@@ -16,6 +16,9 @@ namespace Core
 
 		if (!DrawIDMaterial.expired())
 			DrawIDMaterial.lock()->BeginUse();
+
+		if (!ComputeFormFactorMaterial.expired())
+			ComputeFormFactorMaterial.lock()->BeginUse();
 	}
 
 	void GLRenderableUnit::Activate()
@@ -52,6 +55,24 @@ namespace Core
 
 		if (!DrawIDMaterial.expired())
 			DrawIDMaterial.lock()->Inactivate();
+	}
+
+	void GLRenderableUnit::ActiveComputingFormFactor()
+	{
+		if (!staticMesh.expired())
+			staticMesh.lock()->Activate();
+
+		if (!ComputeFormFactorMaterial.expired())
+			ComputeFormFactorMaterial.lock()->Activate();
+	}
+
+	void GLRenderableUnit::InactiveComputingFormFactor()
+	{
+		if (!staticMesh.expired())
+			staticMesh.lock()->Inactivate();
+
+		if (!ComputeFormFactorMaterial.expired())
+			ComputeFormFactorMaterial.lock()->Inactivate();
 	}
 	
 	GLRenderableUnit::~GLRenderableUnit()

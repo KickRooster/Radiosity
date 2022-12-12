@@ -11,6 +11,7 @@ namespace Core
 		std::weak_ptr<StaticMesh> staticMesh;
 		std::weak_ptr<Material> material;
 		std::weak_ptr<Material> DrawIDMaterial;
+		std::weak_ptr<Material> ComputeFormFactorMaterial;
 
 		GLRenderableUnit();
 		void BeginUse();
@@ -18,6 +19,8 @@ namespace Core
 		void Inactivate();
 		void ActivateDrawingID();
 		void InactivateDrawingID();
+		void ActiveComputingFormFactor();
+		void InactiveComputingFormFactor();
 		~GLRenderableUnit();
 	};
 }

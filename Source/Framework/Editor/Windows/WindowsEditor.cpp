@@ -35,6 +35,14 @@ namespace Core
 		m_DrawIDMaterial->glVertexShader.lock()->Attach(m_DrawIDMaterial.get());
 		m_DrawIDMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["drawID"];
 		m_DrawIDMaterial->glFragmentShader.lock()->Attach(m_DrawIDMaterial.get());
+
+		//////////////////////////////////////////////////////////////////////////
+
+		m_ComputeFormFactorMaterial = std::make_shared<Material>();
+		m_ComputeFormFactorMaterial->glVertexShader = m_assetManager->glVertexShaderMap["computeFormFactor"];
+		m_ComputeFormFactorMaterial->glVertexShader.lock()->Attach(m_ComputeFormFactorMaterial.get());
+		m_ComputeFormFactorMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["computeFormFactor"];
+		m_ComputeFormFactorMaterial->glFragmentShader.lock()->Attach(m_ComputeFormFactorMaterial.get());
 		
 		//////////////////////////////////////////////////////////////////////////
 
@@ -1132,6 +1140,7 @@ namespace Core
 
 		defaultObject->glRenderableUnit->material = material;
 		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
+		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 
 		defaultObject->Initialize(m_GLDevice.get(), False);
 
@@ -1156,6 +1165,7 @@ namespace Core
 
 		object->glRenderableUnit->material = material;
 		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
+		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 
 		object->name = object->staticMeshName;
 
@@ -1318,19 +1328,22 @@ namespace Core
 		ImGui::End();
 		
 		//////////////////////////////////////////////////////////////////////////
-		ImGui::SetNextWindowPos(ImVec2(600, 0));
-		ImGui::SetNextWindowSize(ImVec2(600, 600));
+		if (m_RadiorityTexture.get())
+		{
+			ImGui::SetNextWindowPos(ImVec2(600, 0));
+			ImGui::SetNextWindowSize(ImVec2(600, 600));
 		
-		ImGui::Begin("Pfofile View");
-		ImVec2 rayTracedRegion = ImGui::GetContentRegionAvail();
+			ImGui::Begin("Pfofile View");
+			ImVec2 rayTracedRegion = ImGui::GetContentRegionAvail();
 		
-		ImGui::Image(
-			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
-			rayTracedRegion,
-			ImVec2(0, 1.0f),
-			ImVec2(1.0f, 0));
+			ImGui::Image(
+				reinterpret_cast<void *>(m_RadiorityTexture->GetID64()),
+				rayTracedRegion,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
 
-		ImGui::End();
+			ImGui::End();
+		}
 		
 		//////////////////////////////////////////////////////////////////////////
 		ImGui::SetNextWindowPos(ImVec2(0, 600));
@@ -1418,13 +1431,16 @@ namespace Core
 		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
 
 		static queue<Primitive> RemainingPrimitives;
+
+		int32 RadiosityTextureWidth = 0;
+		int32 RadiosityTextureHeight = 0;
 		
 		if (m_frameCount == 0)
 		{
 			BeingBakingObject->BeforeBaking();
 			
-			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
-			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
+			RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
+			RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
 
 			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_RadiorityTexture->LoadImage(
@@ -1432,8 +1448,8 @@ namespace Core
 			RadiosityTextureHeight,
 			Null);
 
-			m_residualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_residualTexture->LoadImage(
+			m_ResidualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_ResidualTexture->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			Null);
@@ -1441,7 +1457,12 @@ namespace Core
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture.get());
-			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_residualTexture.get());
+			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_ResidualTexture.get());
+
+			m_visibilityPassFrameBuffer->Activate();
+			m_GLDevice->SetClearColor(0, 0, 0, 1.0f);
+			m_GLDevice->Clear();
+			m_visibilityPassFrameBuffer->Inactivate();
 			
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
@@ -1453,32 +1474,50 @@ namespace Core
 				RemainingPrimitives.push(iter->second);
 			}
 		}
-
-		Camera BakeCamera;
-		BakeCamera.zNear = 1.0f;
-		BakeCamera.zFar = 6000.0f;
-		BakeCamera.ascept = 1.0f;
-		BakeCamera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
-		BakeCamera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
-		BakeCamera.fovY = 120.0f * Deg2Rad;
-
+		
 		if (!RemainingPrimitives.empty())
 		{
 			Primitive Primitive = RemainingPrimitives.front();
 
+			//	Visibility Pass
 			m_visibilityPassFrameBuffer->Activate();
-			m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
-				
-			BakeCamera.position = Primitive.ShootPosition;
-			BakeCamera.lookAt = Primitive.Normal;
-			BakeCamera.UpdateMatrix();
-			BakeCamera.UpdataGLParam(m_GLDevice.get());
+			{
+				m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 
-			BeingBakingObject->DrawID(m_GLDevice.get());
+				Camera Camera;
+				Camera.zNear = 1.0f;
+				Camera.zFar = 6000.0f;
+				Camera.ascept = 1.0f;
+				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
+				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
+				Camera.fovY = 120.0f * Deg2Rad;
 				
+				Camera.position = Primitive.ShootPosition;
+				Camera.lookAt = Primitive.Normal;
+				Camera.UpdateMatrix();
+				Camera.UpdataGLParam(m_GLDevice.get());
+
+				BeingBakingObject->DrawID(m_GLDevice.get());
+			}
 			m_visibilityPassFrameBuffer->Inactivate();
 
-			//m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
+			//	Reconstruction Pass
+			m_reconstructionPassFrameBuffer->Activate();
+			{
+				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
+				Matrix4x4 OrthoMatrix = Ortho(
+					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetLeftMost(),
+					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetRightMost(),
+					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetBottomMost(),
+					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetTopMost(),
+					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetZNear(),
+					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetZFar()
+					);
+				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_OrthoProjectionMatrix, sizeof(OrthoMatrix), &OrthoMatrix);
+	
+				BeingBakingObject->ComputeFormFactor(m_GLDevice.get());
+			}
+			m_reconstructionPassFrameBuffer->Inactivate();
 			
 			RemainingPrimitives.pop();
 			
@@ -1496,6 +1535,8 @@ namespace Core
 		}
 		
 		m_baking = False;
+
+		//m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
 		
 		//	��ȾGI
 		if (0)

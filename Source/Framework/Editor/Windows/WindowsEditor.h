@@ -43,7 +43,7 @@ namespace Core
 		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
 		std::unique_ptr<GLTexture> m_RadiorityTexture;
-		std::unique_ptr<GLTexture> m_residualTexture;
+		std::unique_ptr<GLTexture> m_ResidualTexture;
 		//float* m_pRadiosityRawData;
 		//float* m_residualRawData;
 		
@@ -54,6 +54,7 @@ namespace Core
 		//	Editor Builtin Resources
 		std::shared_ptr<Material> m_arealLightMaterial;
 		std::shared_ptr<Material> m_DrawIDMaterial;
+		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
 		std::shared_ptr<StaticMesh> m_areaLightMesh;
 		std::shared_ptr<StaticMesh> m_postprocessMesh;
 

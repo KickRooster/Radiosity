@@ -7,9 +7,9 @@ namespace Core
 		return glm::perspective(fovY, aspect, zNear, zFar);
 	}
 
-	Matrix4x4 Ortho()
+	Matrix4x4 Ortho(float Left, float Right, float Bottom, float Top, float zNear, float zFar)
 	{
-		return glm::ortho(0, 0, 0, 0);
+		return glm::orthoRH_NO(Left, Right, Bottom, Top, zNear, zFar);
 	}
 	
 	Matrix4x4 Translate(const Matrix4x4 & m, const Vector3 & v)

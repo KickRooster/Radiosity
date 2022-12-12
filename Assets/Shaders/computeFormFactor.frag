@@ -34,11 +34,16 @@
 			mat4 object2WorldIT;
 		};
 		
-		out vec4 out_Color;
+		layout(location = 0) out vec4 attch0;
+		layout(location = 1) out vec4 attch1;
 
 		void main()
 		{
-			 vec3 albedo = texture(albedoSampler, vec2(uv0.x, uv0.y)).xyz;
-			 out_Color.xyz = albedo;
-			 out_Color.w = 1.0;
+			vec3 albedo = texture(albedoSampler, vec2(uv0.x, uv0.y)).xyz;
+
+			attch0.xyz = albedo.xyz;
+			attch0.w = 1.0;
+
+			attch1.xyz = vec3(0, 1.0, 0);
+			attch1.w = 1.0;
 		};

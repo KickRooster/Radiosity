@@ -2,6 +2,8 @@
 #include <Vector4.h>
 #include <Vector3.h>
 #include <Vector2.h>
+#include <fbxsdk/core/arch/fbxtypes.h>
+
 #include "..\RHI\OpenGLRHI\GLBuffer.h"
 #include "..\RHI\OpenGLRHI\GLVertexBufferLayout.h"
 #include "IAsset.h"
@@ -66,6 +68,12 @@ namespace Core
 
 		float m_totalSurfaceArea;
 		float m_totalUVArea;
+		float m_leftMost;
+		float m_rightMost;
+		float m_topMost;
+		float m_bottomMost;
+		float m_zNear;
+		float m_zFar;
 		int32 m_radiosityTextureWidth;
 		int32 m_radiosityTextureHeight;
 		
@@ -141,6 +149,12 @@ namespace Core
 
 		int32 GetRadiosityTextureWidth()const;
 		int32 GetRadiosityTextureHeight() const;
+		float GetLeftMost();
+		float GetRightMost();
+		float GetBottomMost();
+		float GetTopMost();
+		float GetZNear();
+		float GetZFar();
 		
 		void SetControlPointCount(int32 controlPointCount);
 

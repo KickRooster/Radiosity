@@ -52,6 +52,7 @@ namespace Core
 		void RenderAsPostprocess(OpenGLDevice * pDevice, Vector4 & postprocessParam);
 		void BeforeBaking();
 		void DrawID(OpenGLDevice * pDevice);
+		void ComputeFormFactor(OpenGLDevice * pDevice);
 		Matrix4x4 * GetObject2WorldMatrix() ;
 		Vector3 GetZDirection();
 		Vector3 GetYDirection();
