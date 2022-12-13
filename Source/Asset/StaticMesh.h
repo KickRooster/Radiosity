@@ -29,6 +29,7 @@ namespace Core
 		float SurfaceArea;
 		Vector3 Normal;
 		Vector4 ShootPosition;
+		Vector3 Energy;
 	};
 	
 	class StaticMesh : public IAsset
@@ -68,12 +69,6 @@ namespace Core
 
 		float m_totalSurfaceArea;
 		float m_totalUVArea;
-		float m_leftMost;
-		float m_rightMost;
-		float m_topMost;
-		float m_bottomMost;
-		float m_zNear;
-		float m_zFar;
 		int32 m_radiosityTextureWidth;
 		int32 m_radiosityTextureHeight;
 		
@@ -149,12 +144,6 @@ namespace Core
 
 		int32 GetRadiosityTextureWidth()const;
 		int32 GetRadiosityTextureHeight() const;
-		float GetLeftMost();
-		float GetRightMost();
-		float GetBottomMost();
-		float GetTopMost();
-		float GetZNear();
-		float GetZFar();
 		
 		void SetControlPointCount(int32 controlPointCount);
 
@@ -162,6 +151,8 @@ namespace Core
 		Matrix4x4 GetLocal2World() const;
 
 		void BeforeBaking(Matrix4x4 Object2World);
+
+		void CalculateOrthoParameters(const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
 		
 		virtual ~StaticMesh();
 	};

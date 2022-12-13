@@ -28,9 +28,9 @@ namespace Core
 		queryLimts();
 
 		registerShaderGlobalData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData));
-		registerShaderGlobalData(GLShaderDataAlias_OrthoProjectionMatrix, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatrices, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatricesIT, sizeof(Matrix4x4Identify));
+		registerShaderGlobalData(GLShaderDataAlias_ShooterInfo, sizeof(ShooterInfo));
 		registerShaderGlobalData(GLShaderDataAlias_LightmapUVParam, sizeof(Vector4Dummy));
 		registerShaderGlobalData(GLShaderDataAlias_PostprocessParam, sizeof(Vector4Dummy));
 		registerShaderGlobalData(GLShaderDataAlias_LightParam, sizeof(Vector3Dummy));
@@ -134,13 +134,31 @@ namespace Core
 
 	void OpenGLDevice::BeginReconstrucionPass(int32 width, int32 height)
 	{
+		glClearColor(0, 0, 0, 1);
+		glCheckError();
+
+		glClearDepth(1.0);
+		glCheckError();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCheckError();
+		
 		glViewport(0, 0, width, height);
 		glCheckError();
 
-		glDisable(GL_CULL_FACE);
+		glFrontFace(GL_CCW);
 		glCheckError();
 
-		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glCheckError();
+
+		glCullFace(GL_BACK);
+		glCheckError();
+
+		glEnable(GL_DEPTH_TEST);
+		glCheckError();
+
+		glDepthFunc(GL_LESS);
 		glCheckError();
 	}
 	

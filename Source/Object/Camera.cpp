@@ -8,35 +8,42 @@ using namespace Core;
 namespace Core
 {
 	Camera::Camera():
-		m_perspectiveMatrix(Matrix4x4Identify),
+		m_perspectiveProjectioneMatrix(Matrix4x4Identify),
 		m_viewMatrix(Matrix4x4Identify),
 		m_viewMatrixInv(Matrix4x4Identify),
-		m_viewProjectionMatrix(Matrix4x4Identify),
-		m_randowTextureMatrix(Matrix4x4Identify),
+		m_viewPerspectiveProjectionMatrix(Matrix4x4Identify),
 		m_leftMouseClicked(False),
 		m_rightMouseClicked(False),
 		m_pUniformBuffer(std::make_unique<GLBuffer>()),
 		m_initialized(False),
 		m_rightMousePosPrev(Vector2(0, 0)),
 		m_yaw(-90.0f),
-		m_pitch(0)
+		m_pitch(0),
+		OrthoParams()
 	{
 		
 	}
 
-	void Camera::UpdateMatrix()
+	void Camera::UpdateViewMatrix()
 	{
-		m_perspectiveMatrix = Perspective(fovY, ascept, zNear, zFar);
-
 		m_viewMatrix = LookAt(position, position + lookAt, Up);
 		m_viewMatrixInv = Inverse(m_viewMatrix);
+	}
 
-		m_viewProjectionMatrix = m_perspectiveMatrix * m_viewMatrix;
+	void Camera::UpdateMatrix()
+	{
+		m_viewMatrix = LookAt(position, position + lookAt, Up);
+		m_viewMatrixInv = Inverse(m_viewMatrix);
+		
+		m_perspectiveProjectioneMatrix = Perspective(fovY, ascept, zNear, zFar);
+		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
+
+		m_orthoProjectionMatrix = Ortho(OrthoParams.Left, OrthoParams.Right, OrthoParams.Bottom, OrthoParams.Top, OrthoParams.ZNear, OrthoParams.ZFar);
 	}
 	
-	void Camera::UpdateProjectionMatrix()
+	void Camera::UpdatePerspectiveProjectionMatrix()
 	{
-		m_perspectiveMatrix = Perspective(fovY, ascept, zNear, zFar);
+		m_perspectiveProjectioneMatrix = Perspective(fovY, ascept, zNear, zFar);
 	}
 
 	void Camera::Tick(float deltaTime, const InputState & inputState)
@@ -119,46 +126,42 @@ namespace Core
 		m_viewMatrix = LookAt(position, position + lookAt, Up);
 		
 		m_viewMatrixInv = Inverse(m_viewMatrix);
-		m_viewProjectionMatrix = m_perspectiveMatrix * m_viewMatrix;
+		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
 	}
 
 	void Camera::UpdataGLParam(OpenGLDevice * pDevice)
 	{
 		CameraUniformData CameraUniformData;
 		CameraUniformData.ViewMatrix = m_viewMatrix;
-		CameraUniformData.ViewProjectionMatrix = m_viewProjectionMatrix;
+		CameraUniformData.PerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix;
+		CameraUniformData.OrthoProjectionMatrix = m_orthoProjectionMatrix;
 		CameraUniformData.Position = Vector4(position.x, position.y, position.z, 1.0f);
 		CameraUniformData.NearFar.x = zNear;
 		CameraUniformData.NearFar.y = zFar;
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData), &CameraUniformData);
 	}
 
-	Matrix4x4 * Camera::GetViewPeojectionMatrix()
-	{
-		return &m_viewProjectionMatrix;
-	}
-
-	Core::Matrix4x4 * Camera::GetViewMatrix()
+	Matrix4x4 * Camera::GetViewMatrix()
 	{
 		return &m_viewMatrix;
 	}
 
-	Core::Matrix4x4 * Camera::GetPeojectionMatrix()
+	Matrix4x4 * Camera::GetPerspectivePeojectionMatrix()
 	{
-		return &m_perspectiveMatrix;
+		return &m_perspectiveProjectioneMatrix;
 	}
 
-	Core::Vector3 Camera::GetForward() const
+	Vector3 Camera::GetForward() const
 	{
 		return -GetZAxis(m_viewMatrix);
 	}
 
-	Core::Vector3 Camera::GetUp() const
+	Vector3 Camera::GetUp() const
 	{
 		return GetYAxis(m_viewMatrix);
 	}
 
-	Core::Vector3 Camera::GetRight() const
+	Vector3 Camera::GetRight() const
 	{
 		return GetXAxis(m_viewMatrix);
 	}

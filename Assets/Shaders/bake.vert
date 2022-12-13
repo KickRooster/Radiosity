@@ -15,22 +15,27 @@
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
-			mat4 viewProjectionMatrix;
+			mat4 perspectiveProjectionMatrix;
+			mat4 orthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform OrthoProjectionMatrix
-		{
-			mat4 orthoProjectionMatrix;
-		};
-		layout (std140, binding = 2) uniform ObjectMatrices
+		layout (std140, binding = 1) uniform ObjectMatrices
 		{
 			mat4 object2World;
 		};
-		layout (std140, binding = 3) uniform ObjectMatricesIT
+		layout (std140, binding = 2) uniform ObjectMatricesIT
 		{
 			mat4 object2WorldIT;
 		};
+		layout (std140, binding = 3) uniform ShooterInfo
+		{
+			vec3 ShooterPosition;
+			vec3 ShooterNormal;
+			vec3 ShooterEnergy;
+			vec3 ShooterSurfaceArea;
+		};
+
 		out vec3 normal;
 		out vec3 tangent;
 		out vec3 binormal;
@@ -45,7 +50,7 @@
 		out vec2 uv7;
 		void main()
 		{
-		    gl_Position = viewProjectionMatrix * object2World * vPos;
+		    gl_Position = perspectiveProjectionMatrix * viewMatrix * object2World * vPos;
 		    normal = vNormal;
 		    tangent = vTangent;
 		    binormal = vBinormal;

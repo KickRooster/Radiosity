@@ -12,19 +12,47 @@ namespace Core
 	struct CameraUniformData
 	{
 		Matrix4x4 ViewMatrix;
-		Matrix4x4 ViewProjectionMatrix;
+		Matrix4x4 PerspectiveProjectionMatrix;
+		Matrix4x4 OrthoProjectionMatrix;
 		Vector4 Position;
 		Vector4 NearFar;	//	near,far,
+	};
+
+	struct ShooterInfo
+	{
+		Vector3 Position;
+		Vector3 Normal;
+		Vector3 Energy;
+		Vector3 SurfaceArea;
+	};
+
+	struct OrthoProjectionParams
+	{
+		float Left;
+		float Right;
+		float Bottom;
+		float Top;
+		float ZNear;
+		float ZFar;
+
+		OrthoProjectionParams::OrthoProjectionParams()
+		{
+			Left = 0;
+			Right = 0;
+			Bottom = 0;
+			Top = 0;
+			ZNear = 0;
+			ZFar = 0;
+		}
 	};
 	
 	class Camera
 	{
-	private:
-		Matrix4x4 m_perspectiveMatrix;
 		Matrix4x4 m_viewMatrix;
 		Matrix4x4 m_viewMatrixInv;
-		Matrix4x4 m_viewProjectionMatrix;
-		Matrix4x4 m_randowTextureMatrix;
+		Matrix4x4 m_perspectiveProjectioneMatrix;
+		Matrix4x4 m_viewPerspectiveProjectionMatrix;
+		Matrix4x4 m_orthoProjectionMatrix;
 
 		Bool m_leftMouseClicked;
 		Bool m_rightMouseClicked;
@@ -43,18 +71,20 @@ namespace Core
 		float zFar;
 		float ascept;
 		float fovY;
+		OrthoProjectionParams OrthoParams;
+		
 		Vector3 position;
 		Vector3 lookAt;
 		Vector3 eularAngle;
 
 		Camera();
+		void UpdateViewMatrix();
 		void UpdateMatrix();
-		void UpdateProjectionMatrix();
+		void UpdatePerspectiveProjectionMatrix();
 		void Tick(float deltaTime, const InputState & inputState);
 		void UpdataGLParam(OpenGLDevice * pDevice);
-		Matrix4x4 * GetViewPeojectionMatrix();
 		Matrix4x4 * GetViewMatrix();
-		Matrix4x4 * GetPeojectionMatrix();
+		Matrix4x4 * GetPerspectivePeojectionMatrix();
 		Vector3 GetForward() const;
 		Vector3 GetUp() const;
 		Vector3 GetRight() const;

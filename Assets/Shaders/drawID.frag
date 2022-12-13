@@ -17,21 +17,25 @@
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
-			mat4 viewProjectionMatrix;
+			mat4 perspectiveProjectionMatrix;
+			mat4 orthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform OrthoProjectionMatrix
-		{
-			mat4 orthoProjectionMatrix;
-		};
-		layout (std140, binding = 2) uniform ObjectMatrices
+		layout (std140, binding = 1) uniform ObjectMatrices
 		{
 			mat4 object2World;
 		};
-		layout (std140, binding = 3) uniform ObjectMatricesIT
+		layout (std140, binding = 2) uniform ObjectMatricesIT
 		{
 			mat4 object2WorldIT;
+		};
+		layout (std140, binding = 3) uniform ShooterInfo
+		{
+			vec3 ShooterPosition;
+			vec3 ShooterNormal;
+			vec3 ShooterEnergy;
+			vec3 ShooterSurfaceArea;
 		};
 
 		out vec4 out_Color;

@@ -1306,7 +1306,7 @@ namespace Core
 			m_GLFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLColorAttach.get());
 
 			m_scene->GetCamera()->ascept = rasterizedRegion.x / rasterizedRegion.y;
-			m_scene->GetCamera()->UpdateProjectionMatrix();
+			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
 		}
 
 		ImGui::Image(
@@ -1321,7 +1321,7 @@ namespace Core
 				rasterizedTopLeft,
 				rasterizedRegion,
 				m_scene->GetCamera()->GetViewMatrix(),
-				m_scene->GetCamera()->GetPeojectionMatrix(),
+				m_scene->GetCamera()->GetPerspectivePeojectionMatrix(),
 				m_pSelectedObject);
 		}
 
@@ -1376,35 +1376,41 @@ namespace Core
 		//////////////////////////////////////////////////////////////////////////
 		
 		//////////////////////////////////////////////////////////////////////////
-		ImGui::SetNextWindowPos(ImVec2(0, 800));
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		if (m_RadiorityTexture.get())
+		{
+			ImGui::SetNextWindowPos(ImVec2(0, 800));
+			ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
-		ImGui::Begin("Bake View");
-		ImVec2 bakeViewRegion = ImGui::GetContentRegionAvail();
+			ImGui::Begin("Bake View");
+			ImVec2 bakeViewRegion = ImGui::GetContentRegionAvail();
 		
-		ImGui::Image(
-			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
-			bakeViewRegion,
-			ImVec2(0, 1.0f),
-			ImVec2(1.0f, 0));
+			ImGui::Image(
+				reinterpret_cast<void *>(m_RadiorityTexture->GetID64()),
+				bakeViewRegion,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
 		
-		ImGui::End();
+			ImGui::End();
+		}
 		//////////////////////////////////////////////////////////////////////////
 
 		//////////////////////////////////////////////////////////////////////////
-		ImGui::SetNextWindowPos(ImVec2(200, 800));
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		if (m_ResidualTexture.get())
+		{
+			ImGui::SetNextWindowPos(ImVec2(200, 800));
+			ImGui::SetNextWindowSize(ImVec2(200, 200));
 
-		ImGui::Begin("Debug View");
-		ImVec2 debugViewRegion = ImGui::GetContentRegionAvail();
+			ImGui::Begin("Debug View");
+			ImVec2 debugViewRegion = ImGui::GetContentRegionAvail();
 
-		ImGui::Image(
-			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
-			debugViewRegion,
-			ImVec2(0, 1.0f),
-			ImVec2(1.0f, 0));
+			ImGui::Image(
+				reinterpret_cast<void *>(m_ResidualTexture->GetID64()),
+				debugViewRegion,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
 
-		ImGui::End();
+			ImGui::End();
+		}
 		//////////////////////////////////////////////////////////////////////////
 
 		panelSceneObjects();
@@ -1431,17 +1437,14 @@ namespace Core
 		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
 
 		static queue<Primitive> RemainingPrimitives;
-
-		int32 RadiosityTextureWidth = 0;
-		int32 RadiosityTextureHeight = 0;
 		
 		if (m_frameCount == 0)
 		{
 			BeingBakingObject->BeforeBaking();
-			
-			RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
-			RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
 
+			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
+			
 			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_RadiorityTexture->LoadImage(
 			RadiosityTextureWidth,
@@ -1459,11 +1462,6 @@ namespace Core
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture.get());
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_ResidualTexture.get());
 
-			m_visibilityPassFrameBuffer->Activate();
-			m_GLDevice->SetClearColor(0, 0, 0, 1.0f);
-			m_GLDevice->Clear();
-			m_visibilityPassFrameBuffer->Inactivate();
-			
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
 			
@@ -1471,6 +1469,8 @@ namespace Core
 					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
 					++iter)
 			{
+				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
+				iter->second.Energy = Vector3(1.0, 1.0, 1.0);
 				RemainingPrimitives.push(iter->second);
 			}
 		}
@@ -1478,25 +1478,46 @@ namespace Core
 		if (!RemainingPrimitives.empty())
 		{
 			Primitive Primitive = RemainingPrimitives.front();
-
+			RemainingPrimitives.pop();
+			
+			static Camera Camera;
+			Camera.zNear = 1.0f;
+			Camera.zFar = 6000.0f;
+			Camera.ascept = 1.0f;
+			Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
+			Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
+			Camera.fovY = 120.0f * Deg2Rad;
+			Camera.position = Primitive.ShootPosition;
+			Camera.lookAt = Primitive.Normal;
+			Camera.UpdateViewMatrix();
+			float Left;
+			float Right;
+			float Bottom;
+			float Top;
+			float ZNear;
+			float ZFar;
+			BeingBakingObject->glRenderableUnit.get()->staticMesh.lock()->CalculateOrthoParameters(
+				*BeingBakingObject->GetObject2WorldMatrix(),
+				*Camera.GetViewMatrix(),
+				Left,
+				Right,
+				Bottom,
+				Top,
+				ZNear,
+				ZFar);
+			Camera.OrthoParams.Left = Left;
+			Camera.OrthoParams.Right = Right;
+			Camera.OrthoParams.Bottom = Bottom;
+			Camera.OrthoParams.Top = Top;
+			Camera.OrthoParams.ZNear = 0;
+			Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
+			Camera.UpdateMatrix();
+			Camera.UpdataGLParam(m_GLDevice.get());
+			
 			//	Visibility Pass
 			m_visibilityPassFrameBuffer->Activate();
 			{
 				m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
-
-				Camera Camera;
-				Camera.zNear = 1.0f;
-				Camera.zFar = 6000.0f;
-				Camera.ascept = 1.0f;
-				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
-				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
-				Camera.fovY = 120.0f * Deg2Rad;
-				
-				Camera.position = Primitive.ShootPosition;
-				Camera.lookAt = Primitive.Normal;
-				Camera.UpdateMatrix();
-				Camera.UpdataGLParam(m_GLDevice.get());
-
 				BeingBakingObject->DrawID(m_GLDevice.get());
 			}
 			m_visibilityPassFrameBuffer->Inactivate();
@@ -1504,22 +1525,18 @@ namespace Core
 			//	Reconstruction Pass
 			m_reconstructionPassFrameBuffer->Activate();
 			{
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
-				Matrix4x4 OrthoMatrix = Ortho(
-					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetLeftMost(),
-					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetRightMost(),
-					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetBottomMost(),
-					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetTopMost(),
-					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetZNear(),
-					BeingBakingObject->glRenderableUnit.get()->staticMesh.lock().get()->GetZFar()
-					);
-				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_OrthoProjectionMatrix, sizeof(OrthoMatrix), &OrthoMatrix);
-	
+				ShooterInfo ShooterInfo;
+				ShooterInfo.Position = Primitive.ShootPosition;
+				ShooterInfo.Normal = Primitive.Normal;
+				ShooterInfo.Energy = Primitive.Energy;
+				ShooterInfo.SurfaceArea = Vector3(Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea);
+				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_ShooterInfo, sizeof(ShooterInfo), &ShooterInfo);
 				BeingBakingObject->ComputeFormFactor(m_GLDevice.get());
 			}
 			m_reconstructionPassFrameBuffer->Inactivate();
-			
-			RemainingPrimitives.pop();
 			
 			if (RemainingPrimitives.empty())
 			{

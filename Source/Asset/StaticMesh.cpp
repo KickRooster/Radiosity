@@ -45,19 +45,10 @@ namespace Core
 		m_totalSurfaceArea = 0;
 		m_totalUVArea = 0;
 
-		m_leftMost = 0;
-		m_rightMost = 0;
-		m_topMost = 0;
-		m_bottomMost = 0;
-		m_zNear = 0;
-		m_zFar = 0;
-
 		float* pPrimitiveSurfaceAreas = new float[vertexCount];
 		int32* pPrimitiveIDs = new int32[vertexCount];
 
 		PrimitiveMap.empty();
-
-		Vector3 Scale = Vector3(Object2World[0][0], Object2World[1][1], Object2World[2][2]);
 		
 		if (pUV1s)
 		{
@@ -83,30 +74,6 @@ namespace Core
 			Vector3 WorldPos0XYZ = Vector3(WorldPos0.x, WorldPos0.y, WorldPos0.z);
 			Vector3 WorldPos1XYZ = Vector3(WorldPos1.x, WorldPos1.y, WorldPos1.z);
 			Vector3 WorldPos2XYZ = Vector3(WorldPos2.x, WorldPos2.y, WorldPos2.z);
-
-			m_leftMost = min(m_leftMost, pos0.x * Scale.x);
-			m_leftMost = min(m_leftMost, pos1.x * Scale.x);
-			m_leftMost = min(m_leftMost, pos2.x * Scale.x);
-
-			m_rightMost = max(m_rightMost, pos0.x * Scale.x);
-			m_rightMost = max(m_rightMost, pos1.x * Scale.x);
-			m_rightMost = max(m_rightMost, pos2.x * Scale.x);
-
-			m_bottomMost = min(m_bottomMost, pos0.y * Scale.y);
-			m_bottomMost = min(m_bottomMost, pos1.y * Scale.y);
-			m_bottomMost = min(m_bottomMost, pos2.y * Scale.y);
-			
-			m_topMost = max(m_topMost, pos0.y * Scale.y);
-			m_topMost = max(m_topMost, pos1.y * Scale.y);
-			m_topMost = max(m_topMost, pos2.y * Scale.y);
-
-			m_zNear = min(m_zNear, pos0.z * Scale.z);
-			m_zNear = min(m_zNear, pos1.z * Scale.z);
-			m_zNear = min(m_zNear, pos2.z * Scale.z);
-
-			m_zFar = max(m_zFar, pos0.z * Scale.z);
-			m_zFar = max(m_zFar, pos1.z * Scale.z);
-			m_zFar = max(m_zFar, pos2.z * Scale.z);
 			
 			float triangleSurfaceArea = getTriangleArea(WorldPos0XYZ, WorldPos1XYZ, WorldPos2XYZ);
 
@@ -749,36 +716,6 @@ namespace Core
 	{
 		return m_radiosityTextureHeight;
 	}
-
-	float StaticMesh::GetLeftMost()
-	{
-		return m_leftMost;
-	}
-
-	float StaticMesh::GetRightMost()
-	{
-		return m_rightMost;
-	}
-
-	float StaticMesh::GetBottomMost()
-	{
-		return m_bottomMost;
-	}
-
-	float StaticMesh::GetTopMost()
-	{
-		return m_topMost;
-	}
-
-	float StaticMesh::GetZNear()
-	{
-		return m_zNear;
-	}
-
-	float StaticMesh::GetZFar()
-	{
-		return m_zFar;
-	}
 	
 	void StaticMesh::SetControlPointCount(int32 controlPointCount)
 	{
@@ -799,6 +736,55 @@ namespace Core
 	{
 		PrepareCustomDataAndPrimitiveMap(Object2World);
 		uploadToGPU();
+	}
+
+	void StaticMesh::CalculateOrthoParameters(const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar)
+	{
+		OutLeftMost = 0;
+		OutRightMost = 0;
+		OutBottomMost = 0;
+		OutTopMost = 0;
+		OutZNear = 0;
+		OutZFar = 0;
+		
+		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
+		{
+			Vector4 pos0 = pPositions[triangleIndex * 3 + 0];
+			Vector4 pos1 = pPositions[triangleIndex * 3 + 1];
+			Vector4 pos2 = pPositions[triangleIndex * 3 + 2];
+
+			Vector4 WorldPos0 = Object2World * pos0;
+			Vector4 WorldPos1 = Object2World * pos1;
+			Vector4 WorldPos2 = Object2World * pos2;
+
+			Vector4 ViewPos0 = View * WorldPos0;
+			Vector4 ViewPos1 = View * WorldPos1;
+			Vector4 ViewPos2 = View * WorldPos2;
+
+			OutLeftMost = min(OutLeftMost, ViewPos0.x);
+			OutLeftMost = min(OutLeftMost, ViewPos1.x);
+			OutLeftMost = min(OutLeftMost, ViewPos2.x);
+
+			OutRightMost = max(OutRightMost, ViewPos0.x);
+			OutRightMost = max(OutRightMost, ViewPos1.x);
+			OutRightMost = max(OutRightMost, ViewPos2.x);
+
+			OutBottomMost = min(OutBottomMost, ViewPos0.y);
+			OutBottomMost = min(OutBottomMost, ViewPos1.y);
+			OutBottomMost = min(OutBottomMost, ViewPos2.y);
+			
+			OutTopMost = max(OutTopMost, ViewPos0.y);
+			OutTopMost = max(OutTopMost, ViewPos1.y);
+			OutTopMost = max(OutTopMost, ViewPos2.y);
+
+			OutZNear = min(OutZNear, ViewPos0.z);
+			OutZNear = min(OutZNear, ViewPos1.z);
+			OutZNear = min(OutZNear, ViewPos2.z);
+
+			OutZFar = max(OutZFar, ViewPos0.z);
+			OutZFar = max(OutZFar, ViewPos1.z);
+			OutZFar = max(OutZFar, ViewPos2.z);
+		}
 	}
 	
 	StaticMesh::~StaticMesh()

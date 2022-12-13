@@ -1,5 +1,6 @@
 		#version 450 core
 	
+		in vec4 pos;
 		in vec3 normal;
 		in vec3 tangent;
 		in vec3 binormal;
@@ -17,33 +18,39 @@
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
-			mat4 viewProjectionMatrix;
+			mat4 perspectiveProjectionMatrix;
+			mat4 orthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform OrthoProjectionMatrix
-		{
-			mat4 orthoProjectionMatrix;
-		};
-		layout (std140, binding = 2) uniform ObjectMatrices
+		layout (std140, binding = 1) uniform ObjectMatrices
 		{
 			mat4 object2World;
 		};
-		layout (std140, binding = 3) uniform ObjectMatricesIT
+		layout (std140, binding = 2) uniform ObjectMatricesIT
 		{
 			mat4 object2WorldIT;
 		};
-		
+		layout (std140, binding = 3) uniform ShooterInfo
+		{
+			vec3 ShooterPosition;
+			vec3 ShooterNormal;
+			vec3 ShooterEnergy;
+			vec3 ShooterSurfaceArea;
+		};
+
 		layout(location = 0) out vec4 attch0;
 		layout(location = 1) out vec4 attch1;
 
 		void main()
 		{
+			//vec4 RecvPos = object2World * pos;
+
 			vec3 albedo = texture(albedoSampler, vec2(uv0.x, uv0.y)).xyz;
 
 			attch0.xyz = albedo.xyz;
 			attch0.w = 1.0;
 
-			attch1.xyz = vec3(0, 1.0, 0);
+			attch1.xyz = albedo.xyz;
 			attch1.w = 1.0;
 		};

@@ -9,6 +9,17 @@ namespace Core
 
 	Matrix4x4 Ortho(float Left, float Right, float Bottom, float Top, float zNear, float zFar)
 	{
+		// Matrix4x4 Result;
+		//
+		// Result[0][0] = 2 / (Right - Left);
+		// Result[1][1] = 2 / (Top - Bottom);
+		// Result[2][2] = 2 / (zFar - zNear);
+		// Result[3][0] = -(Right + Left) / (Right - Left);
+		// Result[3][1] = -(Top + Bottom) / (Top - Bottom);
+		// Result[3][2] = -(zFar + zNear) / (zFar - zNear);
+		//
+		// return Result;
+		//
 		return glm::orthoRH_NO(Left, Right, Bottom, Top, zNear, zFar);
 	}
 	
