@@ -21,20 +21,20 @@
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform ObjectMatrices
+		layout (std140, binding = 1) uniform ShooterInfo
+		{
+			vec4 ShooterPosition;
+			vec4 ShooterNormal;
+			vec4 ShooterEnergy;
+			vec4 ShooterSurfaceArea;
+		};
+		layout (std140, binding = 2) uniform ObjectMatrices
 		{
 			mat4 object2World;
 		};
-		layout (std140, binding = 2) uniform ObjectMatricesIT
+		layout (std140, binding = 3) uniform ObjectMatricesIT
 		{
 			mat4 object2WorldIT;
-		};
-		layout (std140, binding = 3) uniform ShooterInfo
-		{
-			vec3 ShooterPosition;
-			vec3 ShooterNormal;
-			vec3 ShooterEnergy;
-			vec3 ShooterSurfaceArea;
 		};
 
 		out vec3 normal;

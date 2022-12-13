@@ -20,10 +20,10 @@ namespace Core
 
 	struct ShooterInfo
 	{
-		Vector3 Position;
-		Vector3 Normal;
-		Vector3 Energy;
-		Vector3 SurfaceArea;
+		Vector4 Position;
+		Vector4 Normal;
+		Vector4 Energy;
+		Vector4 SurfaceArea;
 	};
 
 	struct OrthoProjectionParams

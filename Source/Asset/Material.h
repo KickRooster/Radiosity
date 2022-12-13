@@ -65,6 +65,7 @@ namespace Core
 		std::weak_ptr<GLSL> glFragmentShader;
 
 		std::weak_ptr<Texture> albedoTexture;
+		std::weak_ptr<GLTexture> IDTexture;
 		std::weak_ptr<Texture> normalMap;
 		std::weak_ptr<Texture> metallicTexture;
 		std::weak_ptr<Texture> roughnessTexture;
@@ -77,6 +78,7 @@ namespace Core
 		ctd::string glFragmentShaderName;
 
 		ctd::string albedoTextureName;
+		ctd::string IDTextureName;
 		ctd::string normalMapName;
 		ctd::string metallicTextureName;
 		ctd::string roughnessTextureName;
@@ -86,6 +88,7 @@ namespace Core
 		float albedoColor[4] = { 1.0f, 1.0f,1.0f,1.0f }; 
 
 		const ctd::string albedoSamplerName = "albedoSampler";
+		const ctd::string IDSamplerName = "IDSampler";
 		const ctd::string normalSamplerName = "normalSampler";
 		const ctd::string metallicSamplerName = "metallicSampler";
 		const ctd::string roughnessSamplerName = "roughnessSampler";

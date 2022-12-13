@@ -42,11 +42,7 @@ namespace Core
 
 		const ANSICHAR * defaultGLVertexShaderName = "default";
 		const ANSICHAR * defaultGLFragmentShaderName = "default";
-
-		const ANSICHAR * glBakingVertexShaderName = "bake";
-		const ANSICHAR * glBakingFragmentShaderName = "bake";
-		const ANSICHAR * bakingMaterialName = "baking";
-
+		
 		const ANSICHAR * defaultAlbedoTextureName = "default";
 
 		//ANSICHAR * projectFullPath = "E:\\Projects\\Template0";

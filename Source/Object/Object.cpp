@@ -111,7 +111,7 @@ namespace Core
 
 	void Object::BeforeBaking()
 	{
-		glRenderableUnit.get()->staticMesh.lock().get()->BeforeBaking(m_object2WorldMatrix);
+		glRenderableUnit.get()->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix);
 	}
 	
 	void Object::DrawID(OpenGLDevice * pDevice)

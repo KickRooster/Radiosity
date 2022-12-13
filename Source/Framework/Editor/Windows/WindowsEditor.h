@@ -37,7 +37,7 @@ namespace Core
 		const int32 PrimitiveIDTextureWidth = 1024;
 		const int32 PrimitiveIDTextureHeight = 1024;
 		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
-		std::unique_ptr<GLTexture> m_primitiveIDTexture;
+		std::shared_ptr<GLTexture> m_primitiveIDTexture;
 		float * m_pPrimitiveIDRawData;
 
 		//	Reconstrucsion Pass

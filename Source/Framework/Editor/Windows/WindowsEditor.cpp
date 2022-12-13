@@ -1200,7 +1200,7 @@ namespace Core
 		m_baking(False)
 	{
 		//	Visibility Pass
-		m_primitiveIDTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+		m_primitiveIDTexture = std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 		m_primitiveIDTexture->LoadImage(
 		PrimitiveIDTextureWidth,
 		PrimitiveIDTextureHeight,
@@ -1441,9 +1441,12 @@ namespace Core
 		if (m_frameCount == 0)
 		{
 			BeingBakingObject->BeforeBaking();
-
-			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
-			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->albedoTexture =
+				BeingBakingObject->glRenderableUnit->material.lock()->albedoTexture;
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDTexture = m_primitiveIDTexture;
+			
+			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 			
 			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_RadiorityTexture->LoadImage(
@@ -1470,7 +1473,7 @@ namespace Core
 					++iter)
 			{
 				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector3(1.0, 1.0, 1.0);
+				iter->second.Energy = Vector4(1.0, 1.0, 1.0, 1.0);
 				RemainingPrimitives.push(iter->second);
 			}
 		}
@@ -1496,7 +1499,7 @@ namespace Core
 			float Top;
 			float ZNear;
 			float ZFar;
-			BeingBakingObject->glRenderableUnit.get()->staticMesh.lock()->CalculateOrthoParameters(
+			BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
 				*BeingBakingObject->GetObject2WorldMatrix(),
 				*Camera.GetViewMatrix(),
 				Left,
@@ -1525,14 +1528,14 @@ namespace Core
 			//	Reconstruction Pass
 			m_reconstructionPassFrameBuffer->Activate();
 			{
-				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureWidth();
-				int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock().get()->GetRadiosityTextureHeight();
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
 				ShooterInfo ShooterInfo;
 				ShooterInfo.Position = Primitive.ShootPosition;
-				ShooterInfo.Normal = Primitive.Normal;
+				ShooterInfo.Normal = Vector4(Primitive.Normal.x, Primitive.Normal.y, Primitive.Normal.z, 0);
 				ShooterInfo.Energy = Primitive.Energy;
-				ShooterInfo.SurfaceArea = Vector3(Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea);
+				ShooterInfo.SurfaceArea = Vector4(Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea);
 				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_ShooterInfo, sizeof(ShooterInfo), &ShooterInfo);
 				BeingBakingObject->ComputeFormFactor(m_GLDevice.get());
 			}

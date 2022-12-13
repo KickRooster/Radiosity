@@ -29,7 +29,7 @@ namespace Core
 		float SurfaceArea;
 		Vector3 Normal;
 		Vector4 ShootPosition;
-		Vector3 Energy;
+		Vector4 Energy;
 	};
 	
 	class StaticMesh : public IAsset

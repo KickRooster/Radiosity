@@ -80,6 +80,13 @@ namespace Core
 			albedoTexture.lock()->Activate();
 		}
 
+		if (!IDTexture.expired())
+		{
+			m_glProgram->ActivateTextureSlot(slotIndex, IDSamplerName.c_str());
+			++slotIndex;
+			IDTexture.lock()->Activate();
+		}
+
 		if (!normalMap.expired())
 		{
 			m_glProgram->ActivateTextureSlot(slotIndex, normalSamplerName.c_str());
@@ -116,6 +123,11 @@ namespace Core
 		if (!albedoTexture.expired())
 			albedoTexture.lock()->Inactivate();
 
+		if (!IDTexture.expired())
+		{
+			IDTexture.lock()->Inactivate();
+		}
+		
 		if (!normalMap.expired())
 			normalMap.lock()->Inactivate();
 
