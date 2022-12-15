@@ -28,6 +28,7 @@ namespace Core
 		queryLimts();
 
 		registerShaderGlobalData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData));
+		registerShaderGlobalData(GLShaderDataAlias_HemicubeMatrices, sizeof(HemicubeMatrices));
 		registerShaderGlobalData(GLShaderDataAlias_ShooterInfo, sizeof(ShooterInfo));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatrices, sizeof(Matrix4x4Identify));
 		registerShaderGlobalData(GLShaderDataAlias_ObjectMatricesIT, sizeof(Matrix4x4Identify));
@@ -143,6 +144,33 @@ namespace Core
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glCheckError();
 		
+		glViewport(0, 0, width, height);
+		glCheckError();
+
+		glFrontFace(GL_CCW);
+		glCheckError();
+
+		glEnable(GL_CULL_FACE);
+		glCheckError();
+
+		glCullFace(GL_BACK);
+		glCheckError();
+
+		glEnable(GL_DEPTH_TEST);
+		glCheckError();
+
+		glDepthFunc(GL_LESS);
+		glCheckError();
+	}
+
+	void OpenGLDevice::BeginViewCubeMapPass(int32 width, int32 height)
+	{
+		glClearColor(0, 0, 0, 1.0f);
+		glCheckError();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCheckError();
+
 		glViewport(0, 0, width, height);
 		glCheckError();
 

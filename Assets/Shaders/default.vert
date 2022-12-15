@@ -21,18 +21,26 @@
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform ShooterInfo
+		layout (std140, binding = 1) uniform HemicubeMatrices
+		{
+			mat4 ViewProjection_N_Z;
+			mat4 ViewProjection_N_X;
+			mat4 ViewProjection_P_X;
+			mat4 ViewProjection_N_Y;
+			mat4 ViewProjection_P_Y;
+		};
+		layout (std140, binding = 2) uniform ShooterInfo
 		{
 			vec4 ShooterPosition;
 			vec4 ShooterNormal;
 			vec4 ShooterEnergy;
 			vec4 ShooterSurfaceArea;
 		};
-		layout (std140, binding = 2) uniform ObjectMatrices
+		layout (std140, binding = 3) uniform ObjectMatrices
 		{
 			mat4 object2World;
 		};
-		layout (std140, binding = 3) uniform ObjectMatricesIT
+		layout (std140, binding = 4) uniform ObjectMatricesIT
 		{
 			mat4 object2WorldIT;
 		};
@@ -41,7 +49,7 @@
 		out vec3 tangent;
 		out vec3 binormal;
 		out vec3 color;
-		out vec4 customData;
+		flat out vec4 customData;
 		out vec2 uv0;
 		out vec2 uv1;
 		out vec2 uv2;

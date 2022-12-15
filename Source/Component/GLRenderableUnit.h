@@ -12,6 +12,7 @@ namespace Core
 		std::weak_ptr<Material> material;
 		std::weak_ptr<Material> DrawIDMaterial;
 		std::weak_ptr<Material> ComputeFormFactorMaterial;
+		std::weak_ptr<Material> ViewCubeMapMaterial;
 
 		GLRenderableUnit();
 		void BeginUse();
@@ -21,6 +22,8 @@ namespace Core
 		void InactivateDrawingID();
 		void ActiveComputingFormFactor();
 		void InactiveComputingFormFactor();
+		void ActiveViewCubeMap();
+		void InactiveCubeMap();
 		~GLRenderableUnit();
 	};
 }

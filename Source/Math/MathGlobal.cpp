@@ -38,9 +38,9 @@ namespace Core
 		return glm::rotate(m, angle, v);
 	}
 
-	Matrix4x4 LookAt(const Vector3 & position, const Vector3 & lookDir, const Vector3 & up)
+	Matrix4x4 LookAt(const Vector3 & position, const Vector3 & center, const Vector3 & up)
 	{
-		return glm::lookAt(position, lookDir, up);
+		return glm::lookAt(position, center, up);
 	}
 
 	Matrix4x4 Scale(const Matrix4x4 & m, const Vector3 & v)
@@ -53,10 +53,22 @@ namespace Core
 		return glm::inverse(m);
 	}
 
-	Core::Matrix4x4 Transpose(const Matrix4x4 & m)
+	Matrix4x4 Transpose(const Matrix4x4 & m)
 	{
 		return glm::transpose(m);
 	}
+
+	Vector3 RotateAround(const Vector3& Vector, float angle, const Vector3& Axis)
+	{
+		Matrix4x4 RotationMatrix = glm::rotate(Matrix4x4Identify, angle, Axis);
+
+		Vector4 Vec4 = Vector4(Vector.x, Vector.y, Vector.z, 1.0f);
+		Vector4 Result4 = RotationMatrix * Vec4;
+		Vector3 Result = Vector3(Result4.x, Result4.y, Result4.z);
+
+		return Result;
+	}
+
 
 	Vector3 Normalize(const Vector3 & v)
 	{

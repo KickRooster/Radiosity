@@ -29,7 +29,8 @@ namespace Core
 		GLFrameBuffer();
 		uint32 GetWidth() const;
 		uint32 GetHeight() const;
-		void AttachColor(GLAttachIndex attachIndex, GLTexture * pColorTexture);
+		void AttachColor(GLAttachIndex attachIndex, GLTextureTarget Target, GLTexture * pColorTexture);
+		void ClearAttaches();
 		void Resize(uint32 width, uint32 height);
 		void Activate() const;
 		void Inactivate() const;

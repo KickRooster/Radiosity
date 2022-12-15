@@ -24,15 +24,33 @@ namespace Core
 		
 	}
 
+	Vector3 Camera::GetWorldUp()
+	{
+		Vector3 LookDir = Normalize(lookAtDir);
+		
+		if (Dot(LookDir, Up) > 0.85f)
+		{
+			return Forward;
+		}
+		else if (Dot(LookDir, Up) < -0.85f)
+		{
+			return  -Forward;
+		}
+		else
+		{
+			return Up;
+		}
+	}
+	
 	void Camera::UpdateViewMatrix()
 	{
-		m_viewMatrix = LookAt(position, position + lookAt, Up);
+		m_viewMatrix = LookAt(position, position + lookAtDir, Up);
 		m_viewMatrixInv = Inverse(m_viewMatrix);
 	}
 
 	void Camera::UpdateMatrix()
 	{
-		m_viewMatrix = LookAt(position, position + lookAt, Up);
+		m_viewMatrix = LookAt(position, position + lookAtDir, Up);
 		m_viewMatrixInv = Inverse(m_viewMatrix);
 		
 		m_perspectiveProjectioneMatrix = Perspective(fovY, ascept, zNear, zFar);
@@ -99,20 +117,7 @@ namespace Core
 				m_viewMatrix = Rotate(m_viewMatrix, 0.2f * xDelta * Deg2Rad, GetYAxis(m_viewMatrix));
 				m_viewMatrix = Rotate(m_viewMatrix, 0.2f * yDelta * Deg2Rad, GetXAxis(m_viewMatrix));
 
-				lookAt = -GetZAxis(m_viewMatrix);
-
-				//m_yaw += xDelta * rotateSpeed;
-				//m_pitch += yDelta * rotateSpeed;
-				//
-				//if (m_pitch > 89.0f)
-				//	m_pitch = 89.0f;
-				//if (m_pitch < -89.0f)
-				//	m_pitch = -89.0f;
-				//
-				//lookAt.x = cos(m_yaw * Deg2Rad) * cos(m_pitch * Deg2Rad);
-				//lookAt.y = sin(m_pitch * Deg2Rad);
-				//lookAt.z = sin(m_yaw * Deg2Rad) * cos(m_pitch * Deg2Rad);
-				//lookAt = glm::normalize(lookAt);
+				lookAtDir = -GetZAxis(m_viewMatrix);
 
 				m_rightMousePosPrev.x = rightMousePos.x;
 				m_rightMousePosPrev.y = rightMousePos.y;
@@ -123,7 +128,7 @@ namespace Core
 			m_rightMouseClicked = False;
 		}
 
-		m_viewMatrix = LookAt(position, position + lookAt, Up);
+		m_viewMatrix = LookAt(position, position + lookAtDir, Up);
 		
 		m_viewMatrixInv = Inverse(m_viewMatrix);
 		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
@@ -146,10 +151,16 @@ namespace Core
 		return &m_viewMatrix;
 	}
 
-	Matrix4x4 * Camera::GetPerspectivePeojectionMatrix()
+	Matrix4x4 * Camera::GetPerspectiveProjectionMatrix()
 	{
 		return &m_perspectiveProjectioneMatrix;
 	}
+
+	Matrix4x4* Camera::GetViewPerspcetiveProjectionMatrix()
+	{
+		return &m_viewPerspectiveProjectionMatrix;
+	}
+
 
 	Vector3 Camera::GetForward() const
 	{

@@ -7,17 +7,27 @@ namespace Core
 	{
 		switch (m_wrapMode)
 		{
-		case Core::GLTextureWrapMode_Repeat:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		case GLTextureWrapMode_Repeat:
+			glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glCheckError();
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glCheckError();
+			if (m_target == GLTextureTarget_3D || m_target == GLTextureTarget_CubeMAP)
+			{
+				glTexParameteri(m_target, GL_TEXTURE_WRAP_R, GL_REPEAT);
+				glCheckError();
+			}
 			break;
-		case Core::GLTextureWrapMode_Clamp:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		case GLTextureWrapMode_Clamp:
+			glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_CLAMP);
 			glCheckError();
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(m_target, GL_TEXTURE_WRAP_R, GL_CLAMP);
 			glCheckError();
+			if (m_target == GLTextureTarget_3D || m_target == GLTextureTarget_CubeMAP)
+			{
+				glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_CLAMP);
+				glCheckError();
+			}
 			break;
 		default:
 			break;
@@ -28,16 +38,16 @@ namespace Core
 	{
 		switch (m_filterMode)
 		{
-		case Core::GLTextureFilterMode_Point:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		case GLTextureFilterMode_Point:
+			glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glCheckError();
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glCheckError();
 			break;
-		case Core::GLTextureFilterMode_Bilinear:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		case GLTextureFilterMode_Bilinear:
+			glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glCheckError();
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glCheckError();
 			break;
 		default:
@@ -57,13 +67,13 @@ namespace Core
 		glGenTextures(1, &m_id);
 		glCheckError();
 
-		glBindTexture(GL_TEXTURE_2D, m_id);
+		glBindTexture(target, m_id);
 		glCheckError();
 
 		setWrapMode(m_wrapMode);
 		setFilterMode(m_filterMode);
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(target, 0);
 		glCheckError();
 
 		//	Test Code
@@ -115,14 +125,19 @@ namespace Core
 		//glCheckError();
 	}
 
-	Core::uint32 GLTexture::GetID() const
+	uint32 GLTexture::GetID() const
 	{
 		return m_id;
 	}
 
-	Core::uint64 GLTexture::GetID64() const
+	uint64 GLTexture::GetID64() const
 	{
 		return m_id;
+	}
+
+	GLTextureTarget GLTexture::GetTarget() const
+	{
+		return m_target;
 	}
 
 	void GLTexture::Activate() const
@@ -131,14 +146,32 @@ namespace Core
 		glCheckError();
 	}
 
-	void GLTexture::LoadImage(uint32 width, uint32 height, const void * pData)
+	void GLTexture::LoadImage(int32 width, int32 height, const void * pData)
 	{
 		glBindTexture(m_target, m_id);
 		glCheckError();
 
-		glTexImage2D(m_target, 0, m_internalFormat, width, height, 0, m_pixelFormat, m_dataType, pData);
-		glCheckError();
-
+		if (m_target == GLTextureTarget_CubeMAP)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X,0,m_internalFormat,width,height,0,m_pixelFormat,m_dataType,pData);
+			glCheckError();
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X,0,m_internalFormat,width,height,0,m_pixelFormat,m_dataType,pData);
+			glCheckError();
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y,0,m_internalFormat,width,height,0,m_pixelFormat,m_dataType,pData);
+			glCheckError();
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,0,m_internalFormat,width,height,0,m_pixelFormat,m_dataType,pData);
+			glCheckError();
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z,0,m_internalFormat,width,height,0,m_pixelFormat,m_dataType,pData);
+			glCheckError();
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,0,m_internalFormat,width,height,0,m_pixelFormat,m_dataType,pData);
+			glCheckError();
+		}
+		else
+		{
+			glTexImage2D(m_target, 0, m_internalFormat, width, height, 0, m_pixelFormat, m_dataType, pData);
+			glCheckError();
+		}
+			
 		glBindTexture(m_target, 0);
 		glCheckError();
 	}
@@ -174,7 +207,7 @@ namespace Core
 		glCheckError();
 	}
 
-	Core::GLTextureWrapMode GLTexture::GetWrapMode() const
+	GLTextureWrapMode GLTexture::GetWrapMode() const
 	{
 		return m_wrapMode;
 	}
@@ -192,7 +225,7 @@ namespace Core
 		glCheckError();
 	}
 
-	Core::GLTextureFilterMode GLTexture::GetFilterMode() const
+	GLTextureFilterMode GLTexture::GetFilterMode() const
 	{
 		return m_filterMode;
 	}
@@ -203,10 +236,10 @@ namespace Core
 
 		switch (m_dataType)
 		{
-		case Core::GLDataType_Float:
+		case GLDataType_Float:
 			multiplier = sizeof(float);
 			break;
-		case Core::GLDataType_UnsignedByte:
+		case GLDataType_UnsignedByte:
 			multiplier = sizeof(uint8);
 			break;
 		default:

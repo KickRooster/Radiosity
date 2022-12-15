@@ -22,9 +22,9 @@ SDL_Window * pSDLWindow = nullptr;
 InputState g_inputState;
 WindowsState g_windowState;
 
-#define WINDOW_POSITION_X 320
-#define WINDOW_POSITION_Y 40
-#define WINDOW_WIDTH 1280
+#define WINDOW_POSITION_X 0
+#define WINDOW_POSITION_Y 0
+#define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1000
 
 uint32 g_frameCount = 0;
@@ -266,8 +266,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		pFramework->Tick(deltaTime, g_windowState.width, g_windowState.height, g_inputState);
 		pFramework->Render(g_windowState.width, g_windowState.height);
+		pFramework->ViewCubeMap();
 		pFramework->Bake();
-
+		
 		SDL_GL_SwapWindow(pSDLWindow);
 	}
 

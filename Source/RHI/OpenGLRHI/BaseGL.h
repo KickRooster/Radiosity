@@ -25,6 +25,7 @@ namespace Core
 	enum GLShaderDataAlias : int32
 	{
 		GLShaderDataAlias_CameraUniformData,
+		GLShaderDataAlias_HemicubeMatrices,
 		GLShaderDataAlias_ShooterInfo,
 		GLShaderDataAlias_ObjectMatrices,
 		GLShaderDataAlias_ObjectMatricesIT,
@@ -43,6 +44,13 @@ namespace Core
 		GLTextureTarget_1D = GL_TEXTURE_1D,
 		GLTextureTarget_2D = GL_TEXTURE_2D,
 		GLTextureTarget_3D = GL_TEXTURE_3D,
+		GLTextureTarget_CubeMAP = GL_TEXTURE_CUBE_MAP,
+		GLTextureTarget_CubeMap_Positive_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+		GLTextureTarget_CubeMap_Negative_X = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+		GLTextureTarget_CubeMap_Positive_Y = GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+		GLTextureTarget_CubeMap_Negative_Y = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+		GLTextureTarget_CubeMap_Positive_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+		GLTextureTarget_CubeMap_Negative_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
 	};
 
 	enum GLInternalFormat
@@ -97,6 +105,10 @@ namespace Core
 		GLAttachIndexColor1 = GL_COLOR_ATTACHMENT1,
 		GLAttachIndexColor2 = GL_COLOR_ATTACHMENT2,
 		GLAttachIndexColor3 = GL_COLOR_ATTACHMENT3,
+		GLAttachIndexColor4 = GL_COLOR_ATTACHMENT4,
+		GLAttachIndexColor5 = GL_COLOR_ATTACHMENT5,
+		GLAttachIndexColor6 = GL_COLOR_ATTACHMENT6,
+		GLAttachIndexColor7 = GL_COLOR_ATTACHMENT7,
 	};
 
 	enum GLTextureWrapMode

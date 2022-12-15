@@ -1,5 +1,6 @@
 		#version 450 core
-		
+	
+		in vec4 pos;
 		in vec3 normal;
 		in vec3 tangent;
 		in vec3 binormal;
@@ -13,7 +14,7 @@
 		in vec2 uv5;
 		in vec2 uv6;
 		in vec2 uv7;
-		uniform sampler2D albedoSampler;
+		uniform samplerCube IDCubeMapSampler;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
@@ -50,8 +51,9 @@
 
 		void main()
 		{
-			 out_Color.xyz = vec3(customData.x + 20, customData.x + 20, customData.x + 20);
-			 vec3 albedo = texture(albedoSampler, uv0).xyz;
-			 out_Color.xyz = albedo;
-			 out_Color.w = 1.0;
+			vec4 WorldPos = object2World * pos;
+			vec3 SampleDir = WorldPos.xyz - position.xyz;
+			vec3 CubeMap = texture(IDCubeMapSampler, normalize(SampleDir)).xyz;
+			out_Color.xyz = CubeMap;
+			out_Color.w = 1.0;
 		};

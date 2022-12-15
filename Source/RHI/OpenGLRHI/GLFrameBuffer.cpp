@@ -53,12 +53,12 @@ namespace Core
 		return m_height;
 	}
 
-	void GLFrameBuffer::AttachColor(GLAttachIndex attachIndex, GLTexture * pColorTexture)
+	void GLFrameBuffer::AttachColor(GLAttachIndex attachIndex, GLTextureTarget Target, GLTexture * pColorTexture)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 		glCheckError();
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachIndex, GL_TEXTURE_2D, pColorTexture->GetID(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachIndex, Target, pColorTexture->GetID(), 0);
 		glCheckError();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -67,6 +67,11 @@ namespace Core
 		m_colorAttaches.push_back(attachIndex);
 	}
 
+	void GLFrameBuffer::ClearAttaches()
+	{
+		m_colorAttaches.empty();
+	}
+	
 	void GLFrameBuffer::Resize(uint32 width, uint32 height)
 	{
 		m_width = width;
@@ -131,6 +136,8 @@ namespace Core
 			glDrawBuffers((GLsizei)m_colorAttaches.size(), fourfoldAttaches);
 			glCheckError();
 		}
+
+		frameBufferInvalid();
 	}
 
 	void GLFrameBuffer::Inactivate() const

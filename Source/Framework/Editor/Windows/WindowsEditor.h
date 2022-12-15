@@ -31,14 +31,18 @@ namespace Core
 		std::unique_ptr<GLFrameBuffer> m_GLFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLColorAttach;			//	uint8
 
+		std::unique_ptr<GLFrameBuffer> m_GLDebugViewFrameBuffer;
+		std::unique_ptr<GLTexture> m_GLDebugViewColorAttach;
+
 		Bool m_baking;
 
 		//	Visibility Pass
 		const int32 PrimitiveIDTextureWidth = 1024;
 		const int32 PrimitiveIDTextureHeight = 1024;
 		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
-		std::shared_ptr<GLTexture> m_primitiveIDTexture;
-		float * m_pPrimitiveIDRawData;
+		std::shared_ptr<GLTexture> m_primitiveIDCubeMap;
+		
+		//float * m_pPrimitiveIDRawData;
 
 		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
@@ -55,6 +59,7 @@ namespace Core
 		std::shared_ptr<Material> m_arealLightMaterial;
 		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
+		std::shared_ptr<Material> m_ViewCubeMapMaterial;
 		std::shared_ptr<StaticMesh> m_areaLightMesh;
 		std::shared_ptr<StaticMesh> m_postprocessMesh;
 
@@ -77,6 +82,7 @@ namespace Core
 		virtual void Initialize(int32 width, int32 height) override;
 		virtual void Tick(float deltaTime, int32 width, int32 height, InputState & inputState) override;
 		virtual void Render(int32 width, int32 height) override;
+		virtual void ViewCubeMap() override;
 		virtual void Bake() override;
 		virtual ~WindowsEditor();
 	};

@@ -19,6 +19,11 @@ namespace Core
 
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->BeginUse();
+
+		if (!ViewCubeMapMaterial.expired())
+		{
+			ViewCubeMapMaterial.lock()->BeginUse();	
+		}
 	}
 
 	void GLRenderableUnit::Activate()
@@ -73,6 +78,24 @@ namespace Core
 
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->Inactivate();
+	}
+
+	void GLRenderableUnit::ActiveViewCubeMap()
+	{
+		if (!staticMesh.expired())
+			staticMesh.lock()->Activate();
+
+		if (!ViewCubeMapMaterial.expired())
+			ViewCubeMapMaterial.lock()->Activate();
+	}
+
+	void GLRenderableUnit::InactiveCubeMap()
+	{
+		if (!staticMesh.expired())
+			staticMesh.lock()->Inactivate();
+
+		if (!ViewCubeMapMaterial.expired())
+			ViewCubeMapMaterial.lock()->Inactivate();
 	}
 	
 	GLRenderableUnit::~GLRenderableUnit()

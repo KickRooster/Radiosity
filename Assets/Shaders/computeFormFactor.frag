@@ -5,7 +5,7 @@
 		in vec3 tangent;
 		in vec3 binormal;
 		in vec3 color;
-		in vec4 customData;
+		flat in vec4 customData;
 		in vec2 uv0;
 		in vec2 uv1;
 		in vec2 uv2;
@@ -15,7 +15,7 @@
 		in vec2 uv6;
 		in vec2 uv7;
 		uniform sampler2D albedoSampler;
-		uniform sampler2D IDSampler;
+		uniform samplerCube IDCubeMapSampler;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
@@ -24,22 +24,29 @@
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform ShooterInfo
+		layout (std140, binding = 1) uniform HemicubeMatrices
+		{
+			mat4 ViewProjection_N_Z;
+			mat4 ViewProjection_N_X;
+			mat4 ViewProjection_P_X;
+			mat4 ViewProjection_N_Y;
+			mat4 ViewProjection_P_Y;
+		};
+		layout (std140, binding = 2) uniform ShooterInfo
 		{
 			vec4 ShooterPosition;
 			vec4 ShooterNormal;
 			vec4 ShooterEnergy;
 			vec4 ShooterSurfaceArea;
 		};
-		layout (std140, binding = 2) uniform ObjectMatrices
+		layout (std140, binding = 3) uniform ObjectMatrices
 		{
 			mat4 object2World;
 		};
-		layout (std140, binding = 3) uniform ObjectMatricesIT
+		layout (std140, binding = 4) uniform ObjectMatricesIT
 		{
 			mat4 object2WorldIT;
 		};
-
 		layout(location = 0) out vec4 attch0;
 		layout(location = 1) out vec4 attch1;
 
@@ -56,32 +63,32 @@
 			const float pi = 3.1415926535;
 			float Fij = max(cosi * cosj, 0) / (pi * distance2 + ShooterSurfaceArea.x);
 
-			vec4 ViewPos = viewMatrix * RecvPos;
-			vec3 proj = normalize(ViewPos.xyz);    
-			proj.xy = proj.xy * 0.5 + 0.5;
+			vec4 WorldPos = object2World * pos;
+			vec3 SampleDir = WorldPos.xyz - position.xyz;
 
-			vec3 ID = texture(IDSampler, proj.xy).xyz;
-
+			vec3 CubeMap = texture(IDCubeMapSampler, normalize(SampleDir)).xyz;
+			
 			float Visable;
-			if (customData.x == ID.x)
+			if (CubeMap.x == customData.x)
 			{
 				Visable = 1.0f;
-			} 
+			}
 			else
 			{
 				Visable = 0;
 			}
 
-			//Fij *= Visable;
+			Fij *= Visable;
+			Fij *= 10;
 
 			vec3 albedo = texture(albedoSampler, uv0).xyz;
 
 			vec3 Delta = ShooterEnergy.xyz * albedo * ShooterSurfaceArea.x * Fij;   
 
-			attch0.xyz = Delta * vec3(30);
+			attch0.xyz = Delta;
 			attch0.w = 1.0;
 
-			attch1.xyz = ID;
+			attch1.xyz = vec3(CubeMap.x, CubeMap.y, CubeMap.z);
 			
 			attch1.w = 1.0;
 		};

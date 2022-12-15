@@ -21,8 +21,9 @@ namespace Core
 		GLTexture(GLTextureTarget target, GLInternalFormat internalFormat, GLPixelFormat pixelFormat, GLDataType dataType, GLTextureWrapMode wrapMode, GLTextureFilterMode filterMode);
 		uint32 GetID() const;
 		uint64 GetID64() const;
+		GLTextureTarget GetTarget() const;
 		void Activate() const;
-		void LoadImage(uint32 width, uint32 height, const void * pData);
+		void LoadImage(int32 width, int32 height, const void * pData);
 		void Fetch(void * pData);
 		void Inactivate() const;
 		void SetWrapMode(GLTextureWrapMode wrapMode);

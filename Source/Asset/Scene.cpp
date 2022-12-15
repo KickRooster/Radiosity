@@ -45,10 +45,10 @@ namespace Core
 		m_camera->zNear = 1.0f;
 		m_camera->zFar = 6000.0f;
 		m_camera->ascept = width / (float)height;
-		m_camera->fovY = 120.0f * Deg2Rad;
+		m_camera->fovY = 90.0f * Deg2Rad;
 
-		m_camera->position = Vector3(0, 0, 50.0f);
-		m_camera->lookAt = Vector3(0, 0, -1.0f);
+		m_camera->position = Vector3(0, 0, -50.0f);
+		m_camera->lookAtDir = Vector3(0, 0, 1.0f);
 		m_camera->eularAngle = Vector3(0, 0, 0);
 		
 		m_camera->UpdateMatrix();
@@ -83,7 +83,7 @@ namespace Core
 
 		pDevice->AfterRender();
 	}
-	
+
 	Camera * Scene::GetCamera()
 	{
 		return m_camera.get();

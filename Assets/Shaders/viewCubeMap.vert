@@ -44,7 +44,8 @@
 		{
 			mat4 object2WorldIT;
 		};
-	
+
+		out vec4 pos;
 		out vec3 normal;
 		out vec3 tangent;
 		out vec3 binormal;
@@ -60,19 +61,8 @@
 		out vec2 uv7;
 		void main()
 		{
-    		// transform the geometry to camera space    
-    		//vec4 mpos = viewMatrix * object2World * vPos;
-    		// project to a point on a unit hemisphere      
-    		//vec3 hemi_pt = normalize(mpos.xyz);      
-    		// Compute (f-n), but let the hardware divide z by this
-   			// in the w component (so premultiply x and y)
-    		//float f_minus_n = NearFar.y - NearFar.x; 
-    		//gl_Position.xy = hemi_pt.xy * f_minus_n;
-    		// compute depth proj. independently, using OpenGL orthographic
-    		//gl_Position.z = (-2.0 * mpos.z - NearFar.y - NearFar.x);
-    		//gl_Position.w = f_minus_n;
-
 			gl_Position = perspectiveProjectionMatrix * viewMatrix * object2World * vPos;
+			pos = vPos;
 			normal = vNormal;
 		    tangent = vTangent;
 		    binormal = vBinormal;

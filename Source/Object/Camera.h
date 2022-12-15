@@ -18,6 +18,16 @@ namespace Core
 		Vector4 NearFar;	//	near,far,
 	};
 
+	struct HemicubeMatrices
+	{
+		Matrix4x4 ViewProjection_Positive_X;
+		Matrix4x4 ViewProjection_Negative_X;
+		Matrix4x4 ViewProjection_Positive_Y;
+		Matrix4x4 ViewProjection_Negative_Y;
+		Matrix4x4 ViewProjection_Positive_Z;
+		Matrix4x4 ViewProjection_Negative_Z;
+	};
+
 	struct ShooterInfo
 	{
 		Vector4 Position;
@@ -66,6 +76,8 @@ namespace Core
 		float m_yaw;
 		float m_pitch;
 
+		Vector3 GetWorldUp();
+
 	public:
 		float zNear;
 		float zFar;
@@ -74,7 +86,7 @@ namespace Core
 		OrthoProjectionParams OrthoParams;
 		
 		Vector3 position;
-		Vector3 lookAt;
+		Vector3 lookAtDir;
 		Vector3 eularAngle;
 
 		Camera();
@@ -84,7 +96,8 @@ namespace Core
 		void Tick(float deltaTime, const InputState & inputState);
 		void UpdataGLParam(OpenGLDevice * pDevice);
 		Matrix4x4 * GetViewMatrix();
-		Matrix4x4 * GetPerspectivePeojectionMatrix();
+		Matrix4x4 * GetPerspectiveProjectionMatrix();
+		Matrix4x4 * GetViewPerspcetiveProjectionMatrix();
 		Vector3 GetForward() const;
 		Vector3 GetUp() const;
 		Vector3 GetRight() const;

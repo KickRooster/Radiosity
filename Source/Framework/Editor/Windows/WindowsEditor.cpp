@@ -45,6 +45,14 @@ namespace Core
 		m_ComputeFormFactorMaterial->glFragmentShader.lock()->Attach(m_ComputeFormFactorMaterial.get());
 		
 		//////////////////////////////////////////////////////////////////////////
+		
+		m_ViewCubeMapMaterial = std::make_shared<Material>();
+		m_ViewCubeMapMaterial->glVertexShader = m_assetManager->glVertexShaderMap["viewCubeMap"];
+		m_ViewCubeMapMaterial->glVertexShader.lock()->Attach(m_ViewCubeMapMaterial.get());
+		m_ViewCubeMapMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["viewCubeMap"];
+		m_ViewCubeMapMaterial->glFragmentShader.lock()->Attach(m_ViewCubeMapMaterial.get());
+		
+		//////////////////////////////////////////////////////////////////////////
 
 		m_areaLightMesh = std::make_shared<StaticMesh>();
 
@@ -1141,7 +1149,8 @@ namespace Core
 		defaultObject->glRenderableUnit->material = material;
 		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
-
+		defaultObject->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
+		
 		defaultObject->Initialize(m_GLDevice.get(), False);
 
 		return defaultObject;
@@ -1166,6 +1175,7 @@ namespace Core
 		object->glRenderableUnit->material = material;
 		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
+		object->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
 
 		object->name = object->staticMeshName;
 
@@ -1196,22 +1206,22 @@ namespace Core
 		m_GLDevice(std::make_unique<OpenGLDevice>()),
 		m_guiWrapper(std::make_unique<GUIWrapper>()),
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
+		m_GLDebugViewFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_frameCount(0),
 		m_baking(False)
 	{
 		//	Visibility Pass
-		m_primitiveIDTexture = std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-		m_primitiveIDTexture->LoadImage(
+		m_primitiveIDCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+		m_primitiveIDCubeMap->LoadImage(
 		PrimitiveIDTextureWidth,
 		PrimitiveIDTextureHeight,
 		Null);
 
 		m_visibilityPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 		m_visibilityPassFrameBuffer->Resize(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
-		m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_primitiveIDTexture.get());
 		
-		m_pPrimitiveIDRawData = new float[PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4];
-		memset(m_pPrimitiveIDRawData, 0, PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4);
+		//m_pPrimitiveIDRawData = new float[PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4];
+		//memset(m_pPrimitiveIDRawData, 0, PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4);
 	}
 
 	void WindowsEditor::Initialize(int32 width, int32 height)
@@ -1303,7 +1313,7 @@ namespace Core
 				Null);
 
 			m_GLFrameBuffer->Resize(rasterizedViewWidth, rasterizedViewHeight);
-			m_GLFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLColorAttach.get());
+			m_GLFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLColorAttach->GetTarget(), m_GLColorAttach.get());
 
 			m_scene->GetCamera()->ascept = rasterizedRegion.x / rasterizedRegion.y;
 			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
@@ -1321,30 +1331,69 @@ namespace Core
 				rasterizedTopLeft,
 				rasterizedRegion,
 				m_scene->GetCamera()->GetViewMatrix(),
-				m_scene->GetCamera()->GetPerspectivePeojectionMatrix(),
+				m_scene->GetCamera()->GetPerspectiveProjectionMatrix(),
 				m_pSelectedObject);
 		}
 
 		ImGui::End();
 		
 		//////////////////////////////////////////////////////////////////////////
-		if (m_RadiorityTexture.get())
+		ImGui::SetNextWindowPos(ImVec2(600, 0));
+		ImGui::SetNextWindowSize(ImVec2(600, 600));
+
+		ImGui::Begin("CubeMap View");
+		ImVec2 DebugViewRegion = ImGui::GetContentRegionAvail();
+
+		int32 DebugViewWidth = static_cast<int32>(DebugViewRegion.x);
+		int32 DebugViewHeight = static_cast<int32>(DebugViewRegion.y);
+
+		if (DebugViewWidth != m_GLDebugViewFrameBuffer->GetWidth() ||
+			DebugViewHeight != m_GLDebugViewFrameBuffer->GetHeight())
 		{
-			ImGui::SetNextWindowPos(ImVec2(600, 0));
-			ImGui::SetNextWindowSize(ImVec2(600, 600));
+			if (DebugViewWidth <= 0)
+				DebugViewWidth = 128;
+
+			if (DebugViewHeight <= 0)
+				DebugViewHeight = 128;
+
+			m_GLDebugViewColorAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLDebugViewColorAttach->LoadImage(
+				DebugViewWidth,
+				DebugViewHeight,
+				Null);
+
+			m_GLDebugViewFrameBuffer->Resize(DebugViewWidth, DebugViewHeight);
+			m_GLDebugViewFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLDebugViewColorAttach->GetTarget(), m_GLDebugViewColorAttach.get());
+
+			//	XXX:	这里和GL光栅化的视口尺一致,现在没问题.
+			m_scene->GetCamera()->ascept = DebugViewRegion.x / DebugViewRegion.y;
+			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
+		}
 		
-			ImGui::Begin("Pfofile View");
-			ImVec2 rayTracedRegion = ImGui::GetContentRegionAvail();
+		ImGui::Image(
+			reinterpret_cast<void *>(m_GLDebugViewColorAttach->GetID64()),
+			DebugViewRegion,
+			ImVec2(0, 1.0f),
+			ImVec2(1.0f, 0));
+
+		ImGui::End();
+		//////////////////////////////////////////////////////////////////////////
+		if (m_ResidualTexture.get())
+		{
+			ImGui::SetNextWindowPos(ImVec2(1200, 0));
+			ImGui::SetNextWindowSize(ImVec2(600, 600));
+
+			ImGui::Begin("Profile View");
+			ImVec2 ProfileViewRegion = ImGui::GetContentRegionAvail();
 		
 			ImGui::Image(
-				reinterpret_cast<void *>(m_RadiorityTexture->GetID64()),
-				rayTracedRegion,
+				reinterpret_cast<void *>(m_ResidualTexture->GetID64()),
+				ProfileViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
 
 			ImGui::End();
 		}
-		
 		//////////////////////////////////////////////////////////////////////////
 		ImGui::SetNextWindowPos(ImVec2(0, 600));
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
@@ -1353,7 +1402,7 @@ namespace Core
 		ImVec2 colorAttach0Region = ImGui::GetContentRegionAvail();
 		
 		ImGui::Image(
-			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
+			reinterpret_cast<void *>(m_GLColorAttach->GetID64()),
 			colorAttach0Region,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -1367,7 +1416,7 @@ namespace Core
 		ImVec2 colorAttach1Region = ImGui::GetContentRegionAvail();
 		
 		ImGui::Image(
-			reinterpret_cast<void *>(m_primitiveIDTexture->GetID64()),
+			reinterpret_cast<void *>(m_GLColorAttach->GetID64()),
 			colorAttach1Region,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -1428,6 +1477,17 @@ namespace Core
 		m_guiWrapper->Render(width, height);
 	}
 
+	void WindowsEditor::ViewCubeMap()
+	{
+		m_GLDebugViewFrameBuffer->Activate();
+		m_GLDevice->BeginViewCubeMapPass(m_GLDebugViewFrameBuffer->GetWidth(), m_GLDebugViewFrameBuffer->GetHeight());
+		m_scene->GetCamera()->UpdataGLParam(m_GLDevice.get());
+		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
+		BeingBakingObject->glRenderableUnit->ViewCubeMapMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
+		BeingBakingObject->ViewCubeMap(m_GLDevice.get());
+		m_GLDebugViewFrameBuffer->Inactivate();
+	}
+	
 	void WindowsEditor::Bake()
 	{
 		if (!m_baking)
@@ -1441,9 +1501,8 @@ namespace Core
 		if (m_frameCount == 0)
 		{
 			BeingBakingObject->BeforeBaking();
-			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->albedoTexture =
-				BeingBakingObject->glRenderableUnit->material.lock()->albedoTexture;
-			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDTexture = m_primitiveIDTexture;
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->albedoTexture = BeingBakingObject->glRenderableUnit->material.lock()->albedoTexture;
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
 			
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
@@ -1462,8 +1521,8 @@ namespace Core
 			
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
-			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture.get());
-			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_ResidualTexture.get());
+			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture->GetTarget(), m_RadiorityTexture.get());
+			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_ResidualTexture->GetTarget(), m_ResidualTexture.get());
 
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
@@ -1483,47 +1542,97 @@ namespace Core
 			Primitive Primitive = RemainingPrimitives.front();
 			RemainingPrimitives.pop();
 			
-			static Camera Camera;
-			Camera.zNear = 1.0f;
-			Camera.zFar = 6000.0f;
-			Camera.ascept = 1.0f;
-			Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
-			Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
-			Camera.fovY = 120.0f * Deg2Rad;
-			Camera.position = Primitive.ShootPosition;
-			Camera.lookAt = Primitive.Normal;
-			Camera.UpdateViewMatrix();
-			float Left;
-			float Right;
-			float Bottom;
-			float Top;
-			float ZNear;
-			float ZFar;
-			BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
-				*BeingBakingObject->GetObject2WorldMatrix(),
-				*Camera.GetViewMatrix(),
-				Left,
-				Right,
-				Bottom,
-				Top,
-				ZNear,
-				ZFar);
-			Camera.OrthoParams.Left = Left;
-			Camera.OrthoParams.Right = Right;
-			Camera.OrthoParams.Bottom = Bottom;
-			Camera.OrthoParams.Top = Top;
-			Camera.OrthoParams.ZNear = 0;
-			Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
-			Camera.UpdateMatrix();
-			Camera.UpdataGLParam(m_GLDevice.get());
+			BeingBakingObject->glRenderableUnit->DrawIDMaterial.lock()->albedoTexture = m_assetManager->textureMap["Sponza_Bricks_a_Albedo"];
 			
 			//	Visibility Pass
-			m_visibilityPassFrameBuffer->Activate();
 			{
-				m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
-				BeingBakingObject->DrawID(m_GLDevice.get());
+				Camera Camera;
+				Camera.zNear = 1.0f;
+				Camera.zFar = 1000.0f;
+				Camera.ascept = 1.0f;
+				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
+				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
+				Camera.fovY = 90.0f * Deg2Rad;
+				Camera.position = Primitive.ShootPosition;
+
+				//	+X
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_X, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->Activate();
+				{
+					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+					Camera.lookAtDir = Right;
+					Camera.UpdateMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+					BeingBakingObject->DrawID(m_GLDevice.get());
+				}
+				m_visibilityPassFrameBuffer->Inactivate();
+				m_visibilityPassFrameBuffer->ClearAttaches();
+				
+				//	-X
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_X, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->Activate();
+				{
+					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+					Camera.lookAtDir = -Right;
+					Camera.UpdateMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+					BeingBakingObject->DrawID(m_GLDevice.get());
+					}
+				m_visibilityPassFrameBuffer->Inactivate();
+				m_visibilityPassFrameBuffer->ClearAttaches();
+				
+				//	+Y
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_Y, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->Activate();
+				{
+					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+					Camera.lookAtDir = Up;
+					Camera.UpdateMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+					BeingBakingObject->DrawID(m_GLDevice.get());
+				}
+				m_visibilityPassFrameBuffer->Inactivate();
+				m_visibilityPassFrameBuffer->ClearAttaches();
+				
+				//	-Y
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_Y, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->Activate();
+				{
+					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+					Camera.lookAtDir = -Up;
+					Camera.UpdateMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+					BeingBakingObject->DrawID(m_GLDevice.get());
+				}
+				m_visibilityPassFrameBuffer->Inactivate();
+				m_visibilityPassFrameBuffer->ClearAttaches();
+				
+				//	+Z
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_Z, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->Activate();
+				{
+					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+					Camera.lookAtDir = Forward;
+					Camera.UpdateMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+					BeingBakingObject->DrawID(m_GLDevice.get());
+				}
+				m_visibilityPassFrameBuffer->Inactivate();
+				m_visibilityPassFrameBuffer->ClearAttaches();
+				
+				//	-Z
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_Z, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->Activate();
+				{
+					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
+					Camera.lookAtDir = -Forward;
+					Camera.UpdateMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+					BeingBakingObject->DrawID(m_GLDevice.get());
+				}
+				m_visibilityPassFrameBuffer->Inactivate();
+				m_visibilityPassFrameBuffer->ClearAttaches();
 			}
-			m_visibilityPassFrameBuffer->Inactivate();
 
 			//	Reconstruction Pass
 			m_reconstructionPassFrameBuffer->Activate();
@@ -1531,6 +1640,35 @@ namespace Core
 				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 				int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
+				
+				Camera Camera;
+				Camera.position= Vector3(Primitive.ShootPosition.x, Primitive.ShootPosition.y, Primitive.ShootPosition.z);
+				Camera.lookAtDir = Primitive.Normal;
+				Camera.UpdateViewMatrix();
+				float Left;
+				float Right;
+				float Bottom;
+				float Top;
+				float ZNear;
+				float ZFar;
+				BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
+					*BeingBakingObject->GetObject2WorldMatrix(),
+					*Camera.GetViewMatrix(),
+					Left,
+					Right,
+					Bottom,
+					Top,
+					ZNear,
+					ZFar);
+				Camera.OrthoParams.Left = Left;
+				Camera.OrthoParams.Right = Right;
+				Camera.OrthoParams.Bottom = Bottom;
+				Camera.OrthoParams.Top = Top;
+				Camera.OrthoParams.ZNear = 0;
+				Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
+				Camera.UpdateMatrix();
+				Camera.UpdataGLParam(m_GLDevice.get());
+				
 				ShooterInfo ShooterInfo;
 				ShooterInfo.Position = Primitive.ShootPosition;
 				ShooterInfo.Normal = Vector4(Primitive.Normal.x, Primitive.Normal.y, Primitive.Normal.z, 0);
@@ -1586,6 +1724,6 @@ namespace Core
 
 	WindowsEditor::~WindowsEditor()
 	{
-		delete[] m_pPrimitiveIDRawData;
+		//delete[] m_pPrimitiveIDRawData;
 	}
 }

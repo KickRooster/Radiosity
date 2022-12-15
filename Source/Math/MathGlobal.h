@@ -24,13 +24,15 @@ namespace Core
 
 	Matrix4x4 Rotate(const Matrix4x4 & m, float angle, const Vector3 & v);
 
-	Matrix4x4 LookAt(const Vector3 & position, const Vector3 & lookDir, const Vector3 & up);
+	Matrix4x4 LookAt(const Vector3 & position, const Vector3 & center, const Vector3 & up);
 
 	Matrix4x4 Scale(const Matrix4x4 & m, const Vector3 & v);
 
 	Matrix4x4 Inverse(const Matrix4x4 & m);
 
 	Matrix4x4 Transpose(const Matrix4x4 & m);
+
+	Vector3 RotateAround(const Vector3& Vector, float angle, const Vector3& Axis);
 
 	Vector3 Normalize(const Vector3 & v);
 

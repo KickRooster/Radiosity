@@ -141,18 +141,32 @@ namespace Core
 			Null);
 		glRenderableUnit->InactiveComputingFormFactor();
 	}
+
+	void Object::ViewCubeMap(OpenGLDevice* pDevice)
+	{
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
+
+		glRenderableUnit->ActiveViewCubeMap();
+		pDevice->DrawElements(
+			GLTopology_Triangles,
+			glRenderableUnit->staticMesh.lock()->indexCount,
+			GLDataType_UnsignedInt,
+			Null);
+		glRenderableUnit->InactiveCubeMap();
+	}
 	
 	Matrix4x4 * Object::GetObject2WorldMatrix()
 	{
 		return &m_object2WorldMatrix;
 	}
 
-	Core::Vector3 Object::GetZDirection()
+	Vector3 Object::GetZDirection()
 	{
 		return GetZAxis(m_object2WorldMatrix);
 	}
 
-	Core::Vector3 Object::GetYDirection()
+	Vector3 Object::GetYDirection()
 	{
 		return GetYAxis(m_object2WorldMatrix);
 	}
