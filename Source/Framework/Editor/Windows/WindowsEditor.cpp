@@ -1670,6 +1670,15 @@ namespace Core
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
 				
 				Camera Camera;
+				////	Used for constructing perspective projection matrix for doing depth test to cubemap,
+				////	same parameters with building cube map camera.
+				Camera.zNear = 1.0f;
+				Camera.zFar = 1000.0f;
+				Camera.ascept = 1.0f;
+				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
+				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
+				Camera.fovY = 90.0f * Deg2Rad;
+				////
 				Camera.position= Vector3(Primitive.ShootPosition.x, Primitive.ShootPosition.y, Primitive.ShootPosition.z);
 				Camera.lookAtDir = Primitive.Normal;
 				Camera.UpdateViewMatrixRH();
@@ -1694,7 +1703,11 @@ namespace Core
 				Camera.OrthoParams.Top = Top;
 				Camera.OrthoParams.ZNear = 0;
 				Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
-
+				////	Used for constructing perspective projection matrix for doing depth test to cubemap.
+				////	same parameters with building cube map camera.
+				Camera.UpdatePerspectiveProjectionMatrix();
+				Camera.UpdateViewProjectionMatrix();
+				////
 				Camera.UpdateOrthoProjctionMatrix();
 				Camera.UpdataGLParam(m_GLDevice.get());
 				

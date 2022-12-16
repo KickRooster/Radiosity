@@ -1,5 +1,6 @@
 		#version 450 core
 		
+		in vec4 pos;
 		in vec3 normal;
 		in vec3 tangent;
 		in vec3 binormal;
@@ -52,7 +53,11 @@
 
 		void main()
 		{
-			attch0.xyz = vec3(customData.x, customData.x, customData.x);
+			vec4 ProjectedPos = perspectiveProjectionMatrix * viewMatrix * object2World * pos;
+			ProjectedPos.xyz /= ProjectedPos.w;
+			ProjectedPos.z *= 0.5;
+			ProjectedPos.z += 0.5;
+			attch0.xyz = vec3(customData.x, ProjectedPos.z, customData.x);
 			attch0.w = 1.0;
 
 			vec3 albedo = texture(albedoSampler, uv0).xyz;

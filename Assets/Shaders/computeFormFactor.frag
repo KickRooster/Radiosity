@@ -144,7 +144,20 @@
 			}
 			else
 			{
-				Visable = 0;
+				vec4 PerspectiveProjectedPos = perspectiveProjectionMatrix * viewMatrix * RecvPos;
+				PerspectiveProjectedPos.xyz /= PerspectiveProjectedPos.w;
+				PerspectiveProjectedPos.z *= 0.5;
+				PerspectiveProjectedPos.z += 0.5;
+
+				//	XXX:	manually biased.
+				if (PerspectiveProjectedPos.z < CubeMap.y + 0.00001)
+				{
+					Visable = 1.0f;
+				}
+				else
+				{
+					Visable = 0;
+				}
 			}
 
 			Fij *= Visable;
