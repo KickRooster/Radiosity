@@ -22,13 +22,14 @@
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform HemicubeMatrices
+		layout (std140, binding = 1) uniform CubeMatrices
 		{
-			mat4 ViewProjection_N_Z;
-			mat4 ViewProjection_N_X;
-			mat4 ViewProjection_P_X;
-			mat4 ViewProjection_N_Y;
-			mat4 ViewProjection_P_Y;
+			mat4 ViewProjection_Positive_X;
+			mat4 ViewProjection_Negative_X;
+			mat4 ViewProjection_Positive_Y;
+			mat4 ViewProjection_Negative_Y;
+			mat4 ViewProjection_Positive_Z;
+			mat4 ViewProjection_Negative_Z;
 		};
 		layout (std140, binding = 2) uniform ShooterInfo
 		{
@@ -46,12 +47,15 @@
 			mat4 object2WorldIT;
 		};
 
-		out vec4 out_Color;
+		layout(location = 0) out vec4 attch0;
+		layout(location = 1) out vec4 attch1;
 
 		void main()
 		{
-			out_Color.xyz = vec3(customData.x, customData.x, customData.x);
-			//vec3 albedo = texture(albedoSampler, uv0).xyz;
-			//out_Color.xyz = albedo;
-			out_Color.w = 1.0;
+			attch0.xyz = vec3(customData.x, customData.x, customData.x);
+			attch0.w = 1.0;
+
+			vec3 albedo = texture(albedoSampler, uv0).xyz;
+			attch1.xyz = albedo;
+			attch1.w = 1.0;
 		};

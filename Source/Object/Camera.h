@@ -18,7 +18,7 @@ namespace Core
 		Vector4 NearFar;	//	near,far,
 	};
 
-	struct HemicubeMatrices
+	struct CubeMatrices
 	{
 		Matrix4x4 ViewProjection_Positive_X;
 		Matrix4x4 ViewProjection_Negative_X;

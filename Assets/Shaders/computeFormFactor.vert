@@ -21,13 +21,14 @@
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform HemicubeMatrices
+		layout (std140, binding = 1) uniform CubeMatrices
 		{
-			mat4 ViewProjection_N_Z;
-			mat4 ViewProjection_N_X;
-			mat4 ViewProjection_P_X;
-			mat4 ViewProjection_N_Y;
-			mat4 ViewProjection_P_Y;
+			mat4 ViewProjection_Positive_X;
+			mat4 ViewProjection_Negative_X;
+			mat4 ViewProjection_Positive_Y;
+			mat4 ViewProjection_Negative_Y;
+			mat4 ViewProjection_Positive_Z;
+			mat4 ViewProjection_Negative_Z;
 		};
 		layout (std140, binding = 2) uniform ShooterInfo
 		{
@@ -59,6 +60,7 @@
 		out vec2 uv5;
 		out vec2 uv6;
 		out vec2 uv7;
+		
 		void main()
 		{
 			gl_Position = orthoProjectionMatrix * viewMatrix * object2World * vPos;

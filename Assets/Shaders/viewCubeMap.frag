@@ -23,13 +23,14 @@
 			vec4 position;
 			vec4 NearFar;
 		};
-		layout (std140, binding = 1) uniform HemicubeMatrices
+		layout (std140, binding = 1) uniform CubeMatrices
 		{
-			mat4 ViewProjection_N_Z;
-			mat4 ViewProjection_N_X;
-			mat4 ViewProjection_P_X;
-			mat4 ViewProjection_N_Y;
-			mat4 ViewProjection_P_Y;
+			mat4 ViewProjection_Positive_X;
+			mat4 ViewProjection_Negative_X;
+			mat4 ViewProjection_Positive_Y;
+			mat4 ViewProjection_Negative_Y;
+			mat4 ViewProjection_Positive_Z;
+			mat4 ViewProjection_Negative_Z;
 		};
 		layout (std140, binding = 2) uniform ShooterInfo
 		{
@@ -52,8 +53,80 @@
 		void main()
 		{
 			vec4 WorldPos = object2World * pos;
-			vec3 SampleDir = WorldPos.xyz - position.xyz;
-			vec3 CubeMap = texture(IDCubeMapSampler, normalize(SampleDir)).xyz;
+			vec3 SampleDir = normalize(WorldPos.xyz - position.xyz);
+
+			//	Reconstruct sampling vector from 6 perspective matrices
+			/*
+			float DotPositiveX = dot(SampleDir, vec3(1.0, 0, 0));
+			float DotNegativeX = dot(SampleDir, vec3(-1.0, 0, 0));
+			float DotPositiveY = dot(SampleDir, vec3(0, 1.0, 0));
+			float DotNegativeY = dot(SampleDir, vec3(0, -1.0, 0));
+			float DotPositiveZ = dot(SampleDir, vec3(0, 0, 1.0));
+			float DotNegativeZ = dot(SampleDir, vec3(0, 0, -1.0));
+
+			float MaxDot = max(DotPositiveX, DotNegativeX);
+			MaxDot = max(MaxDot, DotPositiveY);
+			MaxDot = max(MaxDot, DotNegativeY);
+			MaxDot = max(MaxDot, DotPositiveZ);
+			MaxDot = max(MaxDot, DotNegativeZ);
+
+			if (MaxDot == DotPositiveX)
+			{
+				vec4 ProjectedPos = ViewProjection_Positive_X * WorldPos;
+				ProjectedPos.xyz /= ProjectedPos.w;
+
+				SampleDir.x = 1.0;
+				SampleDir.y = -ProjectedPos.y;
+				SampleDir.z = -ProjectedPos.x;
+			}
+			else if (MaxDot == DotNegativeX)
+			{
+				vec4 ProjectedPos = ViewProjection_Negative_X * WorldPos;
+				ProjectedPos.xyz /= ProjectedPos.w;
+
+				SampleDir.x = -1.0;
+				SampleDir.y = -ProjectedPos.y;
+				SampleDir.z = ProjectedPos.x;
+			}
+			else if (MaxDot == DotPositiveY)
+			{
+				vec4 ProjectedPos = ViewProjection_Positive_Y * WorldPos;
+				ProjectedPos.xyz /= ProjectedPos.w;
+				
+				SampleDir.x = ProjectedPos.x;
+				SampleDir.y = 1.0;
+				SampleDir.z = ProjectedPos.y;
+			}
+			else if (MaxDot == DotNegativeY)
+			{
+				vec4 ProjectedPos = ViewProjection_Negative_Y * WorldPos;
+				ProjectedPos.xyz /= ProjectedPos.w;
+
+				SampleDir.x = ProjectedPos.x;
+				SampleDir.y = -1.0;
+				SampleDir.z = -ProjectedPos.y;
+			}
+			else if (MaxDot == DotPositiveZ)
+			{
+				vec4 ProjectedPos = ViewProjection_Positive_Z * WorldPos;
+				ProjectedPos.xyz /= ProjectedPos.w;
+
+				SampleDir.x = ProjectedPos.x;
+				SampleDir.y = -ProjectedPos.y;
+				SampleDir.z = 1.0;
+			}
+			else
+			{
+				vec4 ProjectedPos = ViewProjection_Negative_Z * WorldPos;
+				ProjectedPos.xyz /= ProjectedPos.w;
+
+				SampleDir.x = -ProjectedPos.x;
+				SampleDir.y = -ProjectedPos.y;
+				SampleDir.z = -1.0;
+			}
+			*/
+
+			vec3 CubeMap = texture(IDCubeMapSampler, SampleDir).xyz;
 			out_Color.xyz = CubeMap;
 			out_Color.w = 1.0;
 		};

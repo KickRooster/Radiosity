@@ -1217,6 +1217,12 @@ namespace Core
 		PrimitiveIDTextureHeight,
 		Null);
 
+		m_primitiveAlbedoCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+		m_primitiveAlbedoCubeMap->LoadImage(
+		PrimitiveIDTextureWidth,
+		PrimitiveIDTextureHeight,
+		Null);
+
 		m_visibilityPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 		m_visibilityPassFrameBuffer->Resize(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 		
@@ -1483,7 +1489,8 @@ namespace Core
 		m_GLDevice->BeginViewCubeMapPass(m_GLDebugViewFrameBuffer->GetWidth(), m_GLDebugViewFrameBuffer->GetHeight());
 		m_scene->GetCamera()->UpdataGLParam(m_GLDevice.get());
 		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
-		BeingBakingObject->glRenderableUnit->ViewCubeMapMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
+		BeingBakingObject->glRenderableUnit->ViewCubeMapMaterial.lock()->IDCumeMap = m_primitiveAlbedoCubeMap;
+		m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_CubeMatrices, sizeof(CubeMatrices), &CubeMatrices);
 		BeingBakingObject->ViewCubeMap(m_GLDevice.get());
 		m_GLDebugViewFrameBuffer->Inactivate();
 	}
@@ -1555,17 +1562,19 @@ namespace Core
 				Camera.fovY = 90.0f * Deg2Rad;
 				Camera.position = Primitive.ShootPosition;
 				Camera.UpdatePerspectiveProjectionMatrix();
-
+				
 				//	FIXME:	这里需要定义渲染器里世界坐标系.
 				
 				//	+X
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_X, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_X, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Right;
 					Camera.UpdateViewMatrixRHUp(-Up);
 					Camera.UpdateViewProjectionMatrix();
+					CubeMatrices.ViewProjection_Positive_X = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1574,12 +1583,14 @@ namespace Core
 				
 				//	-X
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_X, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Negative_X, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Right;
 					Camera.UpdateViewMatrixRHUp(-Up);
 					Camera.UpdateViewProjectionMatrix();
+					CubeMatrices.ViewProjection_Negative_X = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 					}
@@ -1588,12 +1599,14 @@ namespace Core
 				
 				//	+Y
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_Y, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_Y, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Up;
 					Camera.UpdateViewMatrixRHUp(Forward);
 					Camera.UpdateViewProjectionMatrix();
+					CubeMatrices.ViewProjection_Positive_Y = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1602,12 +1615,14 @@ namespace Core
 				
 				//	-Y
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_Y, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Negative_Y, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Up;
 					Camera.UpdateViewMatrixRHUp(-Forward);
 					Camera.UpdateViewProjectionMatrix();
+					CubeMatrices.ViewProjection_Negative_Y = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1616,12 +1631,14 @@ namespace Core
 				
 				//	+Z
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_Z, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_Z, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Forward;
 					Camera.UpdateViewMatrixRHUp(-Up);
 					Camera.UpdateViewProjectionMatrix();
+					CubeMatrices.ViewProjection_Positive_Z = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1630,12 +1647,14 @@ namespace Core
 				
 				//	-Z
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_Z, m_primitiveIDCubeMap.get());
+				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Negative_Z, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Forward;
 					Camera.UpdateViewMatrixRHUp(-Up);
 					Camera.UpdateViewProjectionMatrix();
+					CubeMatrices.ViewProjection_Negative_Z = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1675,6 +1694,7 @@ namespace Core
 				Camera.OrthoParams.Top = Top;
 				Camera.OrthoParams.ZNear = 0;
 				Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
+
 				Camera.UpdateOrthoProjctionMatrix();
 				Camera.UpdataGLParam(m_GLDevice.get());
 				
@@ -1684,6 +1704,7 @@ namespace Core
 				ShooterInfo.Energy = Primitive.Energy;
 				ShooterInfo.SurfaceArea = Vector4(Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea);
 				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_ShooterInfo, sizeof(ShooterInfo), &ShooterInfo);
+				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_CubeMatrices, sizeof(CubeMatrices), &CubeMatrices);
 				BeingBakingObject->ComputeFormFactor(m_GLDevice.get());
 			}
 			m_reconstructionPassFrameBuffer->Inactivate();

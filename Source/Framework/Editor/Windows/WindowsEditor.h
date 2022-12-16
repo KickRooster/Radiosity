@@ -41,6 +41,7 @@ namespace Core
 		const int32 PrimitiveIDTextureHeight = 1024;
 		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
 		std::shared_ptr<GLTexture> m_primitiveIDCubeMap;
+		std::shared_ptr<GLTexture> m_primitiveAlbedoCubeMap;
 		
 		//float * m_pPrimitiveIDRawData;
 
@@ -77,6 +78,8 @@ namespace Core
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createAreaLight();
 
+		CubeMatrices CubeMatrices;
+		
 	public:
 		WindowsEditor();
 		virtual void Initialize(int32 width, int32 height) override;
