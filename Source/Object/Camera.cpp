@@ -42,26 +42,37 @@ namespace Core
 		}
 	}
 	
-	void Camera::UpdateViewMatrix()
+	void Camera::UpdateViewMatrixLH()
 	{
-		m_viewMatrix = LookAt(position, position + lookAtDir, Up);
+		m_viewMatrix = LookAtRH(position, position + lookAtDir, GetWorldUp());
 		m_viewMatrixInv = Inverse(m_viewMatrix);
 	}
 
-	void Camera::UpdateMatrix()
+	void Camera::UpdateViewMatrixRH()
 	{
-		m_viewMatrix = LookAt(position, position + lookAtDir, Up);
+		m_viewMatrix = LookAtRH(position, position + lookAtDir, GetWorldUp());
 		m_viewMatrixInv = Inverse(m_viewMatrix);
-		
-		m_perspectiveProjectioneMatrix = Perspective(fovY, ascept, zNear, zFar);
-		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
+	}
 
-		m_orthoProjectionMatrix = Ortho(OrthoParams.Left, OrthoParams.Right, OrthoParams.Bottom, OrthoParams.Top, OrthoParams.ZNear, OrthoParams.ZFar);
+	void Camera::UpdateViewMatrixRHUp(Vector3 Up)
+	{
+		m_viewMatrix = LookAtRH(position, position + lookAtDir, Up);
+		m_viewMatrixInv = Inverse(m_viewMatrix);
 	}
 	
 	void Camera::UpdatePerspectiveProjectionMatrix()
 	{
 		m_perspectiveProjectioneMatrix = Perspective(fovY, ascept, zNear, zFar);
+	}
+
+	void Camera::UpdateOrthoProjctionMatrix()
+	{
+		m_orthoProjectionMatrix = Ortho(OrthoParams.Left, OrthoParams.Right, OrthoParams.Bottom, OrthoParams.Top, OrthoParams.ZNear, OrthoParams.ZFar);
+	}
+	
+	void Camera::UpdateViewProjectionMatrix()
+	{
+		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
 	}
 
 	void Camera::Tick(float deltaTime, const InputState & inputState)

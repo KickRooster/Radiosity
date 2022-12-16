@@ -1554,14 +1554,18 @@ namespace Core
 				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 				Camera.fovY = 90.0f * Deg2Rad;
 				Camera.position = Primitive.ShootPosition;
+				Camera.UpdatePerspectiveProjectionMatrix();
 
+				//	FIXME:	这里需要定义渲染器里世界坐标系.
+				
 				//	+X
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_X, m_primitiveIDCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Right;
-					Camera.UpdateMatrix();
+					Camera.UpdateViewMatrixRHUp(-Up);
+					Camera.UpdateViewProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1574,7 +1578,8 @@ namespace Core
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Right;
-					Camera.UpdateMatrix();
+					Camera.UpdateViewMatrixRHUp(-Up);
+					Camera.UpdateViewProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 					}
@@ -1587,7 +1592,8 @@ namespace Core
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Up;
-					Camera.UpdateMatrix();
+					Camera.UpdateViewMatrixRHUp(Forward);
+					Camera.UpdateViewProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1600,7 +1606,8 @@ namespace Core
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Up;
-					Camera.UpdateMatrix();
+					Camera.UpdateViewMatrixRHUp(-Forward);
+					Camera.UpdateViewProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1613,7 +1620,8 @@ namespace Core
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Forward;
-					Camera.UpdateMatrix();
+					Camera.UpdateViewMatrixRHUp(-Up);
+					Camera.UpdateViewProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1626,7 +1634,8 @@ namespace Core
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Forward;
-					Camera.UpdateMatrix();
+					Camera.UpdateViewMatrixRHUp(-Up);
+					Camera.UpdateViewProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
 				}
@@ -1644,7 +1653,7 @@ namespace Core
 				Camera Camera;
 				Camera.position= Vector3(Primitive.ShootPosition.x, Primitive.ShootPosition.y, Primitive.ShootPosition.z);
 				Camera.lookAtDir = Primitive.Normal;
-				Camera.UpdateViewMatrix();
+				Camera.UpdateViewMatrixRH();
 				float Left;
 				float Right;
 				float Bottom;
@@ -1666,7 +1675,7 @@ namespace Core
 				Camera.OrthoParams.Top = Top;
 				Camera.OrthoParams.ZNear = 0;
 				Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
-				Camera.UpdateMatrix();
+				Camera.UpdateOrthoProjctionMatrix();
 				Camera.UpdataGLParam(m_GLDevice.get());
 				
 				ShooterInfo ShooterInfo;

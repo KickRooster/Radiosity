@@ -79,7 +79,7 @@
 			}
 
 			Fij *= Visable;
-			Fij *= 10;
+			Fij *= 50;
 
 			vec3 albedo = texture(albedoSampler, uv0).xyz;
 
@@ -88,7 +88,7 @@
 			attch0.xyz = Delta;
 			attch0.w = 1.0;
 
-			attch1.xyz = vec3(CubeMap.x, CubeMap.y, CubeMap.z);
+			attch1.xyz = Delta;
 			
 			attch1.w = 1.0;
 		};

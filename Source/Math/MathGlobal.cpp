@@ -43,6 +43,16 @@ namespace Core
 		return glm::lookAt(position, center, up);
 	}
 
+	Matrix4x4 LookAtLH(const Vector3 & position, const Vector3 & center, const Vector3 & up)
+	{
+		return glm::lookAtLH(position, center, up);
+	}
+
+	Matrix4x4 LookAtRH(const Vector3 & position, const Vector3 & center, const Vector3 & up)
+	{
+		return glm::lookAtRH(position, center, up);
+	}
+
 	Matrix4x4 Scale(const Matrix4x4 & m, const Vector3 & v)
 	{
 		return glm::scale(m, v);

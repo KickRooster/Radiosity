@@ -51,7 +51,9 @@ namespace Core
 		m_camera->lookAtDir = Vector3(0, 0, 1.0f);
 		m_camera->eularAngle = Vector3(0, 0, 0);
 		
-		m_camera->UpdateMatrix();
+		m_camera->UpdateViewMatrixRH();
+		m_camera->UpdatePerspectiveProjectionMatrix();
+		m_camera->UpdateViewProjectionMatrix();
 	}
 
 	void Scene::Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState)

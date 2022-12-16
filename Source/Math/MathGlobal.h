@@ -26,6 +26,10 @@ namespace Core
 
 	Matrix4x4 LookAt(const Vector3 & position, const Vector3 & center, const Vector3 & up);
 
+	Matrix4x4 LookAtLH(const Vector3 & position, const Vector3 & center, const Vector3 & up);
+
+	Matrix4x4 LookAtRH(const Vector3 & position, const Vector3 & center, const Vector3 & up);
+	
 	Matrix4x4 Scale(const Matrix4x4 & m, const Vector3 & v);
 
 	Matrix4x4 Inverse(const Matrix4x4 & m);

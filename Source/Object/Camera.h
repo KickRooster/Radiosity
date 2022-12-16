@@ -90,9 +90,12 @@ namespace Core
 		Vector3 eularAngle;
 
 		Camera();
-		void UpdateViewMatrix();
-		void UpdateMatrix();
+		void UpdateViewMatrixLH();
+		void UpdateViewMatrixRH();
+		void UpdateViewMatrixRHUp(Vector3 Up);
 		void UpdatePerspectiveProjectionMatrix();
+		void UpdateOrthoProjctionMatrix();
+		void UpdateViewProjectionMatrix();
 		void Tick(float deltaTime, const InputState & inputState);
 		void UpdataGLParam(OpenGLDevice * pDevice);
 		Matrix4x4 * GetViewMatrix();

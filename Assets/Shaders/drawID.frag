@@ -50,8 +50,8 @@
 
 		void main()
 		{
-			 out_Color.xyz = vec3(customData.x + 20, customData.x + 20, customData.x + 20);
-			 vec3 albedo = texture(albedoSampler, uv0).xyz;
-			 out_Color.xyz = albedo;
-			 out_Color.w = 1.0;
+			out_Color.xyz = vec3(customData.x, customData.x, customData.x);
+			//vec3 albedo = texture(albedoSampler, uv0).xyz;
+			//out_Color.xyz = albedo;
+			out_Color.w = 1.0;
 		};
