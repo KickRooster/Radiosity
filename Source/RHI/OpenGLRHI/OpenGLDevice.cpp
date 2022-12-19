@@ -146,21 +146,6 @@ namespace Core
 		
 		glViewport(0, 0, width, height);
 		glCheckError();
-
-		glFrontFace(GL_CCW);
-		glCheckError();
-
-		glEnable(GL_CULL_FACE);
-		glCheckError();
-
-		glCullFace(GL_BACK);
-		glCheckError();
-		
-		glEnable(GL_DEPTH_TEST);
-		glCheckError();
-
-		glDepthFunc(GL_LESS);
-		glCheckError();
 	}
 
 	void OpenGLDevice::BeginViewCubeMapPass(int32 width, int32 height)

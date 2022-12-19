@@ -1,10 +1,10 @@
-#include "GLTexture.h"
+﻿#include "ImageTexture.h"
 
 namespace Core
 {
-	void GLTexture::setWrapMode(GLTextureWrapMode wrapMode)
+	void GLImageTexture::setWrapMode(GLTextureWrapMode wrapMode)
 	{
-		switch (m_wrapMode)
+		switch (wrapMode)
 		{
 		case GLTextureWrapMode_Repeat:
 			glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -33,9 +33,9 @@ namespace Core
 		}
 	}
 
-	void GLTexture::setFilterMode(GLTextureFilterMode filterMode)
+	void GLImageTexture::setFilterMode(GLTextureFilterMode filterMode)
 	{
-		switch (m_filterMode)
+		switch (filterMode)
 		{
 		case GLTextureFilterMode_Point:
 			glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -53,15 +53,14 @@ namespace Core
 			break;
 		}
 	}
-
-	GLTexture::GLTexture(GLTextureTarget target, GLInternalFormat internalFormat, GLPixelFormat pixelFormat, GLDataType dataType, GLTextureWrapMode wrapMode, GLTextureFilterMode filterMode)
+	
+	GLImageTexture::GLImageTexture(GLTextureTarget target, GLInternalFormat internalFormat, GLPixelFormat pixelFormat, GLDataType dataType, GLTextureWrapMode wrapMode, GLTextureFilterMode filterMode,  GLImageUnit Unit, int32 BoundLevel, GLImageAccess Access)
 		:
 		m_target(target),
 		m_internalFormat(internalFormat),
 		m_pixelFormat(pixelFormat),
 		m_dataType(dataType),
-		m_wrapMode(wrapMode),
-		m_filterMode(filterMode)
+		m_unit(Unit)
 	{
 		glGenTextures(1, &m_id);
 		glCheckError();
@@ -69,35 +68,37 @@ namespace Core
 		glBindTexture(target, m_id);
 		glCheckError();
 
-		setWrapMode(m_wrapMode);
-		setFilterMode(m_filterMode);
-
+		setWrapMode(wrapMode);
+		setFilterMode(filterMode);
+		
 		glBindTexture(target, 0);
+		glCheckError();
+		
+		glBindImageTexture(Unit, m_id, BoundLevel, False, 0, Access, m_internalFormat);
 		glCheckError();
 	}
 	
-	uint32 GLTexture::GetID() const
+	uint32 GLImageTexture::GetID() const
 	{
 		return m_id;
 	}
 
-	uint64 GLTexture::GetID64() const
+	uint64 GLImageTexture::GetID64() const
 	{
 		return m_id;
 	}
 
-	GLTextureTarget GLTexture::GetTarget() const
+	GLTextureTarget GLImageTexture::GetTarget() const
 	{
 		return m_target;
 	}
 
-	void GLTexture::Activate() const
+	GLImageUnit GLImageTexture::GetUnit() const
 	{
-		glBindTexture(m_target, m_id);
-		glCheckError();
+		return m_unit;
 	}
-
-	void GLTexture::LoadImage(int32 width, int32 height, const void * pData)
+	
+	void GLImageTexture::LoadImage(int32 width, int32 height, const void * pData)
 	{
 		glBindTexture(m_target, m_id);
 		glCheckError();
@@ -127,7 +128,7 @@ namespace Core
 		glCheckError();
 	}
 
-	void GLTexture::Fetch(void * pData)
+	void GLImageTexture::Fetch(void * pData)
 	{
 		glBindTexture(m_target, m_id);
 		glCheckError();
@@ -138,50 +139,8 @@ namespace Core
 		glBindTexture(m_target, 0);
 		glCheckError();
 	}
-
-	void GLTexture::Inactivate() const
-	{
-		glBindTexture(m_target, 0);
-		glCheckError();
-	}
-
-	void GLTexture::SetWrapMode(GLTextureWrapMode wrapMode)
-	{
-		m_wrapMode = wrapMode;
-
-		glBindTexture(m_target, m_id);
-		glCheckError();
-
-		setWrapMode(wrapMode);
-
-		glBindTexture(m_target, 0);
-		glCheckError();
-	}
-
-	GLTextureWrapMode GLTexture::GetWrapMode() const
-	{
-		return m_wrapMode;
-	}
-
-	void GLTexture::SetFilterMode(GLTextureFilterMode filterMode)
-	{
-		m_filterMode = filterMode;
-
-		glBindTexture(m_target, m_id);
-		glCheckError();
-
-		setFilterMode(filterMode);
-
-		glBindTexture(m_target, 0);
-		glCheckError();
-	}
-
-	GLTextureFilterMode GLTexture::GetFilterMode() const
-	{
-		return m_filterMode;
-	}
-
-	int32 GLTexture::GetDataSizePerPixel() const
+	
+	int32 GLImageTexture::GetDataSizePerPixel() const
 	{
 		int32 multiplier = 1;
 
@@ -214,7 +173,7 @@ namespace Core
 		return dataSizePerPixel;
 	}
 
-	GLTexture::~GLTexture()
+	GLImageTexture::~GLImageTexture()
 	{
 		glDeleteTextures(1, &m_id);
 		glCheckError();

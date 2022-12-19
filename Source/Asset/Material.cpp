@@ -71,47 +71,67 @@ namespace Core
 	{
 		m_glProgram->Activate();
 
-		int32 slotIndex = 0;
+		int32 SamplerSlotIndex = 0;
 
 		if (!albedoTexture.expired())
 		{
-			m_glProgram->ActivateTextureSlot(slotIndex, albedoSamplerName.c_str());
-			++slotIndex;
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, albedoSamplerName.c_str());
+			++SamplerSlotIndex;
 			albedoTexture.lock()->Activate();
 		}
 
 		if (!IDCumeMap.expired())
 		{
-			m_glProgram->ActivateTextureSlot(slotIndex, IDCubeMapSamplerName.c_str());
-			++slotIndex;
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, IDCubeMapSamplerName.c_str());
+			++SamplerSlotIndex;
 			IDCumeMap.lock()->Activate();
 		}
 
+		if (!AccumulatedImage0.expired())
+		{
+			m_glProgram->ActivateImageSlot(AccumulatedImage0.lock()->GetUnit(), AccumulatedImage0Name.c_str());
+		}
+
+		if (!AccumulatedImage1.expired())
+		{
+			m_glProgram->ActivateImageSlot(AccumulatedImage1.lock()->GetUnit(), AccumulatedImage1Name.c_str());
+		}
+
+		if (!ResidualImage0.expired())
+		{
+			m_glProgram->ActivateImageSlot(ResidualImage0.lock()->GetUnit(), ResidualImage0Name.c_str());
+		}
+
+		if (!ResidualImage1.expired())
+		{
+			m_glProgram->ActivateImageSlot(ResidualImage1.lock()->GetUnit(), ResidualImage1Name.c_str());
+		}
+		
 		if (!normalMap.expired())
 		{
-			m_glProgram->ActivateTextureSlot(slotIndex, normalSamplerName.c_str());
-			++slotIndex;
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, normalSamplerName.c_str());
+			++SamplerSlotIndex;
 			normalMap.lock()->Activate();
 		}
 
 		if (!metallicTexture.expired())
 		{
-			m_glProgram->ActivateTextureSlot(slotIndex, metallicSamplerName.c_str());
-			++slotIndex;
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, metallicSamplerName.c_str());
+			++SamplerSlotIndex;
 			metallicTexture.lock()->Activate();
 		}
 
 		if (!roughnessTexture.expired())
 		{
-			m_glProgram->ActivateTextureSlot(slotIndex, roughnessSamplerName.c_str());
-			++slotIndex;
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, roughnessSamplerName.c_str());
+			++SamplerSlotIndex;
 			roughnessTexture.lock()->Activate();
 		}
 
 		if (!lightmapTexture.expired())
 		{
-			m_glProgram->ActivateTextureSlot(slotIndex, lightmapSamplerName.c_str());
-			++slotIndex;
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, lightmapSamplerName.c_str());
+			++SamplerSlotIndex;
 			lightmapTexture.lock()->Activate();
 		}
 	}

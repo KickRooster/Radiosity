@@ -18,6 +18,7 @@ namespace Core
 		void Link();
 		void Activate() const;
 		void ActivateTextureSlot(int32 slotIndex, const ANSICHAR * samplerName) const;
+		void ActivateImageSlot(int32 slotIndex, const ANSICHAR * ImageName) const;
 		void Set4f(const ANSICHAR * pName, float color[4]);
 		void Inactivate() const;
 		~GLProgram();

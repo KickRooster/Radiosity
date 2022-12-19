@@ -7,6 +7,8 @@
 #include "Texture.h"
 #include "../DesignPattern/ObserverPattern/Obeserver.h"
 #include "../Math/Vector4.h"
+#include "../RHI/OpenGLRHI/ImageTexture.h"
+
 #include STRING_INCLUDE_PATH
 
 namespace Core
@@ -66,6 +68,10 @@ namespace Core
 
 		std::weak_ptr<Texture> albedoTexture;
 		std::weak_ptr<GLTexture> IDCumeMap;
+		std::weak_ptr<GLImageTexture> AccumulatedImage0;
+		std::weak_ptr<GLImageTexture> AccumulatedImage1;
+		std::weak_ptr<GLImageTexture> ResidualImage0;
+		std::weak_ptr<GLImageTexture> ResidualImage1;
 		std::weak_ptr<Texture> normalMap;
 		std::weak_ptr<Texture> metallicTexture;
 		std::weak_ptr<Texture> roughnessTexture;
@@ -89,6 +95,10 @@ namespace Core
 
 		const ctd::string albedoSamplerName = "albedoSampler";
 		const ctd::string IDCubeMapSamplerName = "IDCubeMapSampler";
+		const ctd::string AccumulatedImage0Name = "AccumulatedOutput0";
+		const ctd::string AccumulatedImage1Name = "AccumulatedOutput1";
+		const ctd::string ResidualImage0Name = "ResidualOutput0";
+		const ctd::string ResidualImage1Name = "ResidualOutput1";
 		const ctd::string normalSamplerName = "normalSampler";
 		const ctd::string metallicSamplerName = "metallicSampler";
 		const ctd::string roughnessSamplerName = "roughnessSampler";

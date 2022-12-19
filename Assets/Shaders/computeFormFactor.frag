@@ -1,4 +1,4 @@
-		#version 450 core
+		#version 450
 	
 		in vec4 pos;
 		in vec3 normal;
@@ -14,8 +14,14 @@
 		in vec2 uv5;
 		in vec2 uv6;
 		in vec2 uv7;
-		uniform sampler2D albedoSampler;
-		uniform samplerCube IDCubeMapSampler;
+
+		layout(location = 0) uniform sampler2D albedoSampler;
+		layout(location = 1) uniform samplerCube IDCubeMapSampler;
+		layout(rgba32f, location = 2) uniform restrict image2D AccumulatedOutput0;
+		layout(rgba32f, location = 3) uniform restrict image2D AccumulatedOutput1;
+		layout(rgba32f, location = 4) uniform restrict image2D ResidualOutput0;
+		layout(rgba32f, location = 5) uniform restrict image2D ResidualOutput1;
+		
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
@@ -48,8 +54,8 @@
 		{
 			mat4 object2WorldIT;
 		};
+		
 		layout(location = 0) out vec4 attch0;
-		layout(location = 1) out vec4 attch1;
 
 		void main()
 		{
@@ -150,7 +156,7 @@
 				PerspectiveProjectedPos.z += 0.5;
 
 				//	XXX:	manually biased.
-				if (PerspectiveProjectedPos.z < CubeMap.y + 0.00001)
+				if (PerspectiveProjectedPos.z < CubeMap.y + 0.0001)
 				{
 					Visable = 1.0f;
 				}
@@ -161,16 +167,23 @@
 			}
 
 			Fij *= Visable;
-			Fij *= 50;
+			Fij *= 30;
 
 			vec3 albedo = texture(albedoSampler, uv0).xyz;
 
-			vec3 Delta = ShooterEnergy.xyz * albedo * ShooterSurfaceArea.x * Fij;   
+			vec3 Delta = ShooterEnergy.xyz * albedo * ShooterSurfaceArea.x * Fij;
 
-			attch0.xyz = albedo;
-			attch0.w = 1.0;
+			ivec2 LightmapSize = imageSize(AccumulatedOutput0);
+			ivec2 TargetLocation = ivec2(LightmapSize * uv1);
+			vec4 Irrdiance;
+			Irrdiance.xyz = Delta;
+			Irrdiance.w = 1.0;
 
-			attch1.xyz = Delta;
+			imageStore(AccumulatedOutput0, TargetLocation, Irrdiance);
+			imageStore(AccumulatedOutput1, TargetLocation, vec4(1, 0, 0, 1));
+			imageStore(ResidualOutput0, TargetLocation, vec4(0, 1, 0, 1));
+			imageStore(ResidualOutput1, TargetLocation, vec4(0, 0, 1, 1));
 			
-			attch1.w = 1.0;
+			attch0.xyz = Delta;
+			attch0.w = 1.0;
 		};

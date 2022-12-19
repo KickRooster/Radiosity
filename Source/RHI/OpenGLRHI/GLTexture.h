@@ -6,7 +6,6 @@ namespace Core
 {
 	class GLTexture
 	{
-	private:
 		uint32 m_id;
 		GLTextureTarget m_target;
 		GLInternalFormat m_internalFormat;

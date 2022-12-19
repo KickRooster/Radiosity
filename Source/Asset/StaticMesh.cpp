@@ -115,14 +115,11 @@ namespace Core
 		
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
-			pUV1s[i].x *= UVScale;
-			pUV1s[i].y *= UVScale;
-
 			if (pUV1s[i].x * UVScale > maxU)
-				maxU = pUV1s[i].x;
+				maxU = pUV1s[i].x * UVScale;
 
 			if (pUV1s[i].y > maxV)
-				maxV = pUV1s[i].y;
+				maxV = pUV1s[i].y * UVScale;
 		}
 
 		m_radiosityTextureWidth = ceil(maxU);

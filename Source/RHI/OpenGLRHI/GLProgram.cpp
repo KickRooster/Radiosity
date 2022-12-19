@@ -55,6 +55,15 @@ namespace Core
 		glCheckError();
 	}
 
+	void GLProgram::ActivateImageSlot(int32 slotIndex, const ANSICHAR* ImageName) const
+	{
+		int32 loc = glGetUniformLocation(m_id, ImageName);
+		glCheckError();
+
+		glUniform1i(loc, slotIndex);
+		glCheckError();
+	}
+
 	void GLProgram::Set4f(const ANSICHAR * pName, float color[4])
 	{
 		int32 loc = glGetUniformLocation(m_id, pName);

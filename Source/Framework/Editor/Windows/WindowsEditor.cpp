@@ -1384,16 +1384,16 @@ namespace Core
 
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
-		if (m_ResidualTexture.get())
+		if (m_RadiosityTexture.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(1200, 0));
 			ImGui::SetNextWindowSize(ImVec2(600, 600));
 
-			ImGui::Begin("Profile View");
+			ImGui::Begin("Radiosity View");
 			ImVec2 ProfileViewRegion = ImGui::GetContentRegionAvail();
 		
 			ImGui::Image(
-				reinterpret_cast<void *>(m_ResidualTexture->GetID64()),
+				reinterpret_cast<void *>(m_RadiosityTexture->GetID64()),
 				ProfileViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1401,46 +1401,52 @@ namespace Core
 			ImGui::End();
 		}
 		//////////////////////////////////////////////////////////////////////////
-		ImGui::SetNextWindowPos(ImVec2(0, 600));
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		if (m_AccumulatedImage0.get())
+		{
+			ImGui::SetNextWindowPos(ImVec2(0, 600));
+			ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
-		ImGui::Begin("Color Attach 0");
-		ImVec2 colorAttach0Region = ImGui::GetContentRegionAvail();
+			ImGui::Begin("Accumulated 0");
+			ImVec2 colorAttach0Region = ImGui::GetContentRegionAvail();
 		
-		ImGui::Image(
-			reinterpret_cast<void *>(m_GLColorAttach->GetID64()),
-			colorAttach0Region,
-			ImVec2(0, 1.0f),
-			ImVec2(1.0f, 0));
+			ImGui::Image(
+				reinterpret_cast<void *>(m_AccumulatedImage0->GetID64()),
+				colorAttach0Region,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
 		
-		ImGui::End();
+			ImGui::End();
+		}
 		//////////////////////////////////////////////////////////////////////////
-		ImGui::SetNextWindowPos(ImVec2(200, 600));
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		if (m_ResidualImage0.get())
+		{
+			ImGui::SetNextWindowPos(ImVec2(200, 600));
+			ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
-		ImGui::Begin("Color Attach 1");
-		ImVec2 colorAttach1Region = ImGui::GetContentRegionAvail();
+			ImGui::Begin("Residual 0");
+			ImVec2 colorAttach1Region = ImGui::GetContentRegionAvail();
 		
-		ImGui::Image(
-			reinterpret_cast<void *>(m_GLColorAttach->GetID64()),
-			colorAttach1Region,
-			ImVec2(0, 1.0f),
-			ImVec2(1.0f, 0));
+			ImGui::Image(
+				reinterpret_cast<void *>(m_ResidualImage0->GetID64()),
+				colorAttach1Region,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
 		
-		ImGui::End();
+			ImGui::End();
+		}
 		//////////////////////////////////////////////////////////////////////////
 		
 		//////////////////////////////////////////////////////////////////////////
-		if (m_RadiorityTexture.get())
+		if (m_AccumulatedImage1.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(0, 800));
 			ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
-			ImGui::Begin("Bake View");
+			ImGui::Begin("Accumulated 1");
 			ImVec2 bakeViewRegion = ImGui::GetContentRegionAvail();
 		
 			ImGui::Image(
-				reinterpret_cast<void *>(m_RadiorityTexture->GetID64()),
+				reinterpret_cast<void *>(m_AccumulatedImage1->GetID64()),
 				bakeViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1450,16 +1456,16 @@ namespace Core
 		//////////////////////////////////////////////////////////////////////////
 
 		//////////////////////////////////////////////////////////////////////////
-		if (m_ResidualTexture.get())
+		if (m_ResidualImage1.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(200, 800));
 			ImGui::SetNextWindowSize(ImVec2(200, 200));
 
-			ImGui::Begin("Debug View");
+			ImGui::Begin("Residual 1");
 			ImVec2 debugViewRegion = ImGui::GetContentRegionAvail();
 
 			ImGui::Image(
-				reinterpret_cast<void *>(m_ResidualTexture->GetID64()),
+				reinterpret_cast<void *>(m_ResidualImage1->GetID64()),
 				debugViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1514,23 +1520,55 @@ namespace Core
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 			
-			m_RadiorityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_RadiorityTexture->LoadImage(
+			m_RadiosityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_RadiosityTexture->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			Null);
 
-			m_ResidualTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_ResidualTexture->LoadImage(
+			float* BlackData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			for (int32 i = 0; i < RadiosityTextureWidth * RadiosityTextureHeight; ++i)
+			{
+				BlackData[i * 4 + 0] = 0;
+				BlackData[i * 4 + 1] = 0;
+				BlackData[i * 4 + 2] = 0;
+				BlackData[i * 4 + 3] = 0;
+			}
+			
+			m_AccumulatedImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_0, 0, GLImageAccess_ReadWrite);
+			m_AccumulatedImage0->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
-			Null);
+			BlackData);
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->AccumulatedImage0 = m_AccumulatedImage0;
+
+			m_AccumulatedImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_1, 0, GLImageAccess_ReadWrite);
+			m_AccumulatedImage1->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			BlackData);
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->AccumulatedImage1 = m_AccumulatedImage1;
+			
+			m_ResidualImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_2, 0, GLImageAccess_ReadWrite);
+			m_ResidualImage0->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			BlackData);
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->ResidualImage0 = m_ResidualImage0;
+
+			m_ResidualImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_3, 0, GLImageAccess_ReadWrite);
+			m_ResidualImage1->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			BlackData);
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->ResidualImage1 = m_ResidualImage1;
+
+			delete[] BlackData;
 			
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
-			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiorityTexture->GetTarget(), m_RadiorityTexture.get());
-			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor1, m_ResidualTexture->GetTarget(), m_ResidualTexture.get());
-
+			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiosityTexture->GetTarget(), m_RadiosityTexture.get());
+			
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
 			

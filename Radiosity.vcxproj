@@ -185,6 +185,7 @@
     <ClCompile Include="Source\RHI\OpenGLRHI\GLShader.cpp" />
     <ClCompile Include="Source\RHI\OpenGLRHI\GLTexture.cpp" />
     <ClCompile Include="Source\RHI\OpenGLRHI\GLVertexBufferLayout.cpp" />
+    <ClCompile Include="Source\RHI\OpenGLRHI\ImageTexture.cpp" />
     <ClCompile Include="Source\RHI\OpenGLRHI\OpenGLDevice.cpp" />
     <ClCompile Include="Source\Asset\Scene.cpp" />
     <ClCompile Include="Source\Settings\LightmappingSetting.cpp" />
@@ -330,6 +331,7 @@
     <ClInclude Include="Source\RHI\OpenGLRHI\GLShader.h" />
     <ClInclude Include="Source\RHI\OpenGLRHI\GLTexture.h" />
     <ClInclude Include="Source\RHI\OpenGLRHI\GLVertexBufferLayout.h" />
+    <ClInclude Include="Source\RHI\OpenGLRHI\ImageTexture.h" />
     <ClInclude Include="Source\RHI\OpenGLRHI\OpenGLDevice.h" />
     <ClInclude Include="Source\Asset\Scene.h" />
     <ClInclude Include="Source\Settings\LightmappingSetting.h" />

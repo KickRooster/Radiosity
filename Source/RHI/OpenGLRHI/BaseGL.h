@@ -86,6 +86,25 @@ namespace Core
 		GLPixelFormat_Stencil = GL_DEPTH_STENCIL,
 	};
 
+	enum GLImageUnit
+	{
+		GLImageUnit_0 = 0,
+		GLImageUnit_1 = 1,
+		GLImageUnit_2 = 2,
+		GLImageUnit_3 = 3,
+		GLImageUnit_4 = 4,
+		GLImageUnit_5 = 5,
+		GLImageUnit_6 = 6,
+		GLImageUnit_7 = 7,
+	};
+
+	enum GLImageAccess
+	{
+		GLImageAccess_ReadOnly = GL_READ_ONLY,
+		GLImageAccess_WriteOnly = GL_WRITE_ONLY,
+		GLImageAccess_ReadWrite = GL_READ_WRITE,
+	};
+
 	enum GLShaderType
 	{
 		GLShaderType_VertexShader = GL_VERTEX_SHADER,
