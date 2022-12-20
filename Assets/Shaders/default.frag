@@ -14,6 +14,7 @@
 		in vec2 uv6;
 		in vec2 uv7;
 		uniform sampler2D albedoSampler;
+		uniform sampler2D lightmapSampler;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewMatrix;
@@ -21,6 +22,7 @@
 			mat4 orthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
+			ivec4 FrameCount;
 		};
 		layout (std140, binding = 1) uniform CubeMatrices
 		{
@@ -52,6 +54,8 @@
 		void main()
 		{
 			 vec3 albedo = texture(albedoSampler, vec2(uv0.x, uv0.y)).xyz;
-			 out_Color.xyz = albedo;
+			 vec3 irradiance = texture(lightmapSampler, uv1).xyz;
+			 
+			 out_Color.xyz = albedo * irradiance;
 			 out_Color.w = 1.0;
 		};

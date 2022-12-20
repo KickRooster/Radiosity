@@ -29,6 +29,7 @@
 			mat4 orthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
+			ivec4 FrameCount;
 		};
 		layout (std140, binding = 1) uniform CubeMatrices
 		{
@@ -169,21 +170,43 @@
 			Fij *= Visable;
 			Fij *= 30;
 
+			vec3 Radiosity = ShooterEnergy.xyz * ShooterSurfaceArea.x * Fij;
 			vec3 albedo = texture(albedoSampler, uv0).xyz;
+			vec3 Residual = albedo * Radiosity;
 
-			vec3 Delta = ShooterEnergy.xyz * albedo * ShooterSurfaceArea.x * Fij;
+			if (FrameCount.x % 2 == 0)
+			{
+				//	Read from 0, write to 1
+				ivec2 LightmapSize = imageSize(AccumulatedOutput0);
+				ivec2 TargetLocation = ivec2(LightmapSize * uv1);
 
-			ivec2 LightmapSize = imageSize(AccumulatedOutput0);
-			ivec2 TargetLocation = ivec2(LightmapSize * uv1);
-			vec4 Irrdiance;
-			Irrdiance.xyz = Delta;
-			Irrdiance.w = 1.0;
+				vec4 TotalRadiosity = imageLoad(AccumulatedOutput0, TargetLocation);
+				TotalRadiosity.xyz += Radiosity;
+				TotalRadiosity.w = 1.0;
+				imageStore(AccumulatedOutput1, TargetLocation, TotalRadiosity);
 
-			imageStore(AccumulatedOutput0, TargetLocation, Irrdiance);
-			imageStore(AccumulatedOutput1, TargetLocation, vec4(1, 0, 0, 1));
-			imageStore(ResidualOutput0, TargetLocation, vec4(0, 1, 0, 1));
-			imageStore(ResidualOutput1, TargetLocation, vec4(0, 0, 1, 1));
+				vec4 TotalResidual = imageLoad(ResidualOutput0, TargetLocation);
+				TotalResidual.xyz += Residual;
+				TotalResidual.w = 1.0;
+				imageStore(ResidualOutput1, TargetLocation, TotalResidual);
+			}
+			else
+			{
+				//	Read from 1, write to 0
+				ivec2 LightmapSize = imageSize(AccumulatedOutput1);
+				ivec2 TargetLocation = ivec2(LightmapSize * uv1);
+
+				vec4 TotalRadiosity = imageLoad(AccumulatedOutput1, TargetLocation);
+				TotalRadiosity.xyz += Radiosity;
+				TotalRadiosity.w = 1.0;
+				imageStore(AccumulatedOutput0, TargetLocation, TotalRadiosity);
+
+				vec4 TotalResidual = imageLoad(ResidualOutput1, TargetLocation);
+				TotalResidual.xyz += Residual;
+				TotalResidual.w = 1.0;
+				imageStore(ResidualOutput0, TargetLocation, TotalResidual);
+			}
 			
-			attch0.xyz = Delta;
+			attch0.xyz = Residual;
 			attch0.w = 1.0;
 		};

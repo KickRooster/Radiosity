@@ -128,7 +128,13 @@ namespace Core
 			roughnessTexture.lock()->Activate();
 		}
 
-		if (!lightmapTexture.expired())
+		if (!lightmapImageTexture.expired())
+		{
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, lightmapSamplerName.c_str());
+			++SamplerSlotIndex;
+			lightmapImageTexture.lock()->Activate();
+		}
+		else if (!lightmapTexture.expired())
 		{
 			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, lightmapSamplerName.c_str());
 			++SamplerSlotIndex;
@@ -157,8 +163,14 @@ namespace Core
 		if (!roughnessTexture.expired())
 			roughnessTexture.lock()->Inactivate();
 
-		if (!lightmapTexture.expired())
+		if (!lightmapImageTexture.expired())
+		{
+			lightmapImageTexture.lock()->Inactivate();
+		}
+		else if (!lightmapTexture.expired())
+		{
 			lightmapTexture.lock()->Inactivate();
+		}
 	}
 
 	void Material::SetSampler(int32 slotIndex, ctd::string samplerName, GLTexture * pTexture)

@@ -76,6 +76,7 @@ namespace Core
 		std::weak_ptr<Texture> metallicTexture;
 		std::weak_ptr<Texture> roughnessTexture;
 		std::weak_ptr<Texture> lightmapTexture;
+		std::weak_ptr<GLImageTexture> lightmapImageTexture;
 
 		Bool IsOccluder;
 

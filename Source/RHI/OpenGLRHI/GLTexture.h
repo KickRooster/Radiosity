@@ -6,6 +6,7 @@ namespace Core
 {
 	class GLTexture
 	{
+	protected:
 		uint32 m_id;
 		GLTextureTarget m_target;
 		GLInternalFormat m_internalFormat;
@@ -30,6 +31,6 @@ namespace Core
 		void SetFilterMode(GLTextureFilterMode filterMode);
 		GLTextureFilterMode GetFilterMode() const;
 		int32 GetDataSizePerPixel() const;
-		~GLTexture();
+		virtual ~GLTexture();
 	};
 }

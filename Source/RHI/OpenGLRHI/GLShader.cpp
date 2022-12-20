@@ -38,7 +38,7 @@ namespace Core
 		return ErrorCode_OK;
 	}
 
-	Core::uint32 GLShader::GetID() const
+	uint32 GLShader::GetID() const
 	{
 		return m_id;
 	}

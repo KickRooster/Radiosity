@@ -16,6 +16,7 @@ namespace Core
 		Matrix4x4 OrthoProjectionMatrix;
 		Vector4 Position;
 		Vector4 NearFar;	//	near,far,
+		int32 FrameCount[4];
 	};
 
 	struct CubeMatrices
@@ -83,6 +84,7 @@ namespace Core
 		float zFar;
 		float ascept;
 		float fovY;
+		int32 frameCount;
 		OrthoProjectionParams OrthoParams;
 		
 		Vector3 position;

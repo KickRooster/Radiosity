@@ -23,7 +23,9 @@ namespace Core
 		m_arealLightMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
 		m_arealLightMaterial->glFragmentShader.lock()->Attach(m_arealLightMaterial.get());
 
-		m_arealLightMaterial->lightmapName = "DummyLightmap";
+		m_arealLightMaterial->albedoTexture = m_assetManager->textureMap["default"];
+		m_arealLightMaterial->albedoTexture.lock()->Attach(m_arealLightMaterial.get());
+		
 		m_arealLightMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
 		m_arealLightMaterial->lightmapTexture.lock()->Attach(m_arealLightMaterial.get());
 		m_arealLightMaterial->IsOccluder = False;
@@ -60,6 +62,7 @@ namespace Core
 		m_areaLightMesh->pPositions = new Vector4[m_areaLightMesh->vertexCount];
 		m_areaLightMesh->pNormals = new Vector3[m_areaLightMesh->vertexCount];
 		m_areaLightMesh->pUV0s = new Vector2[m_areaLightMesh->vertexCount];
+		m_areaLightMesh->pUV1s = new Vector2[m_areaLightMesh->vertexCount];
 		
 		float lightScale = 10.0f;
 
@@ -71,7 +74,8 @@ namespace Core
 		m_areaLightMesh->pNormals[0].y = 0;
 		m_areaLightMesh->pNormals[0].z = 1.0f;
 		m_areaLightMesh->pUV0s[0] = Vector2(0, 0);
-
+		m_areaLightMesh->pUV1s[0] = Vector2(0, 0);
+		
 		m_areaLightMesh->pPositions[1].x = 0.5f * lightScale;
 		m_areaLightMesh->pPositions[1].y = -0.5f * lightScale ;
 		m_areaLightMesh->pPositions[1].z = 0;
@@ -80,6 +84,7 @@ namespace Core
 		m_areaLightMesh->pNormals[1].y = 0;
 		m_areaLightMesh->pNormals[1].z = 1.0f;
 		m_areaLightMesh->pUV0s[1] = Vector2(1.0, 0);
+		m_areaLightMesh->pUV1s[1] = Vector2(1.0, 0);
 
 		m_areaLightMesh->pPositions[2].x = 0.5f * lightScale;
 		m_areaLightMesh->pPositions[2].y = 0.5f * lightScale ;
@@ -89,6 +94,7 @@ namespace Core
 		m_areaLightMesh->pNormals[2].y = 0;
 		m_areaLightMesh->pNormals[2].z = 1.0f;
 		m_areaLightMesh->pUV0s[2] = Vector2(1.0f, 1.0f);
+		m_areaLightMesh->pUV1s[2] = Vector2(1.0f, 1.0f);
 
 		m_areaLightMesh->pPositions[3].x = 0.5f * lightScale;
 		m_areaLightMesh->pPositions[3].y = 0.5f * lightScale ;
@@ -98,6 +104,7 @@ namespace Core
 		m_areaLightMesh->pNormals[3].y = 0;
 		m_areaLightMesh->pNormals[3].z = 1.0f;
 		m_areaLightMesh->pUV0s[3] = Vector2(1.0f, 1.0f);
+		m_areaLightMesh->pUV1s[3] = Vector2(1.0f, 1.0f);
 
 		m_areaLightMesh->pPositions[4].x = -0.5f * lightScale;
 		m_areaLightMesh->pPositions[4].y = 0.5f * lightScale ;
@@ -107,6 +114,7 @@ namespace Core
 		m_areaLightMesh->pNormals[4].y = 0;
 		m_areaLightMesh->pNormals[4].z = 1.0f;
 		m_areaLightMesh->pUV0s[4] = Vector2(0, 1.0f);
+		m_areaLightMesh->pUV1s[4] = Vector2(0, 1.0f);
 
 		m_areaLightMesh->pPositions[5].x = -0.5f * lightScale;
 		m_areaLightMesh->pPositions[5].y = -0.5f * lightScale ;
@@ -116,6 +124,7 @@ namespace Core
 		m_areaLightMesh->pNormals[5].y = 0;
 		m_areaLightMesh->pNormals[5].z = 1.0f;
 		m_areaLightMesh->pUV0s[5] = Vector2(0, 0);
+		m_areaLightMesh->pUV1s[5] = Vector2(0, 0);
 
 		m_areaLightMesh->indexCount = 6;
 		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
@@ -1282,6 +1291,10 @@ namespace Core
 			m_baking = !m_baking;
 		}
 
+		string BakingInfo = "Frame: ";
+		BakingInfo += to_string(m_frameCount - 1);
+		ImGui::Text(BakingInfo.c_str());
+
 		//ImGui::InputInt("Progressive Count:", &debugingProgressiveCount);
 
 		//ctd::string bakingInfo = "Progressive[";
@@ -1375,16 +1388,27 @@ namespace Core
 			m_scene->GetCamera()->ascept = DebugViewRegion.x / DebugViewRegion.y;
 			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
 		}
-		
-		ImGui::Image(
-			reinterpret_cast<void *>(m_GLDebugViewColorAttach->GetID64()),
-			DebugViewRegion,
-			ImVec2(0, 1.0f),
-			ImVec2(1.0f, 0));
+
+		if (m_RadiosityTexture.get())
+		{
+			ImGui::Image(
+				reinterpret_cast<void *>(m_RadiosityTexture->GetID64()),
+				DebugViewRegion,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
+		}
+		else
+		{
+			ImGui::Image(
+				reinterpret_cast<void *>(m_GLDebugViewColorAttach->GetID64()),
+				DebugViewRegion,
+				ImVec2(0, 1.0f),
+				ImVec2(1.0f, 0));
+		}
 
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
-		if (m_RadiosityTexture.get())
+		if (m_AccumulatedImage0.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(1200, 0));
 			ImGui::SetNextWindowSize(ImVec2(600, 600));
@@ -1393,7 +1417,8 @@ namespace Core
 			ImVec2 ProfileViewRegion = ImGui::GetContentRegionAvail();
 		
 			ImGui::Image(
-				reinterpret_cast<void *>(m_RadiosityTexture->GetID64()),
+				reinterpret_cast<void *>(
+				(m_frameCount - 1) % 2 == 0 ? m_AccumulatedImage1->GetID64() : m_AccumulatedImage0->GetID64()),
 				ProfileViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1506,10 +1531,15 @@ namespace Core
 		if (!m_baking)
 			return;
 
+		static queue<Primitive> RemainingPrimitives;
+
+		if (RemainingPrimitives.empty())
+		{
+			m_frameCount = 0;
+		}
+
 		//	TODO:	这里需要"聚合"的封装,目前只实现对单个对象的bake.
 		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
-
-		static queue<Primitive> RemainingPrimitives;
 		
 		if (m_frameCount == 0)
 		{
@@ -1717,6 +1747,7 @@ namespace Core
 				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 				Camera.fovY = 90.0f * Deg2Rad;
 				////
+				Camera.frameCount = m_frameCount;
 				Camera.position= Vector3(Primitive.ShootPosition.x, Primitive.ShootPosition.y, Primitive.ShootPosition.z);
 				Camera.lookAtDir = Primitive.Normal;
 				Camera.UpdateViewMatrixRH();
@@ -1759,6 +1790,15 @@ namespace Core
 				BeingBakingObject->ComputeFormFactor(m_GLDevice.get());
 			}
 			m_reconstructionPassFrameBuffer->Inactivate();
+
+			if (m_frameCount % 2 == 0)
+			{
+				BeingBakingObject->glRenderableUnit->material.lock()->lightmapImageTexture = m_AccumulatedImage1;
+			}
+			else
+			{
+				BeingBakingObject->glRenderableUnit->material.lock()->lightmapImageTexture = m_AccumulatedImage0;
+			}
 			
 			if (RemainingPrimitives.empty())
 			{
@@ -1767,11 +1807,6 @@ namespace Core
 		}
 		
 		++m_frameCount;
-
-		if (RemainingPrimitives.empty())
-		{
-			m_frameCount = 0;
-		}
 		
 		m_baking = False;
 

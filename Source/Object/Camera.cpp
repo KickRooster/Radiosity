@@ -154,6 +154,10 @@ namespace Core
 		CameraUniformData.Position = Vector4(position.x, position.y, position.z, 1.0f);
 		CameraUniformData.NearFar.x = zNear;
 		CameraUniformData.NearFar.y = zFar;
+		CameraUniformData.FrameCount[0] = frameCount;
+		CameraUniformData.FrameCount[1] = frameCount;
+		CameraUniformData.FrameCount[2] = frameCount;
+		CameraUniformData.FrameCount[3] = frameCount;
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData), &CameraUniformData);
 	}
 

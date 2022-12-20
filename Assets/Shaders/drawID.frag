@@ -22,6 +22,7 @@
 			mat4 orthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
+			ivec4 FrameCount;
 		};
 		layout (std140, binding = 1) uniform CubeMatrices
 		{
