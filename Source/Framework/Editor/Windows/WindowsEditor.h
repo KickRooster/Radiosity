@@ -48,8 +48,8 @@ namespace Core
 		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
 		std::unique_ptr<GLTexture> m_RadiosityTexture;
-		std::shared_ptr<GLImageTexture> m_AccumulatedImage0;
-		std::shared_ptr<GLImageTexture> m_AccumulatedImage1;
+		std::shared_ptr<GLImageTexture> m_RadiosityImage0;
+		std::shared_ptr<GLImageTexture> m_RadiosityImage1;
 		std::shared_ptr<GLImageTexture> m_ResidualImage0;
 		std::shared_ptr<GLImageTexture> m_ResidualImage1;
 		//float* m_pRadiosityRawData;

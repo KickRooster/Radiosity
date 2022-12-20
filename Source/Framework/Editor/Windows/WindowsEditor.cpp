@@ -1408,7 +1408,7 @@ namespace Core
 
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
-		if (m_AccumulatedImage0.get())
+		if (m_RadiosityImage0.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(1200, 0));
 			ImGui::SetNextWindowSize(ImVec2(600, 600));
@@ -1418,7 +1418,7 @@ namespace Core
 		
 			ImGui::Image(
 				reinterpret_cast<void *>(
-				(m_frameCount - 1) % 2 == 0 ? m_AccumulatedImage1->GetID64() : m_AccumulatedImage0->GetID64()),
+				(m_frameCount - 1) % 2 == 0 ? m_RadiosityImage1->GetID64() : m_RadiosityImage0->GetID64()),
 				ProfileViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1426,16 +1426,16 @@ namespace Core
 			ImGui::End();
 		}
 		//////////////////////////////////////////////////////////////////////////
-		if (m_AccumulatedImage0.get())
+		if (m_RadiosityImage0.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(0, 600));
 			ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
-			ImGui::Begin("Accumulated 0");
+			ImGui::Begin("Radiosity 0");
 			ImVec2 colorAttach0Region = ImGui::GetContentRegionAvail();
 		
 			ImGui::Image(
-				reinterpret_cast<void *>(m_AccumulatedImage0->GetID64()),
+				reinterpret_cast<void *>(m_RadiosityImage0->GetID64()),
 				colorAttach0Region,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1462,16 +1462,16 @@ namespace Core
 		//////////////////////////////////////////////////////////////////////////
 		
 		//////////////////////////////////////////////////////////////////////////
-		if (m_AccumulatedImage1.get())
+		if (m_RadiosityImage1.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(0, 800));
 			ImGui::SetNextWindowSize(ImVec2(200, 200));
 		
-			ImGui::Begin("Accumulated 1");
+			ImGui::Begin("Radiosity 1");
 			ImVec2 bakeViewRegion = ImGui::GetContentRegionAvail();
 		
 			ImGui::Image(
-				reinterpret_cast<void *>(m_AccumulatedImage1->GetID64()),
+				reinterpret_cast<void *>(m_RadiosityImage1->GetID64()),
 				bakeViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
@@ -1565,19 +1565,19 @@ namespace Core
 				BlackData[i * 4 + 3] = 0;
 			}
 			
-			m_AccumulatedImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_0, 0, GLImageAccess_ReadWrite);
-			m_AccumulatedImage0->LoadImage(
+			m_RadiosityImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_0, 0, GLImageAccess_ReadWrite);
+			m_RadiosityImage0->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			BlackData);
-			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->AccumulatedImage0 = m_AccumulatedImage0;
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->RadiosityImage0 = m_RadiosityImage0;
 
-			m_AccumulatedImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_1, 0, GLImageAccess_ReadWrite);
-			m_AccumulatedImage1->LoadImage(
+			m_RadiosityImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_1, 0, GLImageAccess_ReadWrite);
+			m_RadiosityImage1->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			BlackData);
-			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->AccumulatedImage1 = m_AccumulatedImage1;
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->RadiosityImage1 = m_RadiosityImage1;
 			
 			m_ResidualImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_2, 0, GLImageAccess_ReadWrite);
 			m_ResidualImage0->LoadImage(
@@ -1793,11 +1793,11 @@ namespace Core
 
 			if (m_frameCount % 2 == 0)
 			{
-				BeingBakingObject->glRenderableUnit->material.lock()->lightmapImageTexture = m_AccumulatedImage1;
+				BeingBakingObject->glRenderableUnit->material.lock()->lightmapImageTexture = m_RadiosityImage1;
 			}
 			else
 			{
-				BeingBakingObject->glRenderableUnit->material.lock()->lightmapImageTexture = m_AccumulatedImage0;
+				BeingBakingObject->glRenderableUnit->material.lock()->lightmapImageTexture = m_RadiosityImage0;
 			}
 			
 			if (RemainingPrimitives.empty())

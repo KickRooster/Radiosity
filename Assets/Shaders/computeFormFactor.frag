@@ -17,8 +17,8 @@
 
 		layout(location = 0) uniform sampler2D albedoSampler;
 		layout(location = 1) uniform samplerCube IDCubeMapSampler;
-		layout(rgba32f, location = 2) uniform restrict image2D AccumulatedOutput0;
-		layout(rgba32f, location = 3) uniform restrict image2D AccumulatedOutput1;
+		layout(rgba32f, location = 2) uniform restrict image2D RadiosityOutput0;
+		layout(rgba32f, location = 3) uniform restrict image2D RadiosityOutput1;
 		layout(rgba32f, location = 4) uniform restrict image2D ResidualOutput0;
 		layout(rgba32f, location = 5) uniform restrict image2D ResidualOutput1;
 		
@@ -177,13 +177,13 @@
 			if (FrameCount.x % 2 == 0)
 			{
 				//	Read from 0, write to 1
-				ivec2 LightmapSize = imageSize(AccumulatedOutput0);
+				ivec2 LightmapSize = imageSize(RadiosityOutput0);
 				ivec2 TargetLocation = ivec2(LightmapSize * uv1);
 
-				vec4 TotalRadiosity = imageLoad(AccumulatedOutput0, TargetLocation);
+				vec4 TotalRadiosity = imageLoad(RadiosityOutput0, TargetLocation);
 				TotalRadiosity.xyz += Radiosity;
 				TotalRadiosity.w = 1.0;
-				imageStore(AccumulatedOutput1, TargetLocation, TotalRadiosity);
+				imageStore(RadiosityOutput1, TargetLocation, TotalRadiosity);
 
 				vec4 TotalResidual = imageLoad(ResidualOutput0, TargetLocation);
 				TotalResidual.xyz += Residual;
@@ -193,13 +193,13 @@
 			else
 			{
 				//	Read from 1, write to 0
-				ivec2 LightmapSize = imageSize(AccumulatedOutput1);
+				ivec2 LightmapSize = imageSize(RadiosityOutput1);
 				ivec2 TargetLocation = ivec2(LightmapSize * uv1);
 
-				vec4 TotalRadiosity = imageLoad(AccumulatedOutput1, TargetLocation);
+				vec4 TotalRadiosity = imageLoad(RadiosityOutput1, TargetLocation);
 				TotalRadiosity.xyz += Radiosity;
 				TotalRadiosity.w = 1.0;
-				imageStore(AccumulatedOutput0, TargetLocation, TotalRadiosity);
+				imageStore(RadiosityOutput0, TargetLocation, TotalRadiosity);
 
 				vec4 TotalResidual = imageLoad(ResidualOutput1, TargetLocation);
 				TotalResidual.xyz += Residual;

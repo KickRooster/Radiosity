@@ -68,8 +68,8 @@ namespace Core
 
 		std::weak_ptr<Texture> albedoTexture;
 		std::weak_ptr<GLTexture> IDCumeMap;
-		std::weak_ptr<GLImageTexture> AccumulatedImage0;
-		std::weak_ptr<GLImageTexture> AccumulatedImage1;
+		std::weak_ptr<GLImageTexture> RadiosityImage0;
+		std::weak_ptr<GLImageTexture> RadiosityImage1;
 		std::weak_ptr<GLImageTexture> ResidualImage0;
 		std::weak_ptr<GLImageTexture> ResidualImage1;
 		std::weak_ptr<Texture> normalMap;
@@ -96,8 +96,8 @@ namespace Core
 
 		const ctd::string albedoSamplerName = "albedoSampler";
 		const ctd::string IDCubeMapSamplerName = "IDCubeMapSampler";
-		const ctd::string AccumulatedImage0Name = "AccumulatedOutput0";
-		const ctd::string AccumulatedImage1Name = "AccumulatedOutput1";
+		const ctd::string RadiosityImage0Name = "RadiosityOutput0";
+		const ctd::string RadiosityImage1Name = "RadiosityOutput1";
 		const ctd::string ResidualImage0Name = "ResidualOutput0";
 		const ctd::string ResidualImage1Name = "ResidualOutput1";
 		const ctd::string normalSamplerName = "normalSampler";

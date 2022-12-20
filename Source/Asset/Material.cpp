@@ -87,14 +87,14 @@ namespace Core
 			IDCumeMap.lock()->Activate();
 		}
 
-		if (!AccumulatedImage0.expired())
+		if (!RadiosityImage0.expired())
 		{
-			m_glProgram->ActivateImageSlot(AccumulatedImage0.lock()->GetUnit(), AccumulatedImage0Name.c_str());
+			m_glProgram->ActivateImageSlot(RadiosityImage0.lock()->GetUnit(), RadiosityImage0Name.c_str());
 		}
 
-		if (!AccumulatedImage1.expired())
+		if (!RadiosityImage1.expired())
 		{
-			m_glProgram->ActivateImageSlot(AccumulatedImage1.lock()->GetUnit(), AccumulatedImage1Name.c_str());
+			m_glProgram->ActivateImageSlot(RadiosityImage1.lock()->GetUnit(), RadiosityImage1Name.c_str());
 		}
 
 		if (!ResidualImage0.expired())
