@@ -99,10 +99,10 @@ namespace Core
 			Primitive.Normal = Normalize(PrimitiveNormal);
 			Primitive.SurfaceArea = triangleSurfaceArea;
 			Vector3 ZeroBarycentricPosition = WorldPos0XYZ / 3.0f + WorldPos1XYZ / 3.0f + WorldPos2XYZ /3.0f;
-			Primitive.ShootPosition.x = ZeroBarycentricPosition.x;
-			Primitive.ShootPosition.y = ZeroBarycentricPosition.y;
-			Primitive.ShootPosition.z = ZeroBarycentricPosition.z;
-			Primitive.ShootPosition.w = 1.0f;
+			Primitive.ZeroBarycentricPosition.x = ZeroBarycentricPosition.x;
+			Primitive.ZeroBarycentricPosition.y = ZeroBarycentricPosition.y;
+			Primitive.ZeroBarycentricPosition.z = ZeroBarycentricPosition.z;
+			Primitive.ZeroBarycentricPosition.w = 1.0f;
 			//int32 TexelCount = ceil(LightmappingSetting::Instance()->TexelsPerUnit * triangleSurfaceArea);
 
 			PrimitiveMap[triangleIndex] = Primitive;
@@ -735,7 +735,7 @@ namespace Core
 		uploadToGPU();
 	}
 
-	void StaticMesh::CalculateOrthoParameters(const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar)
+	void StaticMesh::CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar)
 	{
 		OutLeftMost = 0;
 		OutRightMost = 0;
@@ -744,11 +744,11 @@ namespace Core
 		OutZNear = 0;
 		OutZFar = 0;
 		
-		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
+		for (int32 PrimitiveIndex = StartPrimitive; PrimitiveIndex < StartPrimitive + PrimitiveCount; ++PrimitiveIndex)
 		{
-			Vector4 pos0 = pPositions[triangleIndex * 3 + 0];
-			Vector4 pos1 = pPositions[triangleIndex * 3 + 1];
-			Vector4 pos2 = pPositions[triangleIndex * 3 + 2];
+			Vector4 pos0 = pPositions[PrimitiveIndex * 3 + 0];
+			Vector4 pos1 = pPositions[PrimitiveIndex * 3 + 1];
+			Vector4 pos2 = pPositions[PrimitiveIndex * 3 + 2];
 
 			Vector4 WorldPos0 = Object2World * pos0;
 			Vector4 WorldPos1 = Object2World * pos1;

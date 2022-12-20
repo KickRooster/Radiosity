@@ -1614,7 +1614,7 @@ namespace Core
 		
 		if (!RemainingPrimitives.empty())
 		{
-			Primitive Primitive = RemainingPrimitives.front();
+			Primitive ShootingPrimitive = RemainingPrimitives.front();
 			RemainingPrimitives.pop();
 			
 			BeingBakingObject->glRenderableUnit->DrawIDMaterial.lock()->albedoTexture = m_assetManager->textureMap["Sponza_Bricks_a_Albedo"];
@@ -1628,7 +1628,7 @@ namespace Core
 				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
 				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 				Camera.fovY = 90.0f * Deg2Rad;
-				Camera.position = Primitive.ShootPosition;
+				Camera.position = ShootingPrimitive.ZeroBarycentricPosition;
 				Camera.UpdatePerspectiveProjectionMatrix();
 				
 				//	FIXME:	这里需要定义渲染器里世界坐标系.
@@ -1734,10 +1734,11 @@ namespace Core
 			m_reconstructionPassFrameBuffer->Activate();
 			{
 				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
-				int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
 				
 				Camera Camera;
+				Camera.frameCount = m_frameCount;
 				////	Used for constructing perspective projection matrix for doing depth test to cubemap,
 				////	same parameters with building cube map camera.
 				Camera.zNear = 1.0f;
@@ -1746,48 +1747,60 @@ namespace Core
 				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
 				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 				Camera.fovY = 90.0f * Deg2Rad;
-				////
-				Camera.frameCount = m_frameCount;
-				Camera.position= Vector3(Primitive.ShootPosition.x, Primitive.ShootPosition.y, Primitive.ShootPosition.z);
-				Camera.lookAtDir = Primitive.Normal;
-				Camera.UpdateViewMatrixRH();
-				float Left;
-				float Right;
-				float Bottom;
-				float Top;
-				float ZNear;
-				float ZFar;
-				BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
-					*BeingBakingObject->GetObject2WorldMatrix(),
-					*Camera.GetViewMatrix(),
-					Left,
-					Right,
-					Bottom,
-					Top,
-					ZNear,
-					ZFar);
-				Camera.OrthoParams.Left = Left;
-				Camera.OrthoParams.Right = Right;
-				Camera.OrthoParams.Bottom = Bottom;
-				Camera.OrthoParams.Top = Top;
-				Camera.OrthoParams.ZNear = 0;
-				Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
-				////	Used for constructing perspective projection matrix for doing depth test to cubemap.
-				////	same parameters with building cube map camera.
 				Camera.UpdatePerspectiveProjectionMatrix();
-				Camera.UpdateViewProjectionMatrix();
 				////
-				Camera.UpdateOrthoProjctionMatrix();
-				Camera.UpdataGLParam(m_GLDevice.get());
 				
 				ShooterInfo ShooterInfo;
-				ShooterInfo.Position = Primitive.ShootPosition;
-				ShooterInfo.Normal = Vector4(Primitive.Normal.x, Primitive.Normal.y, Primitive.Normal.z, 0);
-				ShooterInfo.Energy = Primitive.Energy;
-				ShooterInfo.SurfaceArea = Vector4(Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea, Primitive.SurfaceArea);
+				ShooterInfo.Position = ShootingPrimitive.ZeroBarycentricPosition;
+				ShooterInfo.Normal = Vector4(ShootingPrimitive.Normal.x, ShootingPrimitive.Normal.y, ShootingPrimitive.Normal.z, 0);
+				ShooterInfo.Energy = ShootingPrimitive.Energy;
+				ShooterInfo.SurfaceArea = Vector4(ShootingPrimitive.SurfaceArea, ShootingPrimitive.SurfaceArea, ShootingPrimitive.SurfaceArea, ShootingPrimitive.SurfaceArea);
 				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_ShooterInfo, sizeof(ShooterInfo), &ShooterInfo);
 				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_CubeMatrices, sizeof(CubeMatrices), &CubeMatrices);
-				BeingBakingObject->ComputeFormFactor(m_GLDevice.get());
+
+				BeingBakingObject->BeforeComputeFormFactor(m_GLDevice.get());
+				for (int32 PrimitiveIndex = 0; PrimitiveIndex < BeingBakingObject->glRenderableUnit->staticMesh.lock()->indexCount / 3; ++PrimitiveIndex)
+				{
+					Primitive BakingPrimitive = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[PrimitiveIndex];
+
+					//	TODO:	bakc face culling.
+					
+					Camera.position = Vector3(BakingPrimitive.ZeroBarycentricPosition.x, BakingPrimitive.ZeroBarycentricPosition.y, BakingPrimitive.ZeroBarycentricPosition.z);
+					Camera.position += BakingPrimitive.Normal * Vector3(1.0, 1.0, 1.0);
+					Camera.lookAtDir = -BakingPrimitive.Normal;
+					//Camera.position = ShootingPrimitive.ZeroBarycentricPosition;
+					//Camera.lookAtDir = ShootingPrimitive.Normal;
+					Camera.UpdateViewMatrixRH();
+					Camera.UpdateViewProjectionMatrix();
+					float Left;
+					float Right;
+					float Bottom;
+					float Top;
+					float ZNear;
+					float ZFar;
+					BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
+						PrimitiveIndex,
+						1,//BeingBakingObject->glRenderableUnit->staticMesh.lock()->indexCount / 3,
+						*BeingBakingObject->GetObject2WorldMatrix(),
+						*Camera.GetViewMatrix(),
+						Left,
+						Right,
+						Bottom,
+						Top,
+						ZNear,
+						ZFar);
+					Camera.OrthoParams.Left = Left;
+					Camera.OrthoParams.Right = Right;
+					Camera.OrthoParams.Bottom = Bottom;
+					Camera.OrthoParams.Top = Top;
+					Camera.OrthoParams.ZNear = 0;
+					Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
+					Camera.UpdateOrthoProjctionMatrix();
+					Camera.UpdataGLParam(m_GLDevice.get());
+
+					BeingBakingObject->ComputeFormFactor(m_GLDevice.get(), PrimitiveIndex, 1);
+				}
+				BeingBakingObject->AfterComputeFormFactor();
 			}
 			m_reconstructionPassFrameBuffer->Inactivate();
 

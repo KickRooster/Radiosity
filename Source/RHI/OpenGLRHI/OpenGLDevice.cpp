@@ -76,6 +76,12 @@ namespace Core
 		glCheckError();
 	}
 
+	void OpenGLDevice::DrawArrays(GLTopology topology, int32 FirstIndex, int32 IndexCount)
+	{
+		glDrawArrays(topology, FirstIndex, IndexCount);
+		glCheckError();
+	}
+	
 	void OpenGLDevice::BeforeRender(int32 width, int32 height, float a /* = 1.0f */)
 	{
 		glClearColor(0, 0.2f, 0.4f, a);

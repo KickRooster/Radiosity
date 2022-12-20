@@ -28,7 +28,7 @@ namespace Core
 		float ID;
 		float SurfaceArea;
 		Vector3 Normal;
-		Vector4 ShootPosition;
+		Vector4 ZeroBarycentricPosition;
 		Vector4 Energy;
 	};
 	
@@ -152,7 +152,7 @@ namespace Core
 
 		void BeforeBaking(Matrix4x4 Object2World);
 
-		void CalculateOrthoParameters(const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
+		void CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
 		
 		virtual ~StaticMesh();
 	};

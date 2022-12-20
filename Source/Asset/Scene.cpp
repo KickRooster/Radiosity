@@ -47,8 +47,8 @@ namespace Core
 		m_camera->ascept = width / (float)height;
 		m_camera->fovY = 90.0f * Deg2Rad;
 
-		m_camera->position = Vector3(0, 0, -50.0f);
-		m_camera->lookAtDir = Vector3(0, 0, 1.0f);
+		m_camera->position = Vector3(0, 0, 50.0f);
+		m_camera->lookAtDir = Vector3(0, 0, -1.0f);
 		m_camera->eularAngle = Vector3(0, 0, 0);
 		
 		m_camera->UpdateViewMatrixRH();
