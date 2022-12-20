@@ -11,9 +11,8 @@ namespace Core
 {
 	struct CameraUniformData
 	{
-		Matrix4x4 ViewMatrix;
-		Matrix4x4 PerspectiveProjectionMatrix;
-		Matrix4x4 OrthoProjectionMatrix;
+		Matrix4x4 ViewPerspectiveProjectionMatrix;
+		Matrix4x4 ViewOrthoProjectionMatrix;
 		Vector4 Position;
 		Vector4 NearFar;	//	near,far,
 		int32 FrameCount[4];
@@ -64,6 +63,7 @@ namespace Core
 		Matrix4x4 m_perspectiveProjectioneMatrix;
 		Matrix4x4 m_viewPerspectiveProjectionMatrix;
 		Matrix4x4 m_orthoProjectionMatrix;
+		Matrix4x4 m_viewOrthoProjectionMatrix;
 
 		Bool m_leftMouseClicked;
 		Bool m_rightMouseClicked;
@@ -96,8 +96,9 @@ namespace Core
 		void UpdateViewMatrixRH();
 		void UpdateViewMatrixRHUp(Vector3 Up);
 		void UpdatePerspectiveProjectionMatrix();
+		void UpdateViewPerspectiveProjectionMatrix();
 		void UpdateOrthoProjctionMatrix();
-		void UpdateViewProjectionMatrix();
+		void UpdateViewOrthoProjctionMatrix();
 		void Tick(float deltaTime, const InputState & inputState);
 		void UpdataGLParam(OpenGLDevice * pDevice);
 		Matrix4x4 * GetViewMatrix();

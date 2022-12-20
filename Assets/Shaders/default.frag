@@ -17,9 +17,8 @@
 		uniform sampler2D lightmapSampler;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
-			mat4 viewMatrix;
-			mat4 perspectiveProjectionMatrix;
-			mat4 orthoProjectionMatrix;
+			mat4 viewPerspectiveProjectionMatrix;
+			mat4 viewOrthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 			ivec4 FrameCount;

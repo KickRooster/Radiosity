@@ -8,10 +8,12 @@ using namespace Core;
 namespace Core
 {
 	Camera::Camera():
-		m_perspectiveProjectioneMatrix(Matrix4x4Identify),
 		m_viewMatrix(Matrix4x4Identify),
 		m_viewMatrixInv(Matrix4x4Identify),
+		m_perspectiveProjectioneMatrix(Matrix4x4Identify),
 		m_viewPerspectiveProjectionMatrix(Matrix4x4Identify),
+		m_orthoProjectionMatrix(Matrix4x4Identify),
+		m_viewOrthoProjectionMatrix(Matrix4x4Identify),
 		m_leftMouseClicked(False),
 		m_rightMouseClicked(False),
 		m_pUniformBuffer(std::make_unique<GLBuffer>()),
@@ -64,17 +66,22 @@ namespace Core
 	{
 		m_perspectiveProjectioneMatrix = Perspective(fovY, ascept, zNear, zFar);
 	}
-
+	
+	void Camera::UpdateViewPerspectiveProjectionMatrix()
+	{
+		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
+	}
+	
 	void Camera::UpdateOrthoProjctionMatrix()
 	{
 		m_orthoProjectionMatrix = Ortho(OrthoParams.Left, OrthoParams.Right, OrthoParams.Bottom, OrthoParams.Top, OrthoParams.ZNear, OrthoParams.ZFar);
 	}
-	
-	void Camera::UpdateViewProjectionMatrix()
-	{
-		m_viewPerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix * m_viewMatrix;
-	}
 
+	void Camera::UpdateViewOrthoProjctionMatrix()
+	{
+		m_viewOrthoProjectionMatrix = m_orthoProjectionMatrix * m_viewMatrix;
+	}
+	
 	void Camera::Tick(float deltaTime, const InputState & inputState)
 	{
 		if (inputState.inlvaid)
@@ -148,9 +155,8 @@ namespace Core
 	void Camera::UpdataGLParam(OpenGLDevice * pDevice)
 	{
 		CameraUniformData CameraUniformData;
-		CameraUniformData.ViewMatrix = m_viewMatrix;
-		CameraUniformData.PerspectiveProjectionMatrix = m_perspectiveProjectioneMatrix;
-		CameraUniformData.OrthoProjectionMatrix = m_orthoProjectionMatrix;
+		CameraUniformData.ViewPerspectiveProjectionMatrix = m_viewPerspectiveProjectionMatrix;
+		CameraUniformData.ViewOrthoProjectionMatrix = m_viewOrthoProjectionMatrix;
 		CameraUniformData.Position = Vector4(position.x, position.y, position.z, 1.0f);
 		CameraUniformData.NearFar.x = zNear;
 		CameraUniformData.NearFar.y = zFar;
@@ -175,8 +181,7 @@ namespace Core
 	{
 		return &m_viewPerspectiveProjectionMatrix;
 	}
-
-
+	
 	Vector3 Camera::GetForward() const
 	{
 		return -GetZAxis(m_viewMatrix);

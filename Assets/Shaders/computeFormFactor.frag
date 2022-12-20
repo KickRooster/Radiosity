@@ -24,9 +24,8 @@
 		
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
-			mat4 viewMatrix;
-			mat4 perspectiveProjectionMatrix;
-			mat4 orthoProjectionMatrix;
+			mat4 viewPerspectiveProjectionMatrix;
+			mat4 viewOrthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 			ivec4 FrameCount;
@@ -151,7 +150,7 @@
 			}
 			else
 			{
-				vec4 PerspectiveProjectedPos = perspectiveProjectionMatrix * viewMatrix * RecvPos;
+				vec4 PerspectiveProjectedPos = viewPerspectiveProjectionMatrix * RecvPos;
 				PerspectiveProjectedPos.xyz /= PerspectiveProjectedPos.w;
 				PerspectiveProjectedPos.z *= 0.5;
 				PerspectiveProjectedPos.z += 0.5;

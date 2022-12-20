@@ -17,9 +17,8 @@
 		uniform sampler2D albedoSampler;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
-			mat4 viewMatrix;
-			mat4 perspectiveProjectionMatrix;
-			mat4 orthoProjectionMatrix;
+			mat4 viewPerspectiveProjectionMatrix;
+			mat4 viewOrthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 			ivec4 FrameCount;
@@ -54,7 +53,7 @@
 
 		void main()
 		{
-			vec4 ProjectedPos = perspectiveProjectionMatrix * viewMatrix * object2World * pos;
+			vec4 ProjectedPos = viewPerspectiveProjectionMatrix * object2World * pos;
 			ProjectedPos.xyz /= ProjectedPos.w;
 			ProjectedPos.z *= 0.5;
 			ProjectedPos.z += 0.5;

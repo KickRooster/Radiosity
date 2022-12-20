@@ -15,9 +15,8 @@
 		layout(location = 13) in vec2 texCoord7;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
-			mat4 viewMatrix;
-			mat4 perspectiveProjectionMatrix;
-			mat4 orthoProjectionMatrix;
+			mat4 viewPerspectiveProjectionMatrix;
+			mat4 viewOrthoProjectionMatrix;
 			vec4 position;
 			vec4 NearFar;
 			ivec4 FrameCount;
@@ -63,7 +62,7 @@
 		out vec2 uv7;
 		void main()
 		{
-			gl_Position = perspectiveProjectionMatrix * viewMatrix * object2World * vPos;
+			gl_Position = viewPerspectiveProjectionMatrix * object2World * vPos;
 			pos = vPos;
 			normal = vNormal;
 		    tangent = vTangent;

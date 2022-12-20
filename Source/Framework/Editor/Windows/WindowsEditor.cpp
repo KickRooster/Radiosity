@@ -1641,7 +1641,7 @@ namespace Core
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Right;
 					Camera.UpdateViewMatrixRHUp(-Up);
-					Camera.UpdateViewProjectionMatrix();
+					Camera.UpdateViewPerspectiveProjectionMatrix();
 					CubeMatrices.ViewProjection_Positive_X = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
@@ -1657,7 +1657,7 @@ namespace Core
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Right;
 					Camera.UpdateViewMatrixRHUp(-Up);
-					Camera.UpdateViewProjectionMatrix();
+					Camera.UpdateViewPerspectiveProjectionMatrix();
 					CubeMatrices.ViewProjection_Negative_X = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
@@ -1673,7 +1673,7 @@ namespace Core
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Up;
 					Camera.UpdateViewMatrixRHUp(Forward);
-					Camera.UpdateViewProjectionMatrix();
+					Camera.UpdateViewPerspectiveProjectionMatrix();
 					CubeMatrices.ViewProjection_Positive_Y = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
@@ -1689,7 +1689,7 @@ namespace Core
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Up;
 					Camera.UpdateViewMatrixRHUp(-Forward);
-					Camera.UpdateViewProjectionMatrix();
+					Camera.UpdateViewPerspectiveProjectionMatrix();
 					CubeMatrices.ViewProjection_Negative_Y = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
@@ -1705,7 +1705,7 @@ namespace Core
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = Forward;
 					Camera.UpdateViewMatrixRHUp(-Up);
-					Camera.UpdateViewProjectionMatrix();
+					Camera.UpdateViewPerspectiveProjectionMatrix();
 					CubeMatrices.ViewProjection_Positive_Z = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
@@ -1721,7 +1721,7 @@ namespace Core
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
 					Camera.lookAtDir = -Forward;
 					Camera.UpdateViewMatrixRHUp(-Up);
-					Camera.UpdateViewProjectionMatrix();
+					Camera.UpdateViewPerspectiveProjectionMatrix();
 					CubeMatrices.ViewProjection_Negative_Z = *Camera.GetViewPerspcetiveProjectionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 					BeingBakingObject->DrawID(m_GLDevice.get());
@@ -1736,11 +1736,20 @@ namespace Core
 				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
-				
+
+				//	Each camera can have two usages for shaders, perspective camera or ortho camera according to
+				//	use viewPerspectiveProjectionMatrix or viewOrthoProjectionMatrix to transform vertex.
+				//	For current usage, perspective transformation is used for transform vertex back to
+				//	visibility testing camera's perspective view to do depth testing, and
+				//	ortho camera is used to rasterize each primitive on top of it to perfom baking.
+				//	We update camera for perspective usage and ortho usage respectively, and so independently.
 				Camera Camera;
 				Camera.frameCount = m_frameCount;
 				////	Used for constructing perspective projection matrix for doing depth test to cubemap,
 				////	same parameters with building cube map camera.
+				Camera.position = ShootingPrimitive.ZeroBarycentricPosition;
+				Camera.lookAtDir = ShootingPrimitive.Normal;
+				Camera.UpdateViewMatrixRH();
 				Camera.zNear = 1.0f;
 				Camera.zFar = 1000.0f;
 				Camera.ascept = 1.0f;
@@ -1748,7 +1757,7 @@ namespace Core
 				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 				Camera.fovY = 90.0f * Deg2Rad;
 				Camera.UpdatePerspectiveProjectionMatrix();
-				////
+				Camera.UpdateViewPerspectiveProjectionMatrix();
 				
 				ShooterInfo ShooterInfo;
 				ShooterInfo.Position = ShootingPrimitive.ZeroBarycentricPosition;
@@ -1768,10 +1777,7 @@ namespace Core
 					Camera.position = Vector3(BakingPrimitive.ZeroBarycentricPosition.x, BakingPrimitive.ZeroBarycentricPosition.y, BakingPrimitive.ZeroBarycentricPosition.z);
 					Camera.position += BakingPrimitive.Normal * Vector3(1.0, 1.0, 1.0);
 					Camera.lookAtDir = -BakingPrimitive.Normal;
-					//Camera.position = ShootingPrimitive.ZeroBarycentricPosition;
-					//Camera.lookAtDir = ShootingPrimitive.Normal;
 					Camera.UpdateViewMatrixRH();
-					Camera.UpdateViewProjectionMatrix();
 					float Left;
 					float Right;
 					float Bottom;
@@ -1780,7 +1786,7 @@ namespace Core
 					float ZFar;
 					BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
 						PrimitiveIndex,
-						1,//BeingBakingObject->glRenderableUnit->staticMesh.lock()->indexCount / 3,
+						1,
 						*BeingBakingObject->GetObject2WorldMatrix(),
 						*Camera.GetViewMatrix(),
 						Left,
@@ -1796,6 +1802,7 @@ namespace Core
 					Camera.OrthoParams.ZNear = 0;
 					Camera.OrthoParams.ZFar = max(abs(ZNear), abs(ZFar));
 					Camera.UpdateOrthoProjctionMatrix();
+					Camera.UpdateViewOrthoProjctionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 
 					BeingBakingObject->ComputeFormFactor(m_GLDevice.get(), PrimitiveIndex, 1);

@@ -53,7 +53,7 @@ namespace Core
 		
 		m_camera->UpdateViewMatrixRH();
 		m_camera->UpdatePerspectiveProjectionMatrix();
-		m_camera->UpdateViewProjectionMatrix();
+		m_camera->UpdateViewPerspectiveProjectionMatrix();
 	}
 
 	void Scene::Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState)
