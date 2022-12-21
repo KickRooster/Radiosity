@@ -150,7 +150,7 @@ namespace Core
 		glRenderableUnit->ActiveComputingFormFactor();
 	}
 
-	void Object::ComputeFormFactor(OpenGLDevice* pDevice, int32 StartPrimitive, int32 PrimitiveCount)
+	void Object::DrawPrimitive(OpenGLDevice* pDevice, int32 StartPrimitive, int32 PrimitiveCount)
 	{
 		pDevice->DrawArrays(GLTopology_Triangles, StartPrimitive * 3, PrimitiveCount * 3);
 	}
@@ -158,6 +158,19 @@ namespace Core
 	void Object::AfterComputeFormFactor()
 	{
 		glRenderableUnit->InactiveComputingFormFactor();
+	}
+
+	void Object::BeforePickShooter(OpenGLDevice* pDevice)
+	{
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
+
+		glRenderableUnit->ActivePickShooter();
+	}
+
+	void Object::AfterPickShooter()
+	{
+		glRenderableUnit->InactivePickShooter();
 	}
 	
 	void Object::ViewCubeMap(OpenGLDevice* pDevice)

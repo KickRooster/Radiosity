@@ -127,6 +127,18 @@ namespace Core
 		glCheckError();
 	}
 
+	void GLTexture::GenerateMipMap()
+	{
+		glBindTexture(m_target, m_id);
+		glCheckError();
+
+		glGenerateMipmap(m_target);
+		glCheckError();
+
+		glBindTexture(m_target, 0);
+		glCheckError();
+	}
+	
 	void GLTexture::Fetch(void * pData)
 	{
 		glBindTexture(m_target, m_id);

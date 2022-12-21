@@ -24,6 +24,11 @@ namespace Core
 		{
 			ViewCubeMapMaterial.lock()->BeginUse();	
 		}
+
+		if (!PickShooterMaterial.expired())
+		{
+			PickShooterMaterial.lock()->BeginUse();
+		}
 	}
 
 	void GLRenderableUnit::Activate()
@@ -96,6 +101,24 @@ namespace Core
 
 		if (!ViewCubeMapMaterial.expired())
 			ViewCubeMapMaterial.lock()->Inactivate();
+	}
+
+	void GLRenderableUnit::ActivePickShooter()
+	{
+		if (!staticMesh.expired())
+			staticMesh.lock()->Activate();
+
+		if (!PickShooterMaterial.expired())
+			PickShooterMaterial.lock()->Activate();
+	}
+
+	void GLRenderableUnit::InactivePickShooter()
+	{
+		if (!staticMesh.expired())
+			staticMesh.lock()->Inactivate();
+
+		if (!PickShooterMaterial.expired())
+			PickShooterMaterial.lock()->Inactivate();
 	}
 	
 	GLRenderableUnit::~GLRenderableUnit()

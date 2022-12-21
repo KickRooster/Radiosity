@@ -180,6 +180,36 @@ namespace Core
 		glDepthFunc(GL_LESS);
 		glCheckError();
 	}
+
+	void OpenGLDevice::BeginPickPass(int32 width, int32 height)
+	{
+		glClearColor(0, 0, 0, 0);
+		glCheckError();
+
+		glClearDepth(1.0);
+		glCheckError();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCheckError();
+
+		glViewport(0, 0, width, height);
+		glCheckError();
+
+		glFrontFace(GL_CCW);
+		glCheckError();
+
+		glEnable(GL_CULL_FACE);
+		glCheckError();
+
+		glCullFace(GL_BACK);
+		glCheckError();
+
+		glEnable(GL_DEPTH_TEST);
+		glCheckError();
+
+		glDepthFunc(GL_LESS);
+		glCheckError();
+	}
 	
 	void OpenGLDevice::AfterRender()
 	{

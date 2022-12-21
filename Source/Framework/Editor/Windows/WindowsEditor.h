@@ -64,6 +64,7 @@ namespace Core
 		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
 		std::shared_ptr<Material> m_ViewCubeMapMaterial;
+		std::shared_ptr<Material> m_PickShooterMaterial;
 		std::shared_ptr<StaticMesh> m_areaLightMesh;
 		std::shared_ptr<StaticMesh> m_postprocessMesh;
 

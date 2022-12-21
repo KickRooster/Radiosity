@@ -54,8 +54,10 @@ namespace Core
 		void DrawID(OpenGLDevice * pDevice);
 		void ComputeFormFactor(OpenGLDevice * pDevice);
 		void BeforeComputeFormFactor(OpenGLDevice* pDevice);
-		void ComputeFormFactor(OpenGLDevice * pDevice, int32 StartPrimitive, int32 PrimitiveCount);
+		void DrawPrimitive(OpenGLDevice * pDevice, int32 StartPrimitive, int32 PrimitiveCount);
 		void AfterComputeFormFactor();
+		void BeforePickShooter(OpenGLDevice * pDevice);
+		void AfterPickShooter();
 		void ViewCubeMap(OpenGLDevice * pDevice);
 		Matrix4x4 * GetObject2WorldMatrix() ;
 		Vector3 GetZDirection();

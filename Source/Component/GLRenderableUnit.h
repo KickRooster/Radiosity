@@ -13,6 +13,7 @@ namespace Core
 		std::weak_ptr<Material> DrawIDMaterial;
 		std::weak_ptr<Material> ComputeFormFactorMaterial;
 		std::weak_ptr<Material> ViewCubeMapMaterial;
+		std::weak_ptr<Material> PickShooterMaterial;
 
 		GLRenderableUnit();
 		void BeginUse();
@@ -24,6 +25,8 @@ namespace Core
 		void InactiveComputingFormFactor();
 		void ActiveViewCubeMap();
 		void InactiveCubeMap();
+		void ActivePickShooter();
+		void InactivePickShooter();
 		~GLRenderableUnit();
 	};
 }

@@ -181,12 +181,12 @@
 
 				vec4 TotalRadiosity = imageLoad(RadiosityOutput0, TargetLocation);
 				TotalRadiosity.xyz += Radiosity;
-				TotalRadiosity.w = 1.0;
+				TotalRadiosity.w = customData.x;	//	primitive id
 				imageStore(RadiosityOutput1, TargetLocation, TotalRadiosity);
 
 				vec4 TotalResidual = imageLoad(ResidualOutput0, TargetLocation);
 				TotalResidual.xyz += Residual;
-				TotalResidual.w = 1.0;
+				TotalResidual.w = customData.x;
 				imageStore(ResidualOutput1, TargetLocation, TotalResidual);
 			}
 			else
@@ -197,12 +197,12 @@
 
 				vec4 TotalRadiosity = imageLoad(RadiosityOutput1, TargetLocation);
 				TotalRadiosity.xyz += Radiosity;
-				TotalRadiosity.w = 1.0;
+				TotalRadiosity.w = customData.x;
 				imageStore(RadiosityOutput0, TargetLocation, TotalRadiosity);
 
 				vec4 TotalResidual = imageLoad(ResidualOutput1, TargetLocation);
 				TotalResidual.xyz += Residual;
-				TotalResidual.w = 1.0;
+				TotalResidual.w = customData.x;
 				imageStore(ResidualOutput0, TargetLocation, TotalResidual);
 			}
 			

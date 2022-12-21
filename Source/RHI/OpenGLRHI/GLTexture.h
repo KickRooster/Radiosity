@@ -24,6 +24,7 @@ namespace Core
 		GLTextureTarget GetTarget() const;
 		void Activate() const;
 		void LoadImage(int32 width, int32 height, const void * pData);
+		void GenerateMipMap();
 		void Fetch(void * pData);
 		void Inactivate() const;
 		void SetWrapMode(GLTextureWrapMode wrapMode);

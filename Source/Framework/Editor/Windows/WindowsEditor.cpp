@@ -56,6 +56,14 @@ namespace Core
 		
 		//////////////////////////////////////////////////////////////////////////
 
+		m_PickShooterMaterial = std::make_shared<Material>();
+		m_PickShooterMaterial->glVertexShader = m_assetManager->glVertexShaderMap["pickShooter"];
+		m_PickShooterMaterial->glVertexShader.lock()->Attach(m_PickShooterMaterial.get());
+		m_PickShooterMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["pickShooter"];
+		m_PickShooterMaterial->glFragmentShader.lock()->Attach(m_PickShooterMaterial.get());
+		
+		//////////////////////////////////////////////////////////////////////////
+		
 		m_areaLightMesh = std::make_shared<StaticMesh>();
 
 		m_areaLightMesh->vertexCount = 6;
@@ -1159,6 +1167,7 @@ namespace Core
 		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 		defaultObject->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
+		defaultObject->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
 		
 		defaultObject->Initialize(m_GLDevice.get(), False);
 
@@ -1185,6 +1194,7 @@ namespace Core
 		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 		object->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
+		object->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
 
 		object->name = object->staticMeshName;
 
@@ -1571,7 +1581,7 @@ namespace Core
 			RadiosityTextureHeight,
 			BlackData);
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->RadiosityImage0 = m_RadiosityImage0;
-
+			
 			m_RadiosityImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_1, 0, GLImageAccess_ReadWrite);
 			m_RadiosityImage1->LoadImage(
 			RadiosityTextureWidth,
@@ -1805,7 +1815,7 @@ namespace Core
 					Camera.UpdateViewOrthoProjctionMatrix();
 					Camera.UpdataGLParam(m_GLDevice.get());
 
-					BeingBakingObject->ComputeFormFactor(m_GLDevice.get(), PrimitiveIndex, 1);
+					BeingBakingObject->DrawPrimitive(m_GLDevice.get(), PrimitiveIndex, 1);
 				}
 				BeingBakingObject->AfterComputeFormFactor();
 			}
@@ -1822,7 +1832,7 @@ namespace Core
 			
 			if (RemainingPrimitives.empty())
 			{
-				//	pick next emmiter
+				//	Pick Pass, pick next emmiter
 			}
 		}
 		
