@@ -170,6 +170,7 @@
     <ClCompile Include="Source\Include\BaseInclude.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\MathGlobal.cpp" />
+    <ClCompile Include="Source\Math\Matrix3x3.cpp" />
     <ClCompile Include="Source\Math\Matrix4x4.cpp" />
     <ClCompile Include="Source\Math\SH.cpp" />
     <ClCompile Include="Source\Math\Vector2.cpp" />
@@ -311,6 +312,7 @@
     <ClInclude Include="Source\Include\BaseInclude.h" />
     <ClInclude Include="Source\Math\MathBase.h" />
     <ClInclude Include="Source\Math\MathGlobal.h" />
+    <ClInclude Include="Source\Math\Matrix3x3.h" />
     <ClInclude Include="Source\Math\Matrix4x4.h" />
     <ClInclude Include="Source\Math\SH.h" />
     <ClInclude Include="Source\Math\Vector2.h" />

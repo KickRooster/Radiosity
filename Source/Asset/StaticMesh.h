@@ -87,14 +87,15 @@ namespace Core
 		const int32 binormalSlotIndex = 3;
 		const int32 colorSlotIndex = 4;
 		const int32 customDataSlotIndex = 5;
-		const int32 uv0SlotIndex = 6;
-		const int32 uv1SlotIndex = 7;
-		const int32 uv2SlotIndex = 8;
-		const int32 uv3SlotIndex = 9;
-		const int32 uv4SlotIndex = 10;
-		const int32 uv5SlotIndex = 11;
-		const int32 uv6SlotIndex = 12;
-		const int32 uv7SlotIndex = 13;
+		const int32 scaledUV1PositionIndex = 6;
+		const int32 uv0SlotIndex = 7;
+		const int32 uv1SlotIndex = 8;
+		const int32 uv2SlotIndex = 9;
+		const int32 uv3SlotIndex = 10;
+		const int32 uv4SlotIndex = 11;
+		const int32 uv5SlotIndex = 12;
+		const int32 uv6SlotIndex = 13;
+		const int32 uv7SlotIndex = 14;
 
 		Vector4 * pPositions;	//	λ��
 		Vector3 * pNormals;		//	����
@@ -102,6 +103,7 @@ namespace Core
 		Vector3 * pBinormals;	//	������
 		Vector4 * pColors;		//	��ɫ		//	TODO:	Ҫ�ĳ�uint8
 		Vector4 * pCustomData;
+		Vector4 * pScaledUV1Positions;
 		Vector2 * pUV0s;		//	UV0
 		Vector2 * pUV1s;		//	UV1
 		Vector2 * pUV2s;		//	UV2
@@ -110,6 +112,8 @@ namespace Core
 		Vector2 * pUV5s;		//	UV5
 		Vector2 * pUV6s;		//	UV6
 		Vector2 * pUV7s;		//	UV7
+
+		Vector3 ScaledUVTriangleNormal;
 
 		uint32 * pIndices;		//	����
 		
@@ -144,6 +148,8 @@ namespace Core
 
 		int32 GetRadiosityTextureWidth()const;
 		int32 GetRadiosityTextureHeight() const;
+		float GetTotalSurfaceArea()const;
+		float GetTotalUVArea() const;
 		
 		void SetControlPointCount(int32 controlPointCount);
 

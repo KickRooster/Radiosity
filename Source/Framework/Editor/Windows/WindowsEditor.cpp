@@ -5,6 +5,7 @@
 #include "../../../Helper/Helper.h"
 #include <queue>
 
+
 #include STRING_INCLUDE_PATH
 #include VECTOR_INCLUDE_PATH
 
@@ -1227,7 +1228,8 @@ namespace Core
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_GLDebugViewFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_frameCount(0),
-		m_baking(False)
+		m_baking(False),
+		m_thresold(0.001f)
 	{
 		//	Visibility Pass
 		m_primitiveIDCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
@@ -1244,9 +1246,19 @@ namespace Core
 
 		m_visibilityPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 		m_visibilityPassFrameBuffer->Resize(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
-		
-		//m_pPrimitiveIDRawData = new float[PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4];
-		//memset(m_pPrimitiveIDRawData, 0, PrimitiveIDTextureWidth * PrimitiveIDTextureHeight * sizeof(float) * 4);
+
+		//	http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
+		AdobeRGBD65RGBToXYZ = Matrix3x3(
+		0.5767309f,  0.1855540f,  0.1881852f,
+		0.2973769f,  0.6273491f,  0.0752741f,
+		0.02703434,  0.0706872f,  0.9911085f
+		);
+
+		AdobeRGBD65XYZToRGB = Matrix3x3(
+		2.0413690f, -0.5649464f, -0.3446944f,
+		-0.9692660f,  1.8760108f,  0.0415560f,
+		0.0134474f, -0.1183897f,  1.0154096f
+		);
 	}
 
 	void WindowsEditor::Initialize(int32 width, int32 height)
@@ -1300,6 +1312,11 @@ namespace Core
 		{
 			m_baking = !m_baking;
 		}
+		
+		ImGui::SliderFloat("Thresold: ", &m_thresold, 0, 1.0);
+		std::string YString = "Current Y: ";
+		YString += to_string(m_currentMaxY);
+		ImGui::Text(YString.c_str());
 
 		string BakingInfo = "Frame: ";
 		BakingInfo += to_string(m_frameCount - 1);
@@ -1608,6 +1625,9 @@ namespace Core
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiosityTexture->GetTarget(), m_RadiosityTexture.get());
+
+			m_pResidualImageRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4];
+			memset(m_pResidualImageRawData, 0, RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4);
 			
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
@@ -1617,7 +1637,7 @@ namespace Core
 					++iter)
 			{
 				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector4(1.0, 1.0, 1.0, 1.0);
+				iter->second.Energy = Vector4(30.0, 30.0, 30.0, 1.0);
 				RemainingPrimitives.push(iter->second);
 			}
 		}
@@ -1833,12 +1853,101 @@ namespace Core
 			if (RemainingPrimitives.empty())
 			{
 				//	Pick Pass, pick next emmiter
+				//	TODO:	pbo
+				if (m_frameCount % 2 == 0)
+				{
+					m_ResidualImage1->Fetch(m_pResidualImageRawData);
+				}
+				else
+				{
+					m_ResidualImage0->Fetch(m_pResidualImageRawData);
+				}
+
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+
+				std::map<int32, float> PrimitiveYMap;
+				std::map<int32, Vector3> PrimitiveRGBMap;
+				
+				//	pick
+				int32 MaxYPrimitiveID = -1;
+				float MaxY = 0;
+				for (int32 i = 0; i < RadiosityTextureHeight; ++i)
+				{
+					for (int32 j = 0; j < RadiosityTextureWidth; ++j)
+					{
+						float R = m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 0];
+						float G = m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 1];
+						float B = m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 2];
+						
+						float Y = R * 0.30f + G * 0.59f + B * 0.11f;
+
+						int32 PrimitiveID = static_cast<int32>(m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 3]);
+
+						if (PrimitiveYMap.find(PrimitiveID) == PrimitiveYMap.end())
+						{
+							PrimitiveYMap[PrimitiveID] = Y;
+							PrimitiveRGBMap[PrimitiveID] = Vector3(R, G, B);
+						}
+						else
+						{
+							PrimitiveYMap[PrimitiveID] += Y;
+							PrimitiveRGBMap[PrimitiveID] += Vector3(R, G, B);
+						}
+
+						if (PrimitiveYMap[PrimitiveID] > MaxY)
+						{
+							MaxY = PrimitiveYMap[PrimitiveID];
+							MaxYPrimitiveID = PrimitiveID;
+						}
+					}
+				}
+				
+				Vector3 RGB = PrimitiveRGBMap[MaxYPrimitiveID];
+				float SurfaceArea = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID].SurfaceArea;
+				RGB.x /= SurfaceArea;
+				RGB.y /= SurfaceArea;
+				RGB.z /= SurfaceArea;
+				m_currentMaxY = RGB.r * 0.30f + RGB.g * 0.59f + RGB.b * 0.11f;
+
+				if (m_currentMaxY < m_thresold)
+				{
+					m_baking = False;
+					return ;
+				}
+				
+				BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID].Energy = Vector4(RGB.x, RGB.y, RGB.z, 1.0);
+				RemainingPrimitives.push(BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID]);
+
+				for (int32 i = 0; i < RadiosityTextureHeight; ++i)
+				{
+					for (int32 j = 0; j < RadiosityTextureWidth; ++j)
+					{
+						int32 PrimitiveID = static_cast<int32>(m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 3]);
+
+						if (PrimitiveID == MaxYPrimitiveID)
+						{
+							m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 0] = 0;
+							m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 1] = 0;
+							m_pResidualImageRawData[(i * RadiosityTextureWidth + j) * 4 + 2] = 0;
+						}
+					}
+				}
+				
+				if (m_frameCount % 2 == 0)
+				{
+					m_ResidualImage1->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pResidualImageRawData);
+				}
+				else
+				{
+					m_ResidualImage0->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pResidualImageRawData);
+				}
 			}
 		}
 		
 		++m_frameCount;
 		
-		m_baking = False;
+		//m_baking = False;
 
 		//m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
 		
@@ -1870,6 +1979,6 @@ namespace Core
 
 	WindowsEditor::~WindowsEditor()
 	{
-		//delete[] m_pPrimitiveIDRawData;
+		delete[] m_pResidualImageRawData;
 	}
 }

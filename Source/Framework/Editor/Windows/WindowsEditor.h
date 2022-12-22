@@ -10,7 +10,7 @@
 #include "../../../Settings/LightmappingSetting.h"
 #include "../../../Helper/AtlasManager.h"
 #include "../../../Asset/Scene.h"
-#include "../../../Math/SH.h"
+#include "Matrix3x3.h"
 
 #include VECTOR_INCLUDE_PATH
 
@@ -35,6 +35,8 @@ namespace Core
 		std::unique_ptr<GLTexture> m_GLDebugViewColorAttach;
 
 		Bool m_baking;
+		float m_thresold;
+		float m_currentMaxY;
 
 		//	Visibility Pass
 		const int32 PrimitiveIDTextureWidth = 1024;
@@ -52,8 +54,11 @@ namespace Core
 		std::shared_ptr<GLImageTexture> m_RadiosityImage1;
 		std::shared_ptr<GLImageTexture> m_ResidualImage0;
 		std::shared_ptr<GLImageTexture> m_ResidualImage1;
-		//float* m_pRadiosityRawData;
+		float* m_pResidualImageRawData;
 		//float* m_residualRawData;
+
+		Matrix3x3 AdobeRGBD65RGBToXYZ;
+		Matrix3x3 AdobeRGBD65XYZToRGB;
 		
 		int32 m_frameCount;
 		

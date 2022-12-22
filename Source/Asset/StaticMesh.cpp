@@ -107,8 +107,8 @@ namespace Core
 
 			PrimitiveMap[triangleIndex] = Primitive;
 		}
-
-		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit / (m_totalUVArea / m_totalSurfaceArea);
+		
+		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit * (m_totalSurfaceArea / m_totalUVArea);
 		
 		float maxU = 0;
 		float maxV = 0;
@@ -142,6 +142,23 @@ namespace Core
 
 		delete[] pPrimitiveSurfaceAreas;
 		delete[] pPrimitiveIDs;
+
+		if (pScaledUV1Positions)
+		{
+			delete[] pScaledUV1Positions;
+		}
+
+		pScaledUV1Positions = new Vector4[vertexCount];
+
+		for (int32 i = 0; i < vertexCount; ++i)
+		{
+			pScaledUV1Positions[i].x = pUV1s[i].x * UVScale;
+			pScaledUV1Positions[i].y = pUV1s[i].y * UVScale;
+			pScaledUV1Positions[i].z = 1.0f;
+			pScaledUV1Positions[i].w = 1.0f;
+		}
+
+		ScaledUVTriangleNormal = Vector3(0, 0, 1.0f);
 	}
 	
 	ErrorCode StaticMesh::uploadToGPU()
@@ -179,6 +196,10 @@ namespace Core
 		int32 customDataSize = pCustomData ? sizeof(pCustomData[0]) * vertexCount : 0;
 		vertexRawDataSize += customDataSize;
 		vertexRawDataStride += customDataSize / vertexCount;
+
+		int32 scaledUV1PositionSize = pScaledUV1Positions ? sizeof(pScaledUV1Positions[0]) * vertexCount : 0;
+		vertexRawDataSize += scaledUV1PositionSize;
+		vertexRawDataStride += scaledUV1PositionSize / vertexCount;
 
 		int32 uv0Size = pUV0s ? sizeof(pUV0s[0]) * vertexCount : 0;
 		vertexRawDataSize += uv0Size;
@@ -291,6 +312,12 @@ namespace Core
 			{
 				memcpy(m_pVertexRawData + offset, pCustomData + i, sizeof(pCustomData[0]));
 				offset += GetComponentCount(pCustomData[0]);
+			}
+
+			if (scaledUV1PositionSize > 0)
+			{
+				memcpy(m_pVertexRawData + offset, pScaledUV1Positions + i, sizeof(pScaledUV1Positions[0]));
+				offset += GetComponentCount(pScaledUV1Positions[0]);
 			}
 
 			if (uv0Size > 0)
@@ -424,6 +451,19 @@ namespace Core
 				reinterpret_cast<GLvoid *>(pointerOffset));
 
 			pointerOffset += sizeof(pCustomData[0]);
+		}
+
+		if (scaledUV1PositionSize > 0)
+		{
+			m_pVertexBufferLayout->SetSlotElement(
+				scaledUV1PositionIndex,
+				GetComponentCount(pScaledUV1Positions[0]),
+				GLDataType_Float,
+				False,
+				vertexRawDataStride,
+				reinterpret_cast<GLvoid *>(pointerOffset));
+
+			pointerOffset += sizeof(pScaledUV1Positions[0]);
 		}
 
 		if (uv0Size > 0)
@@ -580,6 +620,7 @@ namespace Core
 		pBinormals(Null),
 		pColors(Null),
 		pCustomData(Null),
+		pScaledUV1Positions(Null),
 		pUV0s(Null),
 		pUV1s(Null),
 		pUV2s(Null),
@@ -713,6 +754,16 @@ namespace Core
 	{
 		return m_radiosityTextureHeight;
 	}
+
+	float StaticMesh::GetTotalSurfaceArea() const
+	{
+		return m_totalSurfaceArea;
+	}
+
+	float StaticMesh::GetTotalUVArea() const
+	{
+		return m_totalUVArea;
+	}
 	
 	void StaticMesh::SetControlPointCount(int32 controlPointCount)
 	{
@@ -804,6 +855,11 @@ namespace Core
 		if (pCustomData)
 		{
 			delete[] pCustomData;
+		}
+
+		if (pScaledUV1Positions)
+		{
+			delete[] pScaledUV1Positions;
 		}
 
 		if (pUV0s)
