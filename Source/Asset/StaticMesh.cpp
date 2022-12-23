@@ -99,8 +99,7 @@ namespace Core
 			Primitive.ZeroBarycentricPosition.y = ZeroBarycentricPosition.y;
 			Primitive.ZeroBarycentricPosition.z = ZeroBarycentricPosition.z;
 			Primitive.ZeroBarycentricPosition.w = 1.0f;
-			//int32 TexelCount = ceil(LightmappingSetting::Instance()->TexelsPerUnit * triangleSurfaceArea);
-
+			
 			PrimitiveMap[triangleIndex] = Primitive;
 		}
 		
@@ -807,55 +806,6 @@ namespace Core
 	{
 		PrepareCustomDataAndPrimitiveMap(Object2World);
 		uploadToGPU();
-	}
-
-	void StaticMesh::CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar)
-	{
-		OutLeftMost = 0;
-		OutRightMost = 0;
-		OutBottomMost = 0;
-		OutTopMost = 0;
-		OutZNear = 0;
-		OutZFar = 0;
-		
-		for (int32 PrimitiveIndex = StartPrimitive; PrimitiveIndex < StartPrimitive + PrimitiveCount; ++PrimitiveIndex)
-		{
-			Vector4 pos0 = pPositions[PrimitiveIndex * 3 + 0];
-			Vector4 pos1 = pPositions[PrimitiveIndex * 3 + 1];
-			Vector4 pos2 = pPositions[PrimitiveIndex * 3 + 2];
-
-			Vector4 WorldPos0 = Object2World * pos0;
-			Vector4 WorldPos1 = Object2World * pos1;
-			Vector4 WorldPos2 = Object2World * pos2;
-
-			Vector4 ViewPos0 = View * WorldPos0;
-			Vector4 ViewPos1 = View * WorldPos1;
-			Vector4 ViewPos2 = View * WorldPos2;
-
-			OutLeftMost = min(OutLeftMost, ViewPos0.x);
-			OutLeftMost = min(OutLeftMost, ViewPos1.x);
-			OutLeftMost = min(OutLeftMost, ViewPos2.x);
-
-			OutRightMost = max(OutRightMost, ViewPos0.x);
-			OutRightMost = max(OutRightMost, ViewPos1.x);
-			OutRightMost = max(OutRightMost, ViewPos2.x);
-
-			OutBottomMost = min(OutBottomMost, ViewPos0.y);
-			OutBottomMost = min(OutBottomMost, ViewPos1.y);
-			OutBottomMost = min(OutBottomMost, ViewPos2.y);
-			
-			OutTopMost = max(OutTopMost, ViewPos0.y);
-			OutTopMost = max(OutTopMost, ViewPos1.y);
-			OutTopMost = max(OutTopMost, ViewPos2.y);
-
-			OutZNear = min(OutZNear, ViewPos0.z);
-			OutZNear = min(OutZNear, ViewPos1.z);
-			OutZNear = min(OutZNear, ViewPos2.z);
-
-			OutZFar = max(OutZFar, ViewPos0.z);
-			OutZFar = max(OutZFar, ViewPos1.z);
-			OutZFar = max(OutZFar, ViewPos2.z);
-		}
 	}
 
 	void StaticMesh::CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar)

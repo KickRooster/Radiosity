@@ -158,9 +158,7 @@ namespace Core
 		Matrix4x4 GetLocal2World() const;
 
 		void BeforeBaking(Matrix4x4 Object2World);
-
-		void CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
-
+		
 		void CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
 		
 		virtual ~StaticMesh();

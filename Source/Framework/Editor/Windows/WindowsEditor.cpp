@@ -1801,8 +1801,6 @@ namespace Core
 				for (int32 PrimitiveIndex = 0; PrimitiveIndex < BeingBakingObject->glRenderableUnit->staticMesh.lock()->indexCount / 3; ++PrimitiveIndex)
 				{
 					Primitive BakingPrimitive = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[PrimitiveIndex];
-
-					//	TODO:	bakc face culling.
 					
 					Camera.position = Vector3(BakingPrimitive.UV1ZeroBarycentricPosition.x, BakingPrimitive.UV1ZeroBarycentricPosition.y, BakingPrimitive.UV1ZeroBarycentricPosition.z);
 					Camera.position += BakingPrimitive.UV1Normal * Vector3(1.0, 1.0, 1.0);
