@@ -1804,9 +1804,9 @@ namespace Core
 
 					//	TODO:	bakc face culling.
 					
-					Camera.position = Vector3(BakingPrimitive.ZeroBarycentricPosition.x, BakingPrimitive.ZeroBarycentricPosition.y, BakingPrimitive.ZeroBarycentricPosition.z);
-					Camera.position += BakingPrimitive.Normal * Vector3(1.0, 1.0, 1.0);
-					Camera.lookAtDir = -BakingPrimitive.Normal;
+					Camera.position = Vector3(BakingPrimitive.UV1ZeroBarycentricPosition.x, BakingPrimitive.UV1ZeroBarycentricPosition.y, BakingPrimitive.UV1ZeroBarycentricPosition.z);
+					Camera.position += BakingPrimitive.UV1Normal * Vector3(1.0, 1.0, 1.0);
+					Camera.lookAtDir = -BakingPrimitive.UV1Normal;
 					Camera.UpdateViewMatrixRH();
 					float Left;
 					float Right;
@@ -1817,7 +1817,6 @@ namespace Core
 					BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
 						PrimitiveIndex,
 						1,
-						*BeingBakingObject->GetObject2WorldMatrix(),
 						*Camera.GetViewMatrix(),
 						Left,
 						Right,
@@ -1904,10 +1903,10 @@ namespace Core
 				}
 				
 				Vector3 RGB = PrimitiveRGBMap[MaxYPrimitiveID];
-				float SurfaceArea = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID].SurfaceArea;
-				RGB.x /= SurfaceArea;
-				RGB.y /= SurfaceArea;
-				RGB.z /= SurfaceArea;
+				float ScaledUV1Area = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID].ScaledUV1Area;
+				RGB.x /= ScaledUV1Area;
+				RGB.y /= ScaledUV1Area;
+				RGB.z /= ScaledUV1Area;
 				m_currentMaxY = RGB.r * 0.30f + RGB.g * 0.59f + RGB.b * 0.11f;
 
 				if (m_currentMaxY < m_thresold)

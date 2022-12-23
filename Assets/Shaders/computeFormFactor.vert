@@ -64,7 +64,7 @@
 		
 		void main()
 		{
-			gl_Position = viewOrthoProjectionMatrix * object2World * vPos;
+			gl_Position = viewOrthoProjectionMatrix * vScaledUV1Position;
 
 			pos = vPos;
 			normal = vNormal;

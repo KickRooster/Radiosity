@@ -27,8 +27,11 @@ namespace Core
 	{
 		float ID;
 		float SurfaceArea;
+		float ScaledUV1Area;
 		Vector3 Normal;
 		Vector4 ZeroBarycentricPosition;
+		Vector3 UV1Normal;
+		Vector4 UV1ZeroBarycentricPosition;
 		Vector4 Energy;
 	};
 	
@@ -113,8 +116,6 @@ namespace Core
 		Vector2 * pUV6s;		//	UV6
 		Vector2 * pUV7s;		//	UV7
 
-		Vector3 ScaledUVTriangleNormal;
-
 		uint32 * pIndices;		//	����
 		
 		int32 vertexCount;
@@ -159,6 +160,8 @@ namespace Core
 		void BeforeBaking(Matrix4x4 Object2World);
 
 		void CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& Object2World, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
+
+		void CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
 		
 		virtual ~StaticMesh();
 	};

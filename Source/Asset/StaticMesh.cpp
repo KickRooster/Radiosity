@@ -45,8 +45,8 @@ namespace Core
 		m_totalSurfaceArea = 0;
 		m_totalUVArea = 0;
 
-		float* pPrimitiveSurfaceAreas = new float[vertexCount];
-		int32* pPrimitiveIDs = new int32[vertexCount];
+		float* pPrimitiveSurfaceAreas = new float[vertexCount / 3];
+		int32* pPrimitiveIDs = new int32[vertexCount / 3];
 
 		PrimitiveMap.empty();
 		
@@ -59,9 +59,7 @@ namespace Core
 		
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
 		{
-			pPrimitiveIDs[triangleIndex * 3] = triangleIndex;
-			pPrimitiveIDs[triangleIndex * 3 + 1] = triangleIndex;
-			pPrimitiveIDs[triangleIndex * 3 + 2] = triangleIndex;
+			pPrimitiveIDs[triangleIndex] = triangleIndex;
 			
 			Vector4 pos0 = pPositions[triangleIndex * 3 + 0];
 			Vector4 pos1 = pPositions[triangleIndex * 3 + 1];
@@ -77,9 +75,7 @@ namespace Core
 			
 			float triangleSurfaceArea = getTriangleArea(WorldPos0XYZ, WorldPos1XYZ, WorldPos2XYZ);
 
-			pPrimitiveSurfaceAreas[triangleIndex * 3] = triangleSurfaceArea;
-			pPrimitiveSurfaceAreas[triangleIndex * 3 + 1] = triangleSurfaceArea;
-			pPrimitiveSurfaceAreas[triangleIndex * 3 + 2] = triangleSurfaceArea;
+			pPrimitiveSurfaceAreas[triangleIndex] = triangleSurfaceArea;
 
 			m_totalSurfaceArea += triangleSurfaceArea;
 
@@ -108,22 +104,26 @@ namespace Core
 			PrimitiveMap[triangleIndex] = Primitive;
 		}
 		
-		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit * (m_totalSurfaceArea / m_totalUVArea);
+		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit * m_totalSurfaceArea / m_totalUVArea;
+		float UVScaleSqrt = sqrt(UVScale);
 		
 		float maxU = 0;
 		float maxV = 0;
-		
+
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
-			if (pUV1s[i].x * UVScale > maxU)
-				maxU = pUV1s[i].x * UVScale;
+			if (pUV1s[i].x > maxU)
+				maxU = pUV1s[i].x;
 
 			if (pUV1s[i].y > maxV)
-				maxV = pUV1s[i].y * UVScale;
+				maxV = pUV1s[i].y;
 		}
 
-		m_radiosityTextureWidth = ceil(maxU);
-		m_radiosityTextureHeight = ceil(maxV);
+		float UScale = maxU / maxV * UVScaleSqrt;
+		float VScale = maxV / maxU * UVScaleSqrt;
+		
+		m_radiosityTextureWidth = ceil(maxU * UScale);
+		m_radiosityTextureHeight = ceil(maxV * VScale);
 
 		if (pCustomData)
 		{
@@ -134,8 +134,8 @@ namespace Core
 
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
-			pCustomData[i].x = static_cast<float>(pPrimitiveIDs[i]);
-			pCustomData[i].y = pPrimitiveSurfaceAreas[i];
+			pCustomData[i].x = static_cast<float>(pPrimitiveIDs[i / 3]);
+			pCustomData[i].y = pPrimitiveSurfaceAreas[i / 3];
 			pCustomData[i].z = 0;
 			pCustomData[i].w = 0;
 		}
@@ -152,13 +152,36 @@ namespace Core
 
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
-			pScaledUV1Positions[i].x = pUV1s[i].x * UVScale;
-			pScaledUV1Positions[i].y = pUV1s[i].y * UVScale;
-			pScaledUV1Positions[i].z = 1.0f;
+			pScaledUV1Positions[i].x = pUV1s[i].x * UScale;
+			pScaledUV1Positions[i].y = pUV1s[i].y * VScale;
+			pScaledUV1Positions[i].z = 0;
 			pScaledUV1Positions[i].w = 1.0f;
 		}
 
-		ScaledUVTriangleNormal = Vector3(0, 0, 1.0f);
+		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
+		{
+			Primitive& Primitive = PrimitiveMap[triangleIndex];
+			
+			Vector4 pos0 = pScaledUV1Positions[triangleIndex * 3 + 0];
+			Vector4 pos1 = pScaledUV1Positions[triangleIndex * 3 + 1];
+			Vector4 pos2 = pScaledUV1Positions[triangleIndex * 3 + 2];
+
+			Vector3 ZeroBarycentricPosition = pos0 / 3.0f + pos1 / 3.0f + pos2 / 3.0f;
+			Primitive.UV1ZeroBarycentricPosition.x = ZeroBarycentricPosition.x;
+			Primitive.UV1ZeroBarycentricPosition.y = ZeroBarycentricPosition.y;
+			Primitive.UV1ZeroBarycentricPosition.z = ZeroBarycentricPosition.z;
+			Primitive.UV1ZeroBarycentricPosition.w = 1.0f;
+			
+			Vector3 P0P1 = pos1 - pos0;
+			Vector3 P0P2 = pos2 - pos0;
+			Vector3 PrimitiveNormal = Cross(P0P1, P0P2);
+			Primitive.UV1Normal = Normalize(PrimitiveNormal);
+
+			Vector3 Pos03 = Vector3(pos0.x, pos0.y, pos0.z);
+			Vector3 Pos13 = Vector3(pos1.x, pos1.y, pos1.z);
+			Vector3 Pos23 = Vector3(pos2.x, pos2.y, pos2.z);
+			Primitive.ScaledUV1Area = getTriangleArea(Pos03, Pos13, Pos23);
+		}
 	}
 	
 	ErrorCode StaticMesh::uploadToGPU()
@@ -804,6 +827,51 @@ namespace Core
 			Vector4 WorldPos0 = Object2World * pos0;
 			Vector4 WorldPos1 = Object2World * pos1;
 			Vector4 WorldPos2 = Object2World * pos2;
+
+			Vector4 ViewPos0 = View * WorldPos0;
+			Vector4 ViewPos1 = View * WorldPos1;
+			Vector4 ViewPos2 = View * WorldPos2;
+
+			OutLeftMost = min(OutLeftMost, ViewPos0.x);
+			OutLeftMost = min(OutLeftMost, ViewPos1.x);
+			OutLeftMost = min(OutLeftMost, ViewPos2.x);
+
+			OutRightMost = max(OutRightMost, ViewPos0.x);
+			OutRightMost = max(OutRightMost, ViewPos1.x);
+			OutRightMost = max(OutRightMost, ViewPos2.x);
+
+			OutBottomMost = min(OutBottomMost, ViewPos0.y);
+			OutBottomMost = min(OutBottomMost, ViewPos1.y);
+			OutBottomMost = min(OutBottomMost, ViewPos2.y);
+			
+			OutTopMost = max(OutTopMost, ViewPos0.y);
+			OutTopMost = max(OutTopMost, ViewPos1.y);
+			OutTopMost = max(OutTopMost, ViewPos2.y);
+
+			OutZNear = min(OutZNear, ViewPos0.z);
+			OutZNear = min(OutZNear, ViewPos1.z);
+			OutZNear = min(OutZNear, ViewPos2.z);
+
+			OutZFar = max(OutZFar, ViewPos0.z);
+			OutZFar = max(OutZFar, ViewPos1.z);
+			OutZFar = max(OutZFar, ViewPos2.z);
+		}
+	}
+
+	void StaticMesh::CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar)
+	{
+		OutLeftMost = 0;
+		OutRightMost = 0;
+		OutBottomMost = 0;
+		OutTopMost = 0;
+		OutZNear = 0;
+		OutZFar = 0;
+		
+		for (int32 PrimitiveIndex = StartPrimitive; PrimitiveIndex < StartPrimitive + PrimitiveCount; ++PrimitiveIndex)
+		{
+			Vector4 WorldPos0 = pScaledUV1Positions[PrimitiveIndex * 3 + 0];
+			Vector4 WorldPos1 = pScaledUV1Positions[PrimitiveIndex * 3 + 1];
+			Vector4 WorldPos2 = pScaledUV1Positions[PrimitiveIndex * 3 + 2];
 
 			Vector4 ViewPos0 = View * WorldPos0;
 			Vector4 ViewPos1 = View * WorldPos1;
