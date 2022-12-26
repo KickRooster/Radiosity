@@ -94,11 +94,11 @@ namespace Core
 			Vector3 PrimitiveNormal = Cross(P0P1, P0P2);
 			Primitive.Normal = Normalize(PrimitiveNormal);
 			Primitive.SurfaceArea = triangleSurfaceArea;
-			Vector3 ZeroBarycentricPosition = WorldPos0XYZ / 3.0f + WorldPos1XYZ / 3.0f + WorldPos2XYZ /3.0f;
-			Primitive.ZeroBarycentricPosition.x = ZeroBarycentricPosition.x;
-			Primitive.ZeroBarycentricPosition.y = ZeroBarycentricPosition.y;
-			Primitive.ZeroBarycentricPosition.z = ZeroBarycentricPosition.z;
-			Primitive.ZeroBarycentricPosition.w = 1.0f;
+			Vector3 CentroidPosition = WorldPos0XYZ / 3.0f + WorldPos1XYZ / 3.0f + WorldPos2XYZ /3.0f;
+			Primitive.CentroidPosition.x = CentroidPosition.x;
+			Primitive.CentroidPosition.y = CentroidPosition.y;
+			Primitive.CentroidPosition.z = CentroidPosition.z;
+			Primitive.CentroidPosition.w = 1.0f;
 			
 			PrimitiveMap[triangleIndex] = Primitive;
 		}
@@ -165,11 +165,11 @@ namespace Core
 			Vector4 pos1 = pScaledUV1Positions[triangleIndex * 3 + 1];
 			Vector4 pos2 = pScaledUV1Positions[triangleIndex * 3 + 2];
 
-			Vector3 ZeroBarycentricPosition = pos0 / 3.0f + pos1 / 3.0f + pos2 / 3.0f;
-			Primitive.UV1ZeroBarycentricPosition.x = ZeroBarycentricPosition.x;
-			Primitive.UV1ZeroBarycentricPosition.y = ZeroBarycentricPosition.y;
-			Primitive.UV1ZeroBarycentricPosition.z = ZeroBarycentricPosition.z;
-			Primitive.UV1ZeroBarycentricPosition.w = 1.0f;
+			Vector3 CentroidPosition = pos0 / 3.0f + pos1 / 3.0f + pos2 / 3.0f;
+			Primitive.UV1CentroidPosition.x = CentroidPosition.x;
+			Primitive.UV1CentroidPosition.y = CentroidPosition.y;
+			Primitive.UV1CentroidPosition.z = CentroidPosition.z;
+			Primitive.UV1CentroidPosition.w = 1.0f;
 			
 			Vector3 P0P1 = pos1 - pos0;
 			Vector3 P0P2 = pos2 - pos0;

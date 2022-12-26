@@ -29,9 +29,9 @@ namespace Core
 		float SurfaceArea;
 		float ScaledUV1Area;
 		Vector3 Normal;
-		Vector4 ZeroBarycentricPosition;
+		Vector4 CentroidPosition;
 		Vector3 UV1Normal;
-		Vector4 UV1ZeroBarycentricPosition;
+		Vector4 UV1CentroidPosition;
 		Vector4 Energy;
 	};
 	

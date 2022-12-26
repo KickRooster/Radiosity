@@ -1679,13 +1679,13 @@ namespace Core
 			
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
-			
+
 			for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
 					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
 					++iter)
 			{
 				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector4(3.0, 3.0, 3.0, 1.0);
+				iter->second.Energy = Vector4(5.0, 5.0, 5.0, 1.0);
 				RemainingPrimitives.push(iter->second);
 			}
 		}
@@ -1706,7 +1706,7 @@ namespace Core
 				Camera.ascept *= static_cast<float>(PrimitiveIDTextureWidth);
 				Camera.ascept /= static_cast<float>(PrimitiveIDTextureHeight);
 				Camera.fovY = 90.0f * Deg2Rad;
-				Camera.position = ShootingPrimitive.ZeroBarycentricPosition;
+				Camera.position = ShootingPrimitive.CentroidPosition;
 				Camera.UpdatePerspectiveProjectionMatrix();
 				
 				//	FIXME:	这里需要定义渲染器里世界坐标系.
@@ -1825,7 +1825,7 @@ namespace Core
 				Camera.frameCount = m_frameCount;
 				////	Used for constructing perspective projection matrix for doing depth test to cubemap,
 				////	same parameters with building cube map camera.
-				Camera.position = ShootingPrimitive.ZeroBarycentricPosition;
+				Camera.position = ShootingPrimitive.CentroidPosition;
 				Camera.lookAtDir = ShootingPrimitive.Normal;
 				Camera.UpdateViewMatrixRH();
 				Camera.zNear = 1.0f;
@@ -1838,7 +1838,7 @@ namespace Core
 				Camera.UpdateViewPerspectiveProjectionMatrix();
 				
 				ShooterInfo ShooterInfo;
-				ShooterInfo.Position = ShootingPrimitive.ZeroBarycentricPosition;
+				ShooterInfo.Position = ShootingPrimitive.CentroidPosition;
 				ShooterInfo.Normal = Vector4(ShootingPrimitive.Normal.x, ShootingPrimitive.Normal.y, ShootingPrimitive.Normal.z, 0);
 				ShooterInfo.Energy = ShootingPrimitive.Energy;
 				ShooterInfo.SurfaceArea = Vector4(ShootingPrimitive.SurfaceArea, ShootingPrimitive.SurfaceArea, ShootingPrimitive.SurfaceArea, ShootingPrimitive.SurfaceArea);
@@ -1850,7 +1850,7 @@ namespace Core
 				{
 					Primitive BakingPrimitive = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[PrimitiveIndex];
 					
-					Camera.position = Vector3(BakingPrimitive.UV1ZeroBarycentricPosition.x, BakingPrimitive.UV1ZeroBarycentricPosition.y, BakingPrimitive.UV1ZeroBarycentricPosition.z);
+					Camera.position = Vector3(BakingPrimitive.UV1CentroidPosition.x, BakingPrimitive.UV1CentroidPosition.y, BakingPrimitive.UV1CentroidPosition.z);
 					Camera.position += BakingPrimitive.UV1Normal * Vector3(1.0, 1.0, 1.0);
 					Camera.lookAtDir = -BakingPrimitive.UV1Normal;
 					Camera.UpdateViewMatrixRH();
