@@ -44,8 +44,6 @@ namespace Core
 		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
 		std::shared_ptr<GLTexture> m_primitiveIDCubeMap;
 		std::shared_ptr<GLTexture> m_primitiveAlbedoCubeMap;
-		
-		//float * m_pPrimitiveIDRawData;
 
 		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
@@ -54,8 +52,8 @@ namespace Core
 		std::shared_ptr<GLImageTexture> m_RadiosityImage1;
 		std::shared_ptr<GLImageTexture> m_ResidualImage0;
 		std::shared_ptr<GLImageTexture> m_ResidualImage1;
+		float* m_pRadiosityImageRawData;
 		float* m_pResidualImageRawData;
-		//float* m_residualRawData;
 
 		Matrix3x3 AdobeRGBD65RGBToXYZ;
 		Matrix3x3 AdobeRGBD65XYZToRGB;
@@ -86,6 +84,7 @@ namespace Core
 		//	Create for serialized.
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createAreaLight();
+		void SaveLightmap(std::string Name, int32 Width, int32 Height);
 
 		CubeMatrices CubeMatrices;
 		

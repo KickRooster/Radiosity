@@ -1220,6 +1220,50 @@ namespace Core
 		return areaLight;
 	}
 
+	void WindowsEditor::SaveLightmap(std::string Name, int32 Width, int32 Height)
+	{
+		if ((m_frameCount - 1) % 2 == 0)
+		{
+			m_RadiosityImage1->Fetch(m_pRadiosityImageRawData);
+		}
+		else
+		{
+			m_RadiosityImage0->Fetch(m_pRadiosityImageRawData);
+		}
+
+		uint8* LightmapRawData = new uint8[Width * Height * sizeof(uint8) * 4];
+
+		for (int32 i = 0; i < Height; ++i)
+		{
+			for (int32 j = 0; j < Width; ++j)
+			{
+				float R = m_pRadiosityImageRawData[(i * Width + j) * 4 + 0];
+				float G = m_pRadiosityImageRawData[(i * Width + j) * 4 + 1];
+				float B = m_pRadiosityImageRawData[(i * Width + j) * 4 + 2];
+				//float A = m_pRadiosityImageRawData[(i * Width + j) * 4 + 3];
+
+				int32 IntR = static_cast<int32>(R * 255.0f);
+				int32 IntG = static_cast<int32>(G * 255.0f);
+				int32 IntB = static_cast<int32>(B * 255.0f);
+				
+				LightmapRawData[(i * Width + j) * 4 + 0] = Clamp(IntR, 0, 255);
+				LightmapRawData[(i * Width + j) * 4 + 1] = Clamp(IntG, 0, 255);
+				LightmapRawData[(i * Width + j) * 4 + 2] = Clamp(IntB, 0, 255);
+				LightmapRawData[(i * Width + j) * 4 + 3] = 255;
+			}
+		}
+		
+		m_assetManager->SaveLightmap(
+			Name.c_str(),
+			TextureFormat_RGBA32,
+			LightmapRawData,
+			Width,
+			Height
+			);
+
+		delete[] LightmapRawData;
+	}
+	
 	WindowsEditor::WindowsEditor()
 		:
 		m_assetManager(std::make_unique<AssetManager>()),
@@ -1229,7 +1273,7 @@ namespace Core
 		m_GLDebugViewFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_frameCount(0),
 		m_baking(False),
-		m_thresold(0.001f)
+		m_thresold(0.0001f)
 	{
 		//	Visibility Pass
 		m_primitiveIDCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
@@ -1313,7 +1357,7 @@ namespace Core
 			m_baking = !m_baking;
 		}
 		
-		ImGui::SliderFloat("Thresold: ", &m_thresold, 0, 1.0);
+		ImGui::SliderFloat("Thresold: ", &m_thresold, 0, 0.05, "%.6f");
 		std::string YString = "Current Y: ";
 		YString += to_string(m_currentMaxY);
 		ImGui::Text(YString.c_str());
@@ -1322,14 +1366,15 @@ namespace Core
 		BakingInfo += to_string(m_frameCount - 1);
 		ImGui::Text(BakingInfo.c_str());
 
-		//ImGui::InputInt("Progressive Count:", &debugingProgressiveCount);
+		if (ImGui::Button("Save Lightmap"))
+		{
+			Object* BeingBakingObject = m_scene->GetBeingBakingObject();
 
-		//ctd::string bakingInfo = "Progressive[";
-		//bakingInfo += to_string(m_frameCount);
-		//bakingInfo += "/";
-		//bakingInfo += to_string(debugingProgressiveCount);// LightmappingSetting::Instance()->progressivePassCount);
-		//bakingInfo += "]";
-		//ImGui::Text(bakingInfo.c_str());
+			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+
+			SaveLightmap(BeingBakingObject->name, RadiosityTextureWidth, RadiosityTextureHeight);
+		}
 
 		ImGui::End();
 
@@ -1626,6 +1671,9 @@ namespace Core
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
 			m_reconstructionPassFrameBuffer->AttachColor(GLAttachIndexColor0, m_RadiosityTexture->GetTarget(), m_RadiosityTexture.get());
 
+			m_pRadiosityImageRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4];
+			memset(m_pRadiosityImageRawData, 0, RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4);
+			
 			m_pResidualImageRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4];
 			memset(m_pResidualImageRawData, 0, RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4);
 			
@@ -1637,7 +1685,7 @@ namespace Core
 					++iter)
 			{
 				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector4(30.0, 30.0, 30.0, 1.0);
+				iter->second.Energy = Vector4(3.0, 3.0, 3.0, 1.0);
 				RemainingPrimitives.push(iter->second);
 			}
 		}
@@ -1945,37 +1993,11 @@ namespace Core
 		++m_frameCount;
 		
 		//m_baking = False;
-
-		//m_primitiveIDTexture->Fetch(m_pPrimitiveIDRawData);
-		
-		//	��ȾGI
-		if (0)
-		{
-			//////////////////////////////////////////////////////////////////////////
-			
-			if (m_frameCount == 0)
-				m_assetManager->ScanLightmap();
-
-			m_assetManager->ReloadLightmap();
-
-			for (vector<std::shared_ptr<Object>>::iterator iter = m_scene->objects.begin();
-				iter != m_scene->objects.end();
-				++iter)
-			{
-				//if ((*iter)->glRenderableUnit->bakingMaterial.expired())
-				//	continue;
-			
-				//string lightmapName = LightmappingSetting::Instance()->GetLightmapName((*iter)->glRenderableUnit->material.lock()->lightmapIndex);
-				//(*iter)->glRenderableUnit->material.lock()->lightmapName = lightmapName;
-			//
-				//(*iter)->glRenderableUnit->material.lock()->lightmapTexture = m_assetManager->lightmapMap[lightmapName];
-				//(*iter)->glRenderableUnit->material.lock()->lightmapTexture.lock()->BeginUse();
-			}
-		}
 	}
 
 	WindowsEditor::~WindowsEditor()
 	{
+		delete[] m_pRadiosityImageRawData;
 		delete[] m_pResidualImageRawData;
 	}
 }
