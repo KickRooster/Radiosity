@@ -10,6 +10,7 @@ namespace Core
 	public:
 		std::weak_ptr<StaticMesh> staticMesh;
 		std::weak_ptr<Material> material;
+		std::weak_ptr<Material> DrawGBufferMaterial;
 		std::weak_ptr<Material> DrawIDMaterial;
 		std::weak_ptr<Material> ComputeFormFactorMaterial;
 		std::weak_ptr<Material> ViewCubeMapMaterial;
@@ -19,6 +20,8 @@ namespace Core
 		void BeginUse();
 		void Activate();
 		void Inactivate();
+		void ActiveDrawGBuffer();
+		void InactiveDrawGBuffer();
 		void ActivateDrawingID();
 		void InactivateDrawingID();
 		void ActiveComputingFormFactor();

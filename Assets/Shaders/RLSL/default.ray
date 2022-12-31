@@ -1,0 +1,15 @@
+uniform float ShootingPrimitiveID;
+
+varying vec4 CustomData;
+
+void main()
+{
+	if (CustomData.x == ShootingPrimitiveID)
+	{
+		accumulate(vec4(1.0, 1.0, 1.0, 1.0));
+	}
+	else
+	{
+		accumulate(vec4(0, 0, 0, 1.0));
+	}
+}

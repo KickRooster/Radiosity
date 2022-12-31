@@ -107,23 +107,70 @@ namespace Core
 			shaderRef.lock()->type = FileType_GLSL_Fragment;
 	}
 
-	// void AssetManager::processMesh(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
-	// {
-	// 	weak_ptr<StaticMesh> staticMeshRef = meshMap[fileName];
-	//
-	// 	if (staticMeshRef.expired())
-	// 	{
-	// 		meshMap[fileName] = make_shared<StaticMesh>();
-	// 		staticMeshRef = meshMap[fileName];
-	// 	}
-	//
-	// 	staticMeshRef.lock()->fullPathName = fileFullPathName;
-	// 	staticMeshRef.lock()->fileName = fileName;
-	// 	staticMeshRef.lock()->fileNameWithExt = fileName;
-	// 	staticMeshRef.lock()->fileNameWithExt += extension;
-	// 	staticMeshRef.lock()->type = FileType_StaticMesh;
-	// }
+	void AssetManager::processRLShader(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
+	{
+		RLShaderType shaderType;
 
+		if (strcmp(extension, rlVertexShaderExt) == 0)
+			shaderType = RLShaderType_VertexShader;
+		else if (strcmp(extension, rlRayShaderExt) == 0)
+			shaderType = RLShaderType_RayShader;
+		else if (strcmp(extension, rlFrameShaderExt) == 0)
+			shaderType = RLShaderType_FrameShader;
+		else
+			assert(False);
+
+		weak_ptr<RLSL> shaderRef;
+
+		switch (shaderType)
+		{
+		case RLShaderType_VertexShader:
+			shaderRef = rlVertexShaderMap[fileName];
+			break;
+		case RLShaderType_RayShader:
+			shaderRef = rlRayShaderMap[fileName];
+			break;
+		case RLShaderType_FrameShader:
+			shaderRef = rlFrameShaderMap[fileName];
+			break;
+		default:
+			break;
+		}
+
+		if (shaderRef.expired())
+		{
+			switch (shaderType)
+			{
+			case RLShaderType_VertexShader:
+				rlVertexShaderMap[fileName] = make_shared<RLSL>();
+				shaderRef = rlVertexShaderMap[fileName];
+				break;
+			case RLShaderType_RayShader:
+				rlRayShaderMap[fileName] = make_shared<RLSL>();
+				shaderRef = rlRayShaderMap[fileName];
+				break;
+			case RLShaderType_FrameShader:
+				rlFrameShaderMap[fileName] = make_shared<RLSL>();
+				shaderRef = rlFrameShaderMap[fileName];
+				break;
+			default:
+				break;
+			}
+		}
+
+		shaderRef.lock()->fullPathName = fileFullPathName;
+		shaderRef.lock()->fileName = fileName;
+		shaderRef.lock()->fileNameWithExt = fileName;
+		shaderRef.lock()->fileNameWithExt += extension;
+
+		if (shaderType == RLShaderType_VertexShader)
+			shaderRef.lock()->type = FileType_RLSL_Vertex;
+		else if (shaderType == RLShaderType_RayShader)
+			shaderRef.lock()->type = FileType_RLSL_Ray;
+		else if (shaderType == RLShaderType_FrameShader)
+			shaderRef.lock()->type = FileType_RLSL_Frame;
+	}
+	
 	void AssetManager::processStaticMesh(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
 	{
 		ctd::vector<std::unique_ptr<StaticMesh>> staticMeshes;
@@ -180,6 +227,12 @@ namespace Core
 			materialRef.lock()->glFragmentShaderName = defaultGLFragmentShaderName;
 			materialRef.lock()->glFragmentShader = glFragmentShaderMap[defaultGLFragmentShaderName];
 			materialRef.lock()->glFragmentShader.lock()->Attach(materialMap[materialName].get());
+
+			materialRef.lock()->rlVertexShaderName = defaultRLVertexShaderName;
+			materialRef.lock()->rlVertexShader = rlVertexShaderMap[defaultRLVertexShaderName];
+
+			materialRef.lock()->rlRayShaderName = defaultRLRayShaderName;
+			materialRef.lock()->rlRayShader = rlRayShaderMap[defaultRLRayShaderName];
 			
 			materialRef.lock()->albedoTextureName = defaultAlbedoTextureName;
 			materialRef.lock()->albedoTexture = textureMap[defaultAlbedoTextureName];
@@ -401,6 +454,9 @@ namespace Core
 						case AssetType_GLShader:
 							processGLShader(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
 							break;
+						case AssetType_RLShader:
+							processRLShader(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
+							break;	
 						case AssetType_StaticMesh:
 							processStaticMesh(extension.c_str(), fileNameWithoutExt.c_str(), fullPathName.c_str());
 							break;
@@ -454,6 +510,8 @@ namespace Core
 		processFolder(AssetType_Prefab, prefabFullPath, prefabExt, Null);
 
 		processFolder(AssetType_GLShader, glShaderFullPath, glVertexShaderExt, glFragmentShaderExt, Null);
+
+		processFolder(AssetType_RLShader, rlShaderFullPath, rlVertexShaderExt, rlRayShaderExt, rlFrameShaderExt, Null);
 		
 		processFolder(AssetType_TextureInfo, textureFullPath, textureInfoExt, Null);
 
@@ -498,6 +556,30 @@ namespace Core
 
 		for (ctd::map<ctd::string, std::shared_ptr<GLSL>>::iterator iter = glFragmentShaderMap.begin();
 			iter != glFragmentShaderMap.end();
+			++iter)
+		{
+			iter->second->Reload();
+		}
+	}
+
+	void AssetManager::ReloadRLShader()
+	{
+		for (ctd::map<ctd::string, std::shared_ptr<RLSL>>::iterator iter = rlVertexShaderMap.begin();
+			iter != rlVertexShaderMap.end();
+			++iter)
+		{
+			iter->second->Reload();
+		}
+
+		for (ctd::map<ctd::string, std::shared_ptr<RLSL>>::iterator iter = rlRayShaderMap.begin();
+			iter != rlRayShaderMap.end();
+			++iter)
+		{
+			iter->second->Reload();
+		}
+
+		for (ctd::map<ctd::string, std::shared_ptr<RLSL>>::iterator iter = rlFrameShaderMap.begin();
+			iter != rlFrameShaderMap.end();
 			++iter)
 		{
 			iter->second->Reload();

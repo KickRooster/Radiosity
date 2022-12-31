@@ -1,5 +1,6 @@
 		#version 450 core
-	
+		
+		in vec4 pos;
 		in vec3 normal;
 		in vec3 tangent;
 		in vec3 binormal;
@@ -14,7 +15,6 @@
 		in vec2 uv6;
 		in vec2 uv7;
 		uniform sampler2D albedoSampler;
-		uniform sampler2D lightmapSampler;
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewPerspectiveProjectionMatrix;
@@ -48,13 +48,20 @@
 			mat4 object2WorldIT;
 		};
 
-		out vec4 out_Color;
+		layout(location = 0) out vec4 attch0;
+		layout(location = 1) out vec4 attch1;
+		layout(location = 2) out vec4 attch2;
 
 		void main()
 		{
-			 vec3 albedo = texture(albedoSampler, vec2(uv0.x, uv0.y)).xyz;
-			 vec3 irradiance = texture(lightmapSampler, uv1).xyz;
-			 
-			 out_Color.xyz = albedo * irradiance;
-			 out_Color.w = 1.0;
+			vec4 WorldPos = object2World * pos;
+			attch0.xyz = WorldPos.xyz;
+			attch0.w = 1.0;
+
+			vec4 Normal4 = vec4(normal.x, normal.y, normal.z, 1.0f);
+			vec4 WorldNormal4 = object2WorldIT * Normal4;
+			attch1.xyz = normalize(WorldNormal4.xyz);
+			attch1.w = 1.0;
+
+			attch2 = vec4(customData.x, customData.x, customData.x, 1.0);
 		};

@@ -3,6 +3,7 @@
 #include "IAsset.h"
 #include "TextureInfo.h"
 #include "..\RHI\OpenGLRHI\GLTexture.h"
+#include "..\RHI\OpenRLRHI\RLTexture2D.h"
 #include "..\DesignPattern\ObserverPattern\Subject.h"
 
 namespace Core
@@ -11,6 +12,7 @@ namespace Core
 	{
 	private:
 		std::unique_ptr<GLTexture> m_glTexture;
+		std::unique_ptr<RLTexture2D> m_rlTexture;
 		
 		void load();
 
@@ -33,6 +35,14 @@ namespace Core
 		void SetGLFilterMode(GLTextureFilterMode filterMode);
 		GLTextureFilterMode GetGLFilterMode() const;
 		void UploadToGL();
+		
+		void SetRLWrapMode(RLTextureWrapMode wrapMode);
+		RLTextureWrapMode GetRLWrapMode() const;
+		void SetRLFilterMode(RLTextureFilterMode filterMode);
+		RLTextureFilterMode GetRLFilterMode() const;
+		void UploadToRL();
+		RLTexture2D * GetRLTexture();
+		
 		virtual ~Texture();
 	};
 }

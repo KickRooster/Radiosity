@@ -29,7 +29,14 @@ namespace Core
 		
 		m_arealLightMaterial->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
 		m_arealLightMaterial->lightmapTexture.lock()->Attach(m_arealLightMaterial.get());
-		m_arealLightMaterial->IsOccluder = False;
+		m_arealLightMaterial->IsOccluder = True;
+		//////////////////////////////////////////////////////////////////////////
+
+		m_DrawGBufferMaterial = std::make_shared<Material>();
+		m_DrawGBufferMaterial->glVertexShader = m_assetManager->glVertexShaderMap["drawGBuffer"];
+		m_DrawGBufferMaterial->glVertexShader.lock()->Attach(m_DrawGBufferMaterial.get());
+		m_DrawGBufferMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["drawGBuffer"];
+		m_DrawGBufferMaterial->glFragmentShader.lock()->Attach(m_DrawGBufferMaterial.get());
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +63,7 @@ namespace Core
 		m_ViewCubeMapMaterial->glFragmentShader.lock()->Attach(m_ViewCubeMapMaterial.get());
 		
 		//////////////////////////////////////////////////////////////////////////
-
+		
 		m_PickShooterMaterial = std::make_shared<Material>();
 		m_PickShooterMaterial->glVertexShader = m_assetManager->glVertexShaderMap["pickShooter"];
 		m_PickShooterMaterial->glVertexShader.lock()->Attach(m_PickShooterMaterial.get());
@@ -1165,10 +1172,17 @@ namespace Core
 		material->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
 
 		defaultObject->glRenderableUnit->material = material;
+		defaultObject->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 		defaultObject->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
 		defaultObject->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
+
+		defaultObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
+		defaultObject->rlRenderableUnit->staticMesh = m_assetManager->staticMeshMap[prefab.lock()->staticMeshName];
+		defaultObject->rlRenderableUnit->material = material;
+		material->rlVertexShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
+		material->rlRayShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
 		
 		defaultObject->Initialize(m_GLDevice.get(), False);
 
@@ -1192,10 +1206,17 @@ namespace Core
 		material->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
 
 		object->glRenderableUnit->material = material;
+		object->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 		object->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
 		object->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
+
+		object->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
+		object->rlRenderableUnit->staticMesh = m_assetManager->staticMeshMap[object->staticMeshName];
+		object->rlRenderableUnit->material = material;
+		material->rlVertexShader.lock()->Attach(object->rlRenderableUnit.get());
+		material->rlRayShader.lock()->Attach(object->rlRenderableUnit.get());
 
 		object->name = object->staticMeshName;
 
@@ -1204,7 +1225,7 @@ namespace Core
 		return object;
 	}
 
-	std::shared_ptr<Core::Object> WindowsEditor::createAreaLight()
+	std::shared_ptr<Object> WindowsEditor::createAreaLight()
 	{
 		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
 		ctd::string name = "Area Light";
@@ -1220,6 +1241,41 @@ namespace Core
 		return areaLight;
 	}
 
+	std::unique_ptr<Object> WindowsEditor::CreateObject(const Primitive& Primitive)
+	{
+		shared_ptr<StaticMesh> PrimitiveMesh = std::make_shared<StaticMesh>();
+		PrimitiveMesh->pPositions = new Vector4[3];
+		PrimitiveMesh->vertexCount = 3;
+
+		PrimitiveMesh->pPositions[0] = Primitive.Positions[0];
+		PrimitiveMesh->pPositions[1] = Primitive.Positions[1];
+		PrimitiveMesh->pPositions[2] = Primitive.Positions[2];
+		
+		PrimitiveMesh->pIndices = new uint32[3];
+		PrimitiveMesh->indexCount = 3;
+		PrimitiveMesh->pIndices[0] = 0;
+		PrimitiveMesh->pIndices[1] = 1;
+		PrimitiveMesh->pIndices[2] = 2;
+
+		shared_ptr<Material> PrimitiveMaterial = make_shared<Material>();
+		PrimitiveMaterial->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
+		PrimitiveMaterial->rlVertexShader = m_assetManager->rlVertexShaderMap["primitive"];
+		PrimitiveMaterial->rlRayShader = m_assetManager->rlRayShaderMap["primitive"];
+		
+		std::unique_ptr<Object> PrimitiveObject = std::make_unique<Object>();
+		PrimitiveObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
+		PrimitiveObject->rlRenderableUnit->staticMesh = PrimitiveMesh;
+		PrimitiveObject->rlRenderableUnit->material = PrimitiveMaterial;
+		
+		PrimitiveMaterial->rlVertexShader.lock()->Attach(PrimitiveObject->rlRenderableUnit.get());
+		PrimitiveMaterial->rlRayShader.lock()->Attach(PrimitiveObject->rlRenderableUnit.get());
+
+		PrimitiveMesh->BeginUse();
+		PrimitiveObject->rlRenderableUnit->Commit();
+
+		return PrimitiveObject;
+	}
+	
 	void WindowsEditor::SaveLightmap(std::string Name, int32 Width, int32 Height)
 	{
 		if ((m_frameCount - 1) % 2 == 0)
@@ -1263,14 +1319,46 @@ namespace Core
 
 		delete[] LightmapRawData;
 	}
+
+	uint32 WindowsEditor::ReverseBits(uint32 Value)
+	{
+		Value = (Value << 16u) | (Value >> 16u); 
+		Value = ((Value & 0x55555555) << 1u) | ((Value & 0xAAAAAAAA) >> 1u);
+		Value = ((Value & 0x33333333) << 2u) | ((Value & 0xCCCCCCCC) >> 2u);
+		Value = ((Value & 0x0F0F0F0F) << 4u) | ((Value & 0xF0F0F0F0) >> 4u);
+		Value = ((Value & 0x00FF00FF) << 8u) | ((Value & 0xFF00FF00) >> 8u);
+		
+		return  float(Value) * 2.3283064365386963e-10;
+	}
+
+	Vector2 WindowsEditor::Hammersley(uint32 Index, uint32 NumSamples)
+	{
+		return Vector2(float(Index) / float(NumSamples), ReverseBits(Index));
+	}
+
+	Vector3 WindowsEditor::UniformSampleHemisphere(float u, float v)
+	{
+		float phi = v * 2.0f * PI;
+		float cosTheta = 1.0f - u;
+		float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+		
+		return Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+	}
 	
 	WindowsEditor::WindowsEditor()
 		:
 		m_assetManager(std::make_unique<AssetManager>()),
 		m_GLDevice(std::make_unique<OpenGLDevice>()),
+		m_RLDevice(std::make_unique<RLDevice>()),
 		m_guiWrapper(std::make_unique<GUIWrapper>()),
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_GLDebugViewFrameBuffer(std::make_unique<GLFrameBuffer>()),
+		m_RLBakingObjectPosition(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
+		m_RLBakingObjectNormal(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
+		m_RLBakeFrameBuffer(std::make_unique<RLFrameBuffer>()),
+		m_RLBakeColorAttach(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
+		m_RLBakePackingBuffer(std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer)),
+		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_frameCount(0),
 		m_baking(False),
 		m_thresold(0.0001f)
@@ -1303,11 +1391,31 @@ namespace Core
 		-0.9692660f,  1.8760108f,  0.0415560f,
 		0.0134474f, -0.1183897f,  1.0154096f
 		);
+
+		float* Sequences = new float[SamplerCount * 4];
+		for (int32 i = 0; i < SamplerCount; ++i)
+		{
+			Vector2 H = Hammersley(i, SamplerCount);
+				
+			Sequences[i * 4 + 0] = H.x;
+			Sequences[i * 4 + 1] = H.y;
+			Sequences[i * 4 + 2] = 0;
+			Sequences[i * 4 + 3] = 1.0;
+		}
+		
+		m_RLHammersleyTexture = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+		m_RLHammersleyTexture->LoadImage(SamplerCount, 1.0, Sequences);
+		delete[] Sequences;
 	}
 
 	void WindowsEditor::Initialize(int32 width, int32 height)
 	{
 		m_assetManager->Scan();
+
+		m_RLDevice->Initialize(
+			m_assetManager->rlVertexShaderMap["environment"],
+			m_assetManager->rlRayShaderMap["environment"],
+			m_assetManager->rlFrameShaderMap["bake"]);
 
 		if (m_assetManager->sceneMap.find(startSceneName) != m_assetManager->sceneMap.end())
 			m_scene = m_assetManager->sceneMap[startSceneName];
@@ -1331,6 +1439,10 @@ namespace Core
 		}
 		
 		m_guiWrapper->Initialize(width, height);
+
+		m_rlShootingPrimitiveBuffer = std::make_unique<RLBuffer>(RLBufferTarget_UniformBlockBuffer);
+		m_rlShootingPrimitiveBuffer->name = "ShootingPrimitive";
+		m_rlShootingPrimitiveBuffer->AllocateMemorySpace(sizeof(RLPrimitive), RLBufferUsage_DynamicDraw);
 	}
 
 	void WindowsEditor::Tick(float deltaTime, int32 width, int32 height, InputState & inputState)
@@ -1461,26 +1573,34 @@ namespace Core
 			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
 		}
 
-		if (m_RadiosityTexture.get())
-		{
-			ImGui::Image(
-				reinterpret_cast<void *>(m_RadiosityTexture->GetID64()),
-				DebugViewRegion,
-				ImVec2(0, 1.0f),
-				ImVec2(1.0f, 0));
-		}
-		else
-		{
-			ImGui::Image(
-				reinterpret_cast<void *>(m_GLDebugViewColorAttach->GetID64()),
-				DebugViewRegion,
-				ImVec2(0, 1.0f),
-				ImVec2(1.0f, 0));
-		}
+		//if (m_RadiosityTexture.get())
+		//{
+		//	ImGui::Image(
+		//		reinterpret_cast<void *>(m_RadiosityTexture->GetID64()),
+		//		DebugViewRegion,
+		//		ImVec2(0, 1.0f),
+		//		ImVec2(1.0f, 0));
+		//}
+		//else
+		//{
+		//	ImGui::Image(
+		//		reinterpret_cast<void *>(m_GLDebugViewColorAttach->GetID64()),
+		//		DebugViewRegion,
+		//		ImVec2(0, 1.0f),
+		//		ImVec2(1.0f, 0));
+		//}
 
+		if (m_GLNormalAttach)
+		{
+			ImGui::Image(
+				reinterpret_cast<void *>(m_GLNormalAttach->GetID64()),
+			DebugViewRegion,
+			ImVec2(0, 1.0f),
+			ImVec2(1.0f, 0));
+		}
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
-		if (m_RadiosityImage0.get())
+		if (m_GLVisibilityTexture.get())
 		{
 			ImGui::SetNextWindowPos(ImVec2(1200, 0));
 			ImGui::SetNextWindowSize(ImVec2(600, 600));
@@ -1488,13 +1608,19 @@ namespace Core
 			ImGui::Begin("Radiosity View");
 			ImVec2 ProfileViewRegion = ImGui::GetContentRegionAvail();
 		
+			//ImGui::Image(
+			//	reinterpret_cast<void *>(
+			//	(m_frameCount - 1) % 2 == 0 ? m_RadiosityImage1->GetID64() : m_RadiosityImage0->GetID64()),
+			//	ProfileViewRegion,
+			//	ImVec2(0, 1.0f),
+			//	ImVec2(1.0f, 0));
+//
 			ImGui::Image(
-				reinterpret_cast<void *>(
-				(m_frameCount - 1) % 2 == 0 ? m_RadiosityImage1->GetID64() : m_RadiosityImage0->GetID64()),
+				reinterpret_cast<void *>(m_GLVisibilityTexture->GetID64()),
 				ProfileViewRegion,
 				ImVec2(0, 1.0f),
 				ImVec2(1.0f, 0));
-
+			
 			ImGui::End();
 		}
 		//////////////////////////////////////////////////////////////////////////
@@ -1618,7 +1744,8 @@ namespace Core
 			BeingBakingObject->BeforeBaking();
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->albedoTexture = BeingBakingObject->glRenderableUnit->material.lock()->albedoTexture;
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
-			
+			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->VisibilityTexture = m_GLVisibilityTexture;
+
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 			
@@ -1679,23 +1806,117 @@ namespace Core
 			
 			Object* AreaLight = m_scene->GetAreaLight();
 			AreaLight->BeforeBaking();
-
 			for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
 					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
 					++iter)
 			{
 				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector4(5.0, 5.0, 5.0, 1.0);
+				iter->second.Energy = Vector4(3.0, 3.0, 3.0, 1.0);
+				iter->second.LightPrimitive = True;
 				RemainingPrimitives.push(iter->second);
 			}
+			
+			m_GLPositionAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLPositionAttach->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			Null);
+
+			m_GLNormalAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLNormalAttach->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			Null);
+			
+			m_GLGBufferFrameBuffer = std::make_unique<GLFrameBuffer>();
+			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach->GetTarget(), m_GLPositionAttach.get());
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach->GetTarget(), m_GLNormalAttach.get());
+			
+			m_GLGBufferFrameBuffer->Activate();
+			{
+				m_GLDevice->BeginBasePass(RadiosityTextureWidth, RadiosityTextureHeight);
+				BeingBakingObject->DrawGBuffer(m_GLDevice.get());
+			}
+			m_GLGBufferFrameBuffer->Inactivate();
+
+			float* m_pPositionRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			float* m_pNormalRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			float* m_pPrimitiveIDRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			
+			m_GLPositionAttach->Fetch(m_pPositionRawData);
+			m_GLNormalAttach->Fetch(m_pNormalRawData);
+			
+			m_RLBakingObjectPosition->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pPositionRawData);
+			m_RLBakingObjectNormal->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pNormalRawData);
+		
+			delete[] m_pPositionRawData;
+			delete[] m_pNormalRawData;
+			delete[] m_pPrimitiveIDRawData;
+			
+			m_RLBakeColorAttach->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, Null);
+			m_RLBakeFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLBakeColorAttach.get());
+
+			m_RLBakePackingBuffer->AllocateMemorySpace(
+						RadiosityTextureWidth * RadiosityTextureHeight * m_RLBakeColorAttach->GetDataSizePerPixel(),
+						RLBufferUsage_StaticDraw);
+
+			m_GLVisibilityTexture->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, Null);
 		}
 		
 		if (!RemainingPrimitives.empty())
 		{
 			Primitive ShootingPrimitive = RemainingPrimitives.front();
 			RemainingPrimitives.pop();
+
+			std::unique_ptr<Object> PrimitiveObject;
+			
+			if (!ShootingPrimitive.LightPrimitive)
+			{
+				BeingBakingObject->SetShootingPrimitive(ShootingPrimitive.ID);
+			}
+			else
+			{
+				PrimitiveObject = CreateObject(ShootingPrimitive);
+				BeingBakingObject->SetShootingPrimitive(-1.0f);
+			}
 			
 			BeingBakingObject->glRenderableUnit->DrawIDMaterial.lock()->albedoTexture = m_assetManager->textureMap["Sponza_Bricks_a_Albedo"];
+			
+			//	RL Visibility
+			{
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+				
+				m_rlShootingPrimitiveBuffer->Activate();
+				RLPrimitive* RLPrimitiveData = (RLPrimitive*)m_rlShootingPrimitiveBuffer->Map(RLBufferAccessFlag_ReadWrite);
+				RLPrimitiveData->Positions[0] = ShootingPrimitive.CentroidPosition;
+				RLPrimitiveData->Positions[1] = ShootingPrimitive.Positions[0];
+				RLPrimitiveData->Positions[2] = ShootingPrimitive.Positions[1];
+				RLPrimitiveData->Positions[3] = ShootingPrimitive.Positions[2];
+				m_rlShootingPrimitiveBuffer->Unmap();
+				m_rlShootingPrimitiveBuffer->Inactivate();
+				
+				m_RLDevice->BeginBake(m_RLBakingObjectPosition.get(), m_RLBakingObjectNormal.get(), m_RLHammersleyTexture.get(), m_rlShootingPrimitiveBuffer.get());
+				m_RLBakeFrameBuffer->Activate();
+				m_RLDevice->SetViewport(0, 0, RadiosityTextureWidth, RadiosityTextureHeight);
+				m_RLDevice->Clear();
+				BeingBakingObject->UpdateRLMatrix(m_RLDevice.get());
+				m_RLDevice->ExecuteCommands();
+				m_RLBakeFrameBuffer->Inactivate();
+
+				m_RLBakePackingBuffer->Activate();
+				m_RLBakeColorAttach->Activate();
+				m_RLBakeColorAttach->GetTexImage();
+				m_RLBakeColorAttach->Inactivate();
+				m_RLBakePackingBuffer->Inactivate();
+
+				m_RLBakePackingBuffer->Activate();
+				float * pPixels = static_cast<float *>(m_RLBakePackingBuffer->Map(RLBufferAccessFlag_ReadOnly));
+				m_GLVisibilityTexture->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, pPixels);
+				m_RLBakePackingBuffer->Unmap();
+				m_RLBakePackingBuffer->Inactivate();
+			}
 			
 			//	Visibility Pass
 			{
@@ -1991,8 +2212,14 @@ namespace Core
 		}
 		
 		++m_frameCount;
-		
+
 		//m_baking = False;
+		
+		//m_frameCount = 0;
+		//while (!RemainingPrimitives.empty())
+		//{
+		//	RemainingPrimitives.pop();
+		//}
 	}
 
 	WindowsEditor::~WindowsEditor()

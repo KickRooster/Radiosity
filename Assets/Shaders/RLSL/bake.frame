@@ -1,0 +1,233 @@
+uniform sampler2D positionTexture;
+uniform sampler2D normalTexture;
+uniform sampler2D hammersleyTexture;
+uniform primitive environmentPrimitive;
+
+uniformblock ShootingPrimitive
+{
+    vec3 Positions[4];
+};
+
+void setup() 
+{
+	rl_OutputRayCount = 76;
+}
+
+#define PI 3.141592654
+
+vec4 UniformSampleHemisphere( vec2 E )
+{
+	float Phi = 2.0 * PI * E.x;
+	float CosTheta = E.y;
+	float SinTheta = sqrt( 1.0 - CosTheta * CosTheta );
+
+	vec3 H = vec3(SinTheta * cos( Phi ), SinTheta * sin( Phi ), CosTheta);
+	//H.x = SinTheta * cos( Phi );
+	//H.y = SinTheta * sin( Phi );
+	//H.z = CosTheta;
+
+	float PDF = 1.0 / (2.0 * PI);
+
+	return vec4(H.x, H.y, H.z, PDF );
+}
+
+void CreateBasis(vec3 v, inout mat3 basis)
+{
+	vec3 perp;
+	
+	if (abs(v.x) > abs(v.y))
+	{
+		float invLen = 1.0 / sqrt(v.x*v.x + v.z*v.z);
+		perp = vec3(-v.z*invLen, 0, v.x*invLen);
+	}
+	else
+	{
+		float invLen = 1.0 / sqrt(v.y*v.y + v.z*v.z);
+		perp = vec3(0, v.z*invLen, -v.y*invLen);
+	}
+	
+	vec3 perp2 = cross(v, perp);
+	basis      = mat3(perp.x, perp.y, perp.z, perp2.x, perp2.y, perp2.z, v.x, v.y, v.z);
+}
+
+void main()
+{
+	vec2 uv = rl_FrameCoord.xy / rl_FrameSize.xy;
+    vec3 WorldPosition = texture2D(positionTexture, uv).xyz;
+    vec3 WorldNormal = texture2D(normalTexture, uv).xyz;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		vec3 OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x - 1.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x + 1.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y - 1.0, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y + 1.0, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z - 1.0);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z + 1.0);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		///
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x - 2.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x + 2.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y - 2.0, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y + 2.0, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z - 2.0);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z + 2.0);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		///
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x - 3.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x + 3.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y - 3.0, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y + 3.0, ShootingPrimitive.Positions[i].z);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z - 3.0);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+
+		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z + 3.0);
+
+		createRay();
+   		rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+		emitRay();
+	}
+	
+	return ;
+
+	mat3 basis;
+	CreateBasis(WorldNormal, basis);
+
+	float PixelSize = 1.0 / 512.0;
+
+	for (int i = 0; i < 512; ++i)
+	{
+		vec3 Dir = texture2D(hammersleyTexture, vec2(PixelSize * float(i), 0)).xyz;
+		vec3 TransformedDir = basis * Dir;
+
+		createRay();
+   	 	rl_OutRay.origin              = WorldPosition;
+		rl_OutRay.direction           = TransformedDir;
+		rl_OutRay.defaultPrimitive    = environmentPrimitive;
+	}
+}

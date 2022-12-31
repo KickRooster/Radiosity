@@ -24,6 +24,7 @@ namespace Core
 		void DrawElements(GLTopology topology, int32 count, GLDataType dataType, const void * pIndices);
 		void DrawArrays(GLTopology topology, int32 FirstIndex, int32 IndexCount);
 		void BeforeRender(int32 width, int32 height, float a = 1.0f);
+		void BeginBasePass(int32 width, int32 height);
 		void BeginVisibisityPass(int32 width, int32 height);
 		void BeginReconstrucionPass(int32 width, int32 height);
 		void BeginViewCubeMapPass(int32 width, int32 height);

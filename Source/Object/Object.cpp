@@ -53,10 +53,10 @@ namespace Core
 		m_world2ObjectMatrix = Inverse(m_object2WorldMatrix);
 		m_object2WorldITMatrix = Transpose(m_world2ObjectMatrix);
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
-
+		
 		glRenderableUnit->BeginUse();
 	}
-
+	
 	void Object::Tick(float deltaTime, OpenGLDevice * pDevice)
 	{
 		m_world2ObjectMatrix = Inverse(m_object2WorldMatrix);
@@ -111,7 +111,36 @@ namespace Core
 
 	void Object::BeforeBaking()
 	{
-		glRenderableUnit.get()->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix);
+		glRenderableUnit->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix);
+
+		if (rlRenderableUnit)
+		{
+			rlRenderableUnit->Commit();
+		}
+	}
+
+	void Object::UpdateRLMatrix(RLDevice * pDevice)
+	{
+		if (rlRenderableUnit)
+		{
+			rlRenderableUnit->Activate();
+			pDevice->SetTransformMatrix(rlRenderableUnit->GetProgram(), &m_object2WorldMatrix);
+			rlRenderableUnit->Inactivate();
+		}
+	}
+
+	void Object::DrawGBuffer(OpenGLDevice * pDevice)
+	{
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
+		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
+
+		glRenderableUnit->ActiveDrawGBuffer();
+		pDevice->DrawElements(
+			GLTopology_Triangles,
+			glRenderableUnit->staticMesh.lock()->indexCount,
+			GLDataType_UnsignedInt,
+			Null);
+		glRenderableUnit->InactiveDrawGBuffer();
 	}
 	
 	void Object::DrawID(OpenGLDevice * pDevice)
@@ -127,7 +156,7 @@ namespace Core
 			Null);
 		glRenderableUnit->InactivateDrawingID();
 	}
-
+	
 	void Object::ComputeFormFactor(OpenGLDevice* pDevice)
 	{
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
@@ -185,6 +214,13 @@ namespace Core
 			GLDataType_UnsignedInt,
 			Null);
 		glRenderableUnit->InactiveCubeMap();
+	}
+
+	void Object::SetShootingPrimitive(float PrimitiveID)
+	{
+		rlRenderableUnit->Activate();
+		rlRenderableUnit->SetShootingPrimitive(PrimitiveID);
+		rlRenderableUnit->Inactivate();
 	}
 	
 	Matrix4x4 * Object::GetObject2WorldMatrix()

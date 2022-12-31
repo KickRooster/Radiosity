@@ -17,10 +17,11 @@
 
 		layout(location = 0) uniform sampler2D albedoSampler;
 		layout(location = 1) uniform samplerCube IDCubeMapSampler;
-		layout(rgba32f, location = 2) uniform restrict image2D RadiosityOutput0;
-		layout(rgba32f, location = 3) uniform restrict image2D RadiosityOutput1;
-		layout(rgba32f, location = 4) uniform restrict image2D ResidualOutput0;
-		layout(rgba32f, location = 5) uniform restrict image2D ResidualOutput1;
+		layout(location = 2) uniform sampler2D VisibilitySampler;
+		layout(rgba32f, location = 3) uniform restrict image2D RadiosityOutput0;
+		layout(rgba32f, location = 4) uniform restrict image2D RadiosityOutput1;
+		layout(rgba32f, location = 5) uniform restrict image2D ResidualOutput0;
+		layout(rgba32f, location = 6) uniform restrict image2D ResidualOutput1;
 		
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
@@ -166,8 +167,10 @@
 				}
 			}
 
+			//Visable = texture(VisibilitySampler, uv1).x;
+			
 			Fij *= Visable;
-
+			
 			vec3 Radiosity = ShooterEnergy.xyz * ShooterSurfaceArea.x * Fij;
 			vec3 albedo = texture(albedoSampler, uv0).xyz;
 			vec3 Residual = albedo * Radiosity;

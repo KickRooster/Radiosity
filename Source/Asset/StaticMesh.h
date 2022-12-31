@@ -25,6 +25,7 @@ namespace Core
 	
 	struct Primitive
 	{
+		Bool LightPrimitive = False;
 		float ID;
 		float SurfaceArea;
 		float ScaledUV1Area;
@@ -33,6 +34,7 @@ namespace Core
 		Vector3 UV1Normal;
 		Vector4 UV1CentroidPosition;
 		Vector4 Energy;
+		Vector4 Positions[3];
 	};
 	
 	class StaticMesh : public IAsset
@@ -58,6 +60,7 @@ namespace Core
 		int32 m_binormalSize;
 		int32 m_colorSize;
 		int32 m_customDataSize;
+		int32 m_scaledUV1PositionSize;
 		int32 m_uv0Size;
 		int32 m_uv1Size;
 		int32 m_uv2Size;
@@ -138,6 +141,8 @@ namespace Core
 		int32 GetTangentSize() const;
 		int32 GetBinormalSize() const;
 		int32 GetColorSize() const;
+		int32 GetCustomDataSize() const;
+		int32 GetScaledUV1PositionSize() const;
 		int32 GetUV0Size() const;
 		int32 GetUV1Size() const;
 		int32 GetUV2Size() const;

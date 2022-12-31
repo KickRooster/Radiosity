@@ -27,13 +27,28 @@ namespace Core
 		{
 			m_glProgram = std::make_unique<GLProgram>();
 
-			glVertexShader.lock()->BeginUse();
-			m_glProgram->AttachShader(glVertexShader.lock()->GetGLShader());
+			if (!glVertexShader.expired())
+			{
+				glVertexShader.lock()->BeginUse();
+				m_glProgram->AttachShader(glVertexShader.lock()->GetGLShader());
+			}
 
-			glFragmentShader.lock()->BeginUse();
-			m_glProgram->AttachShader(glFragmentShader.lock()->GetGLShader());
+			if (!glFragmentShader.expired())
+			{
+				glFragmentShader.lock()->BeginUse();
+				m_glProgram->AttachShader(glFragmentShader.lock()->GetGLShader());
+			}
 
-			m_glProgram->Link();
+			if (!glVertexShader.expired() && !glFragmentShader.expired())
+			{
+				m_glProgram->Link();
+			}
+			
+			if (!rlVertexShader.expired())
+				rlVertexShader.lock()->BeginUse();
+
+			if (!rlRayShader.expired())
+				rlRayShader.lock()->BeginUse();
 
 			if (!albedoTexture.expired())
 				albedoTexture.lock()->BeginUse();
@@ -85,6 +100,13 @@ namespace Core
 			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, IDCubeMapSamplerName.c_str());
 			++SamplerSlotIndex;
 			IDCumeMap.lock()->Activate();
+		}
+
+		if (!VisibilityTexture.expired())
+		{
+			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, VisibilitySamplerName.c_str());
+			++SamplerSlotIndex;
+			VisibilityTexture.lock()->Activate();
 		}
 
 		if (!RadiosityImage0.expired())
@@ -152,6 +174,11 @@ namespace Core
 		if (!IDCumeMap.expired())
 		{
 			IDCumeMap.lock()->Inactivate();
+		}
+
+		if (!VisibilityTexture.expired())
+		{
+			VisibilityTexture.lock()->Inactivate();
 		}
 
 		if (!normalMap.expired())

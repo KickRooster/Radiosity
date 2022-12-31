@@ -109,6 +109,24 @@ namespace Core
 		glCheckError();
 	}
 
+	void OpenGLDevice::BeginBasePass(int32 width, int32 height)
+	{
+		glClearColor(0, 0, 0, 1);
+		glCheckError();
+
+		glClear(GL_COLOR_BUFFER_BIT);
+		glCheckError();
+
+		glViewport(0, 0, width, height);
+		glCheckError();
+		
+		glDisable(GL_CULL_FACE);
+		glCheckError();
+		
+		glDisable(GL_DEPTH_TEST);
+		glCheckError();
+	}
+	
 	void OpenGLDevice::BeginVisibisityPass(int32 width, int32 height)
 	{
 		glClearColor(0, 0, 0, 1);

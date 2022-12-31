@@ -1,11 +1,13 @@
 #pragma once
 #include "../../IFramework.h"
 #include "../../../RHI/OpenGLRHI/OpenGLDevice.h"
+#include "../../../RHI/OpenRLRHI/RLDevice.h"
 #include "../../../GUI/Button.h"
 #include "../../../3rdParty/DearUI/imgui.h"
 #include "../../../3rdParty/DearUI/ImGuizmo.h"
 #include "../../../GUI/GUIWrapper.h"
 #include "../../../RHI/OpenGLRHI/GLFrameBuffer.h"
+#include "../../../RHI/OpenRLRHI/RLFrameBuffer.h"
 #include "../../../Helper/AssetManager.h"
 #include "../../../Settings/LightmappingSetting.h"
 #include "../../../Helper/AtlasManager.h"
@@ -25,6 +27,7 @@ namespace Core
 		std::shared_ptr<AssetManager> m_assetManager;
 
 		std::unique_ptr<OpenGLDevice> m_GLDevice;
+		std::unique_ptr<RLDevice> m_RLDevice;
 		std::shared_ptr<Scene> m_scene;
 		std::unique_ptr<GUIWrapper> m_guiWrapper;
 
@@ -33,6 +36,25 @@ namespace Core
 
 		std::unique_ptr<GLFrameBuffer> m_GLDebugViewFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLDebugViewColorAttach;
+
+		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer;
+		std::unique_ptr<GLTexture> m_GLPositionAttach;
+		std::unique_ptr<GLTexture> m_GLNormalAttach;
+
+		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition;	//	float
+		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal;	//	float
+
+		std::unique_ptr<RLFrameBuffer> m_RLBakeFrameBuffer;
+		std::unique_ptr<RLTexture2D> m_RLBakeColorAttach;
+		std::unique_ptr<RLBuffer> m_RLBakePackingBuffer;
+		std::shared_ptr<GLTexture> m_GLVisibilityTexture;
+		std::unique_ptr<RLTexture2D> m_RLHammersleyTexture;
+		std::unique_ptr<RLBuffer> m_rlShootingPrimitiveBuffer;
+
+		struct RLPrimitive
+		{
+			Vector4 Positions[4];
+		};
 
 		Bool m_baking;
 		float m_thresold;
@@ -64,6 +86,7 @@ namespace Core
 
 		//	Editor Builtin Resources
 		std::shared_ptr<Material> m_arealLightMaterial;
+		std::shared_ptr<Material> m_DrawGBufferMaterial;
 		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
 		std::shared_ptr<Material> m_ViewCubeMapMaterial;
@@ -84,8 +107,14 @@ namespace Core
 		//	Create for serialized.
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createAreaLight();
+		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, int32 Width, int32 Height);
 
+		uint32 ReverseBits(uint32 Value);
+		Vector2 Hammersley(uint32 Index, uint32 NumSamples);
+		Vector3 UniformSampleHemisphere(float u, float v);
+		const int32 SamplerCount = 512;
+		
 		CubeMatrices CubeMatrices;
 		
 	public:

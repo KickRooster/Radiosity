@@ -3,7 +3,9 @@
 #include "..\Math\Matrix4x4.h"
 #include "..\Asset\StaticMesh.h"
 #include "..\RHI\OpenGLRHI\OpenGLDevice.h"
+#include "..\RHI\OpenRLRHI\RLDevice.h"
 #include "..\Component\GLRenderableUnit.h"
+#include "..\Component\RLRenderableUnit.h"
 #include "../3rdParty/cereal/archives/xml.hpp"
 #include "..\3rdParty\RectangleBinPack\Rect.h"
 
@@ -44,13 +46,16 @@ namespace Core
 		Vector3 scale;
 
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
-
+		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;
+		
 		Object();
 		void Initialize(OpenGLDevice * pDevice, Bool SerializedRTSAsLocal2World);
 		void Tick(float deltaTime, OpenGLDevice * pDevice);
 		void Render(OpenGLDevice * pDevice);
 		void RenderAsPostprocess(OpenGLDevice * pDevice, Vector4 & postprocessParam);
 		void BeforeBaking();
+		void UpdateRLMatrix(RLDevice * pDevice);
+		void DrawGBuffer(OpenGLDevice * pDevice);
 		void DrawID(OpenGLDevice * pDevice);
 		void ComputeFormFactor(OpenGLDevice * pDevice);
 		void BeforeComputeFormFactor(OpenGLDevice* pDevice);
@@ -59,6 +64,7 @@ namespace Core
 		void BeforePickShooter(OpenGLDevice * pDevice);
 		void AfterPickShooter();
 		void ViewCubeMap(OpenGLDevice * pDevice);
+		void SetShootingPrimitive(float PrimitiveID);
 		Matrix4x4 * GetObject2WorldMatrix() ;
 		Vector3 GetZDirection();
 		Vector3 GetYDirection();

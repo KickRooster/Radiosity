@@ -132,6 +132,88 @@ namespace Core
 		}
 	}
 
+	void Texture::SetRLWrapMode(RLTextureWrapMode wrapMode)
+	{
+		m_rlTexture->SetWrapMode(wrapMode);
+	}
+
+	RLTextureWrapMode Texture::GetRLWrapMode() const
+	{
+		return m_rlTexture->GetWrapMode();
+	}
+
+	void Texture::SetRLFilterMode(RLTextureFilterMode filterMode)
+	{
+		m_rlTexture->SetFilterMode(filterMode);
+	}
+
+	RLTextureFilterMode Texture::GetRLFilterMode() const
+	{
+		return m_rlTexture->GetFilterMode();
+	}
+
+	void Texture::UploadToRL()
+	{
+		RLIinternalFormat rlInternalFormat;
+		RLPixelFormat rlPixelFormat;
+
+		switch (info->format)
+		{
+		case TextureFormat_RGB24:
+			rlInternalFormat = RLIinternalFormat_RGB;
+			rlPixelFormat = RLPixelFormat_RGB;
+			break;
+		case TextureFormat_RGBA32:
+			rlInternalFormat = RLIinternalFormat_RGBA;
+			rlPixelFormat = RLPixelFormat_RGBA;
+			break;
+		case TextureFormat_SRGB24:
+			rlInternalFormat = RLIinternalFormat_RGB;
+			rlPixelFormat = RLPixelFormat_RGB;
+			break;
+		case TextureFormat_SRGBA32:
+			rlInternalFormat = RLIinternalFormat_RGBA;
+			rlPixelFormat = RLPixelFormat_RGBA;
+			break;
+		default:
+			assert(False);
+			break;
+		}
+
+		m_rlTexture = std::make_unique<RLTexture2D>(rlInternalFormat, rlPixelFormat, RLDataType_UnsignedByte, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+
+		m_rlTexture->LoadImage(width, height, pImage);
+
+		switch (info->wrapMode)
+		{
+		case TextureWrapMode_Repeat:
+			SetRLWrapMode(RLTextureWrapMode_Repeat);
+			break;
+		case TextureWrapMode_Clamp:
+			SetRLWrapMode(RLTextureWrapMode_Clamp);
+			break;
+		default:
+			break;
+		}
+
+		switch (info->filterMode)
+		{
+		case TextureFilterMode_Point:
+			SetRLFilterMode(RLTextureFilterMode_Point);
+			break;
+		case TextureFilterMode_Bilinear:
+			SetRLFilterMode(RLTextureFilterMode_Bilinear);
+			break;
+		default:
+			break;
+		}
+	}
+
+	RLTexture2D * Texture::GetRLTexture()
+	{
+		return m_rlTexture.get();
+	}
+
 	Texture::~Texture()
 	{
 		if (pImage)

@@ -1,0 +1,11 @@
+void main()
+{
+	if (rl_FrontFacing)
+	{
+		accumulate(vec4(1.0, 1.0, 1.0, 1.0));
+	}
+	else
+	{
+		accumulate(vec4(0, 0, 0, 1.0));
+	}
+}

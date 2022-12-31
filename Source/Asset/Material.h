@@ -4,6 +4,7 @@
 #include "../RHI/OpenGLRHI/GLProgram.h"
 #include "IAsset.h"
 #include "GLSL.h"
+#include "RLSL.h"
 #include "Texture.h"
 #include "../DesignPattern/ObserverPattern/Obeserver.h"
 #include "../Math/Vector4.h"
@@ -66,7 +67,11 @@ namespace Core
 		std::weak_ptr<GLSL> glVertexShader;
 		std::weak_ptr<GLSL> glFragmentShader;
 
+		std::weak_ptr<RLSL> rlVertexShader;
+		std::weak_ptr<RLSL> rlRayShader;
+
 		std::weak_ptr<Texture> albedoTexture;
+		std::weak_ptr<GLTexture> VisibilityTexture;
 		std::weak_ptr<GLTexture> IDCumeMap;
 		std::weak_ptr<GLImageTexture> RadiosityImage0;
 		std::weak_ptr<GLImageTexture> RadiosityImage1;
@@ -83,7 +88,9 @@ namespace Core
 		//	TODO:	�������ܻ���id
 		ctd::string glVertexShaderName;
 		ctd::string glFragmentShaderName;
-
+		ctd::string rlVertexShaderName;
+		ctd::string rlRayShaderName;
+		
 		ctd::string albedoTextureName;
 		ctd::string IDTextureName;
 		ctd::string normalMapName;
@@ -96,6 +103,7 @@ namespace Core
 
 		const ctd::string albedoSamplerName = "albedoSampler";
 		const ctd::string IDCubeMapSamplerName = "IDCubeMapSampler";
+		const ctd::string VisibilitySamplerName = "VisibilitySampler";
 		const ctd::string RadiosityImage0Name = "RadiosityOutput0";
 		const ctd::string RadiosityImage1Name = "RadiosityOutput1";
 		const ctd::string ResidualImage0Name = "ResidualOutput0";

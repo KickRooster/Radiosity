@@ -99,6 +99,9 @@ namespace Core
 			Primitive.CentroidPosition.y = CentroidPosition.y;
 			Primitive.CentroidPosition.z = CentroidPosition.z;
 			Primitive.CentroidPosition.w = 1.0f;
+			Primitive.Positions[0] = WorldPos0;
+			Primitive.Positions[1] = WorldPos1;
+			Primitive.Positions[2] = WorldPos2;
 			
 			PrimitiveMap[triangleIndex] = Primitive;
 		}
@@ -264,6 +267,7 @@ namespace Core
 			binormalSize != m_binormalSize ||
 			colorSize != m_colorSize ||
 			customDataSize != m_customDataSize ||
+			scaledUV1PositionSize != m_scaledUV1PositionSize ||
 			uv0Size != m_uv0Size ||
 			uv1Size != m_uv1Size ||
 			uv2Size != m_uv2Size ||
@@ -287,6 +291,7 @@ namespace Core
 		m_binormalSize = binormalSize;
 		m_colorSize = colorSize;
 		m_customDataSize = customDataSize;
+		m_scaledUV1PositionSize = scaledUV1PositionSize;
 		m_uv0Size = uv0Size;
 		m_uv1Size = uv1Size;
 		m_uv2Size = uv2Size;
@@ -625,6 +630,7 @@ namespace Core
 		m_binormalSize(0),
 		m_colorSize(0),
 		m_customDataSize(0),
+		m_scaledUV1PositionSize(0),
 		m_uv0Size(0),
 		m_uv1Size(0),
 		m_uv2Size(0),
@@ -697,7 +703,7 @@ namespace Core
 		return m_vertexRawDataSize;
 	}
 
-	Core::int32 StaticMesh::GetVertexRawDataStride() const
+	int32 StaticMesh::GetVertexRawDataStride() const
 	{
 		return m_vertexRawDataStride;
 	}
@@ -725,6 +731,16 @@ namespace Core
 	int32 StaticMesh::GetColorSize() const
 	{
 		return m_colorSize;
+	}
+
+	int32 StaticMesh::GetCustomDataSize() const
+	{
+		return m_customDataSize;
+	}
+
+	int32 StaticMesh::GetScaledUV1PositionSize() const
+	{
+		return m_scaledUV1PositionSize;
 	}
 
 	int32 StaticMesh::GetUV0Size() const

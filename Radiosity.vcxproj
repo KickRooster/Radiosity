@@ -152,11 +152,13 @@
     <ClCompile Include="Source\Asset\Material.cpp" />
     <ClCompile Include="Source\Asset\GLSL.cpp" />
     <ClCompile Include="Source\Asset\Prefab.cpp" />
+    <ClCompile Include="Source\Asset\RLSL.cpp" />
     <ClCompile Include="Source\Asset\StaticMesh.cpp" />
     <ClCompile Include="Source\Asset\Texture.cpp" />
     <ClCompile Include="Source\Asset\TextureInfo.cpp" />
     <ClCompile Include="Source\Component\IComponent.cpp" />
     <ClCompile Include="Source\Component\GLRenderableUnit.cpp" />
+    <ClCompile Include="Source\Component\RLRenderableUnit.cpp" />
     <ClCompile Include="Source\DesignPattern\ObserverPattern\Subject.cpp" />
     <ClCompile Include="Source\Framework\Editor\Windows\WindowsEditor.cpp" />
     <ClCompile Include="Source\GUI\Runtime\Windows\WindowsRuntime.cpp" />
@@ -189,6 +191,16 @@
     <ClCompile Include="Source\RHI\OpenGLRHI\ImageTexture.cpp" />
     <ClCompile Include="Source\RHI\OpenGLRHI\OpenGLDevice.cpp" />
     <ClCompile Include="Source\Asset\Scene.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\BaseRL.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLBuffer.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLDevice.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLFrameBuffer.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLPrimitive.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLProgram.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLShader.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLTexture2D.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLVertexBufferLayout.cpp" />
+    <ClCompile Include="Source\RHI\OpenRLRHI\RLVertexShader.cpp" />
     <ClCompile Include="Source\Settings\LightmappingSetting.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -291,11 +303,13 @@
     <ClInclude Include="Source\Asset\Material.h" />
     <ClInclude Include="Source\Asset\GLSL.h" />
     <ClInclude Include="Source\Asset\Prefab.h" />
+    <ClInclude Include="Source\Asset\RLSL.h" />
     <ClInclude Include="Source\Asset\StaticMesh.h" />
     <ClInclude Include="Source\Asset\Texture.h" />
     <ClInclude Include="Source\Asset\TextureInfo.h" />
     <ClInclude Include="Source\Component\IComponent.h" />
     <ClInclude Include="Source\Component\GLRenderableUnit.h" />
+    <ClInclude Include="Source\Component\RLRenderableUnit.h" />
     <ClInclude Include="Source\DesignPattern\ObserverPattern\Obeserver.h" />
     <ClInclude Include="Source\DesignPattern\ObserverPattern\Subject.h" />
     <ClInclude Include="Source\DesignPattern\SingletonPattern\Singleton.h" />
@@ -336,6 +350,16 @@
     <ClInclude Include="Source\RHI\OpenGLRHI\ImageTexture.h" />
     <ClInclude Include="Source\RHI\OpenGLRHI\OpenGLDevice.h" />
     <ClInclude Include="Source\Asset\Scene.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\BaseRL.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLBuffer.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLDevice.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLFrameBuffer.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLPrimitive.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLProgram.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLShader.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLTexture2D.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLVertexBufferLayout.h" />
+    <ClInclude Include="Source\RHI\OpenRLRHI\RLVertexShader.h" />
     <ClInclude Include="Source\Settings\LightmappingSetting.h" />
     <ClInclude Include="Source\日志.h" />
   </ItemGroup>
