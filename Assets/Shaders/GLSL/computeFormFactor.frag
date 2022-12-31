@@ -157,7 +157,7 @@
 				PerspectiveProjectedPos.z += 0.5;
 
 				//	XXX:	manually biased.
-				if (PerspectiveProjectedPos.z < CubeMap.y + 0.0001)
+				if (PerspectiveProjectedPos.z < CubeMap.y + 0.001)
 				{
 					Visable = 1.0f;
 				}
@@ -167,9 +167,9 @@
 				}
 			}
 
-			//Visable = texture(VisibilitySampler, uv1).x;
+			float RLVisable = texture(VisibilitySampler, uv1).x;
 			
-			Fij *= Visable;
+			Fij *= RLVisable;
 			
 			vec3 Radiosity = ShooterEnergy.xyz * ShooterSurfaceArea.x * Fij;
 			vec3 albedo = texture(albedoSampler, uv0).xyz;

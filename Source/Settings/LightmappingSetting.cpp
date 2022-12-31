@@ -8,5 +8,5 @@ namespace Core
 	const float LightmappingSetting::gutter = 4.0f;
 	const int32 LightmappingSetting::paddingSize = 1;
 	const int32 LightmappingSetting::progressivePassCount = 1024;
-	float LightmappingSetting::TexelsPerUnit = 50.0f;
+	float LightmappingSetting::TexelsPerUnit = 40.0f;
 }

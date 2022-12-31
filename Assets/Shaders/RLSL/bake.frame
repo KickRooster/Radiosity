@@ -10,7 +10,7 @@ uniformblock ShootingPrimitive
 
 void setup() 
 {
-	rl_OutputRayCount = 76;
+	rl_OutputRayCount = 1;
 }
 
 #define PI 3.141592654
@@ -56,159 +56,14 @@ void main()
     vec3 WorldPosition = texture2D(positionTexture, uv).xyz;
     vec3 WorldNormal = texture2D(normalTexture, uv).xyz;
 
-	for (int i = 0; i < 4; ++i)
+	//	Shoot to centroid position 
+	for (int i = 0; i < 1; ++i)
 	{
-		vec3 OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
+		vec3 Direction = ShootingPrimitive.Positions[i] - WorldPosition;
 
 		createRay();
    		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x - 1.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x + 1.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y - 1.0, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y + 1.0, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z - 1.0);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z + 1.0);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		///
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x - 2.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x + 2.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y - 2.0, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y + 2.0, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z - 2.0);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z + 2.0);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		///
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x - 3.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x + 3.0, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y - 3.0, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y + 3.0, ShootingPrimitive.Positions[i].z);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z - 3.0);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-
-		OffsetPosition = vec3(ShootingPrimitive.Positions[i].x, ShootingPrimitive.Positions[i].y, ShootingPrimitive.Positions[i].z + 3.0);
-
-		createRay();
-   		rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = OffsetPosition - WorldPosition;
+		rl_OutRay.direction           = normalize(Direction);
 		rl_OutRay.defaultPrimitive    = environmentPrimitive;
 		emitRay();
 	}

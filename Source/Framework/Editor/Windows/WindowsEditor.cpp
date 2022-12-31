@@ -1,4 +1,6 @@
 #include "WindowsEditor.h"
+
+#include <DirectXMath.h>
 #include <SDL/SDL_filesystem.h>
 #include "../../../Helper/TextureOperator.h"
 #include "../3rdParty/LinearLeastSquaresStitch/Sitich.h"
@@ -74,84 +76,78 @@ namespace Core
 		
 		m_areaLightMesh = std::make_shared<StaticMesh>();
 
-		m_areaLightMesh->vertexCount = 6;
+		int32 XCount = 8;
+		int32 YCount = 8;
+		float XCountF = static_cast<float>(XCount);
+		float YCountF = static_cast<float>(XCount);
+
+		m_areaLightMesh->vertexCount = XCount * YCount * 6;
 		m_areaLightMesh->pPositions = new Vector4[m_areaLightMesh->vertexCount];
 		m_areaLightMesh->pNormals = new Vector3[m_areaLightMesh->vertexCount];
 		m_areaLightMesh->pUV0s = new Vector2[m_areaLightMesh->vertexCount];
 		m_areaLightMesh->pUV1s = new Vector2[m_areaLightMesh->vertexCount];
 		
-		float lightScale = 10.0f;
-
-		m_areaLightMesh->pPositions[0].x = -0.5f * lightScale;
-		m_areaLightMesh->pPositions[0].y = -0.5f * lightScale ;
-		m_areaLightMesh->pPositions[0].z = 0;
-		m_areaLightMesh->pPositions[0].w = 1.0f;
-		m_areaLightMesh->pNormals[0].x = 0;
-		m_areaLightMesh->pNormals[0].y = 0;
-		m_areaLightMesh->pNormals[0].z = 1.0f;
-		m_areaLightMesh->pUV0s[0] = Vector2(0, 0);
-		m_areaLightMesh->pUV1s[0] = Vector2(0, 0);
-		
-		m_areaLightMesh->pPositions[1].x = 0.5f * lightScale;
-		m_areaLightMesh->pPositions[1].y = -0.5f * lightScale ;
-		m_areaLightMesh->pPositions[1].z = 0;
-		m_areaLightMesh->pPositions[1].w = 1.0f;
-		m_areaLightMesh->pNormals[1].x = 0;
-		m_areaLightMesh->pNormals[1].y = 0;
-		m_areaLightMesh->pNormals[1].z = 1.0f;
-		m_areaLightMesh->pUV0s[1] = Vector2(1.0, 0);
-		m_areaLightMesh->pUV1s[1] = Vector2(1.0, 0);
-
-		m_areaLightMesh->pPositions[2].x = 0.5f * lightScale;
-		m_areaLightMesh->pPositions[2].y = 0.5f * lightScale ;
-		m_areaLightMesh->pPositions[2].z = 0;
-		m_areaLightMesh->pPositions[2].w = 1.0f;
-		m_areaLightMesh->pNormals[2].x = 0;
-		m_areaLightMesh->pNormals[2].y = 0;
-		m_areaLightMesh->pNormals[2].z = 1.0f;
-		m_areaLightMesh->pUV0s[2] = Vector2(1.0f, 1.0f);
-		m_areaLightMesh->pUV1s[2] = Vector2(1.0f, 1.0f);
-
-		m_areaLightMesh->pPositions[3].x = 0.5f * lightScale;
-		m_areaLightMesh->pPositions[3].y = 0.5f * lightScale ;
-		m_areaLightMesh->pPositions[3].z = 0;
-		m_areaLightMesh->pPositions[3].w = 1.0f;
-		m_areaLightMesh->pNormals[3].x = 0;
-		m_areaLightMesh->pNormals[3].y = 0;
-		m_areaLightMesh->pNormals[3].z = 1.0f;
-		m_areaLightMesh->pUV0s[3] = Vector2(1.0f, 1.0f);
-		m_areaLightMesh->pUV1s[3] = Vector2(1.0f, 1.0f);
-
-		m_areaLightMesh->pPositions[4].x = -0.5f * lightScale;
-		m_areaLightMesh->pPositions[4].y = 0.5f * lightScale ;
-		m_areaLightMesh->pPositions[4].z = 0;
-		m_areaLightMesh->pPositions[4].w = 1.0f;
-		m_areaLightMesh->pNormals[4].x = 0;
-		m_areaLightMesh->pNormals[4].y = 0;
-		m_areaLightMesh->pNormals[4].z = 1.0f;
-		m_areaLightMesh->pUV0s[4] = Vector2(0, 1.0f);
-		m_areaLightMesh->pUV1s[4] = Vector2(0, 1.0f);
-
-		m_areaLightMesh->pPositions[5].x = -0.5f * lightScale;
-		m_areaLightMesh->pPositions[5].y = -0.5f * lightScale ;
-		m_areaLightMesh->pPositions[5].z = 0;
-		m_areaLightMesh->pPositions[5].w = 1.0f;
-		m_areaLightMesh->pNormals[5].x = 0;
-		m_areaLightMesh->pNormals[5].y = 0;
-		m_areaLightMesh->pNormals[5].z = 1.0f;
-		m_areaLightMesh->pUV0s[5] = Vector2(0, 0);
-		m_areaLightMesh->pUV1s[5] = Vector2(0, 0);
-
-		m_areaLightMesh->indexCount = 6;
+		m_areaLightMesh->indexCount = XCount * YCount * 6;
 		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
 		
-		m_areaLightMesh->pIndices[0] = 0;
-		m_areaLightMesh->pIndices[1] = 1;
-		m_areaLightMesh->pIndices[2] = 2;
-		m_areaLightMesh->pIndices[3] = 3;
-		m_areaLightMesh->pIndices[4] = 4;
-		m_areaLightMesh->pIndices[5] = 5;
+		float lightScale = 10.0f;
+		int32 VertexCursor = 0;
 		
+		for (int32 i = 0; i < YCount; ++i)
+		{ 
+			for (int j = 0; j < XCount; ++j)
+			{
+				Vector4 P0 = Vector4(-XCount / 2 +  j, -YCount / 2 + i, 0, 1.0);
+				Vector4 P1 = Vector4(-XCount / 2 +  j + 1, -YCount / 2 + i, 0, 1.0);
+				Vector4 P2 = Vector4(-XCount / 2 +  j, -YCount / 2 + i + 1, 0, 1.0);
+
+				Vector4 P3 = Vector4(-XCount / 2 +  j + 1, -YCount / 2, 0, 1.0);
+				Vector4 P4 = Vector4(-XCount / 2 +  j + 1, -YCount / 2 + i + 1, 0, 1.0);
+				Vector4 P5 = Vector4(-XCount / 2 +  j, -YCount / 2 + i + 1, 0, 1.0);
+
+				m_areaLightMesh->pPositions[VertexCursor] = P0;
+				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+				
+				m_areaLightMesh->pPositions[VertexCursor] = P1;
+				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+
+				m_areaLightMesh->pPositions[VertexCursor] = P2;
+				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 1.0f) / YCountF);
+				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 1.0f) / YCountF);
+				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+				
+				m_areaLightMesh->pPositions[VertexCursor] = P3;
+				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+
+				m_areaLightMesh->pPositions[VertexCursor] = P4;
+				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 1.0f) / YCountF);
+				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 1.0f) / YCountF);
+				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+
+				m_areaLightMesh->pPositions[VertexCursor] = P5;
+				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
+				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+			}
+		}
 		//////////////////////////////////////////////////////////////////////////
 		m_postprocessMesh = std::make_shared<StaticMesh>();
 		m_postprocessMesh->pPositions = new Vector4[3];
@@ -1250,6 +1246,21 @@ namespace Core
 		PrimitiveMesh->pPositions[0] = Primitive.Positions[0];
 		PrimitiveMesh->pPositions[1] = Primitive.Positions[1];
 		PrimitiveMesh->pPositions[2] = Primitive.Positions[2];
+
+		//	offset for raycast testing.
+		Vector3 Offset = Primitive.Normal * Vector3(0.1f);
+		
+		PrimitiveMesh->pPositions[0].x += Offset.x;
+		PrimitiveMesh->pPositions[0].y += Offset.y;
+		PrimitiveMesh->pPositions[0].z += Offset.z;
+		
+		PrimitiveMesh->pPositions[1].x += Offset.x;
+		PrimitiveMesh->pPositions[1].y += Offset.y;
+		PrimitiveMesh->pPositions[1].z += Offset.z;
+
+		PrimitiveMesh->pPositions[2].x += Offset.x;
+		PrimitiveMesh->pPositions[2].y += Offset.y;
+		PrimitiveMesh->pPositions[2].z += Offset.z;
 		
 		PrimitiveMesh->pIndices = new uint32[3];
 		PrimitiveMesh->indexCount = 3;
@@ -1764,14 +1775,14 @@ namespace Core
 				BlackData[i * 4 + 3] = 0;
 			}
 			
-			m_RadiosityImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_0, 0, GLImageAccess_ReadWrite);
+			m_RadiosityImage0 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Bilinear, GLImageUnit_0, 0, GLImageAccess_ReadWrite);
 			m_RadiosityImage0->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			BlackData);
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->RadiosityImage0 = m_RadiosityImage0;
 			
-			m_RadiosityImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point, GLImageUnit_1, 0, GLImageAccess_ReadWrite);
+			m_RadiosityImage1 = std::make_shared<GLImageTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Bilinear, GLImageUnit_1, 0, GLImageAccess_ReadWrite);
 			m_RadiosityImage1->LoadImage(
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
@@ -1811,7 +1822,7 @@ namespace Core
 					++iter)
 			{
 				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector4(3.0, 3.0, 3.0, 1.0);
+				iter->second.Energy = Vector4(2.0, 2.0, 2.0, 1.0);
 				iter->second.LightPrimitive = True;
 				RemainingPrimitives.push(iter->second);
 			}
@@ -1869,17 +1880,7 @@ namespace Core
 			Primitive ShootingPrimitive = RemainingPrimitives.front();
 			RemainingPrimitives.pop();
 
-			std::unique_ptr<Object> PrimitiveObject;
-			
-			if (!ShootingPrimitive.LightPrimitive)
-			{
-				BeingBakingObject->SetShootingPrimitive(ShootingPrimitive.ID);
-			}
-			else
-			{
-				PrimitiveObject = CreateObject(ShootingPrimitive);
-				BeingBakingObject->SetShootingPrimitive(-1.0f);
-			}
+			std::unique_ptr<Object> PrimitiveObject = CreateObject(ShootingPrimitive);
 			
 			BeingBakingObject->glRenderableUnit->DrawIDMaterial.lock()->albedoTexture = m_assetManager->textureMap["Sponza_Bricks_a_Albedo"];
 			
