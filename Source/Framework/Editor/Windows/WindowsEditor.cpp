@@ -403,6 +403,17 @@ namespace Core
 				pressedOK = False;
 			}
 
+			ImGui::SameLine();
+
+			if (ImGui::Button("Create Light"))
+			{
+				static int32 Index = 0;
+				std::shared_ptr<Object> lightObject = createAreaLight(Index);
+				++Index;
+				lightObject->Initialize(m_GLDevice.get(), True);
+				m_scene->AddLight(lightObject, False);
+			}
+
 			if (ImGui::Button("Save All"))
 				m_assetManager->SaveAll();
 
@@ -1073,7 +1084,7 @@ namespace Core
 		}
 	}
 
-	void EditTransform(const ImVec2 & regionTopLeft, const ImVec2 & regionSize, const float *cameraView, float *cameraProjection, float* matrix)
+	void EditTransform(const ImVec2 & regionTopLeft, const ImVec2 & regionSize, const float *cameraView, float *cameraProjection, float* matrix, Object * pSelectedObject)
 	{
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
@@ -1127,6 +1138,8 @@ namespace Core
 			break;
 		}
 
+		ImGui::ColorEdit3("Energy", pSelectedObject->Energy);
+
 		ImGui::End();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -1141,8 +1154,7 @@ namespace Core
 
 		ImGui::Begin("Matrix Inspector");
 
-		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix());
-
+		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix(), pSelectedObject);
 	}
 
 	std::shared_ptr<Object> WindowsEditor::createObject(std::weak_ptr<Prefab> prefab)
@@ -1165,7 +1177,7 @@ namespace Core
 			material->lightmapTexture.lock()->Attach(material.get());
 		}
 
-		material->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
+		material->IsOccluder = True;
 
 		defaultObject->glRenderableUnit->material = material;
 		defaultObject->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
@@ -1185,7 +1197,7 @@ namespace Core
 		return defaultObject;
 	}
 
-	std::shared_ptr<Core::Object> WindowsEditor::createObject(std::shared_ptr<Object> object)
+	std::shared_ptr<Object> WindowsEditor::createObject(std::shared_ptr<Object> object)
 	{
 		object->glRenderableUnit = std::make_unique<GLRenderableUnit>();
 		object->glRenderableUnit->staticMesh = m_assetManager->staticMeshMap[object->staticMeshName];
@@ -1199,7 +1211,7 @@ namespace Core
 			material->lightmapTexture.lock()->Attach(material.get());
 		}
 
-		material->IsOccluder = True;	//	TODO:	�����û��¶�ڱ༭����
+		material->IsOccluder = True;
 
 		object->glRenderableUnit->material = material;
 		object->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
@@ -1221,10 +1233,10 @@ namespace Core
 		return object;
 	}
 
-	std::shared_ptr<Object> WindowsEditor::createAreaLight()
+	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index)
 	{
 		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
-		ctd::string name = "Area Light";
+		ctd::string name = "Area Light " + to_string(Index);
 		areaLight->name = name;
 
 		areaLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();
@@ -1436,10 +1448,6 @@ namespace Core
 		m_scene->Initialize(m_GLDevice.get(), width, height);
 
 		createBuiltinResources();
-
-		std::shared_ptr<Object> lightObject = createAreaLight();
-		lightObject->Initialize(m_GLDevice.get(), True);
-		m_scene->AddLight(lightObject, False);
 
 		//	ʵ�������������л��õĶ���
 		for (vector<std::shared_ptr<Object>>::iterator iter = m_scene->serializedObjects.begin();
@@ -1814,17 +1822,24 @@ namespace Core
 			
 			m_pResidualImageRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4];
 			memset(m_pResidualImageRawData, 0, RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4);
-			
-			Object* AreaLight = m_scene->GetAreaLight();
-			AreaLight->BeforeBaking();
-			for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
-					iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
-					++iter)
+
+			for (int32 i = 0; i < m_scene->GetLightCount(); ++i)
 			{
-				//	TODO:	这里光源的强度先写死.要实现支持W,还有cd/m^2.
-				iter->second.Energy = Vector4(2.0, 2.0, 2.0, 1.0);
-				iter->second.LightPrimitive = True;
-				RemainingPrimitives.push(iter->second);
+				Object* AreaLight = m_scene->GetAreaLight(i);
+				
+				AreaLight->BeforeBaking();
+				for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
+						iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
+						++iter)
+				{
+					//	TODO:	要捋清用什么物理单位
+					iter->second.Energy.x = AreaLight->Energy[0];
+					iter->second.Energy.y = AreaLight->Energy[1];
+					iter->second.Energy.z = AreaLight->Energy[2];
+					iter->second.Energy.w = 1.0f;
+					
+					RemainingPrimitives.push(iter->second);
+				}
 			}
 			
 			m_GLPositionAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
@@ -1853,7 +1868,6 @@ namespace Core
 
 			float* m_pPositionRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			float* m_pNormalRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
-			float* m_pPrimitiveIDRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			
 			m_GLPositionAttach->Fetch(m_pPositionRawData);
 			m_GLNormalAttach->Fetch(m_pNormalRawData);
@@ -1863,7 +1877,6 @@ namespace Core
 		
 			delete[] m_pPositionRawData;
 			delete[] m_pNormalRawData;
-			delete[] m_pPrimitiveIDRawData;
 			
 			m_RLBakeColorAttach->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, Null);
 			m_RLBakeFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLBakeColorAttach.get());

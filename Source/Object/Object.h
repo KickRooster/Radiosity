@@ -44,6 +44,7 @@ namespace Core
 		Vector3 position;
 		Vector3 eulerAngle;
 		Vector3 scale;
+		float Energy[3];
 
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
 		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;

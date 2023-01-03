@@ -106,7 +106,7 @@ namespace Core
 		std::shared_ptr<Object> createObject(std::weak_ptr<Prefab> prefab);
 		//	Create for serialized.
 		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
-		std::shared_ptr<Object> createAreaLight();
+		std::shared_ptr<Object> createAreaLight(int32 Index);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, int32 Width, int32 Height);
 

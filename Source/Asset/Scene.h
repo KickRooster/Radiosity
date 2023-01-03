@@ -16,7 +16,7 @@ namespace Core
 
 		std::unique_ptr<Camera> m_camera;
 
-		std::weak_ptr<Object> m_areaLightRef;
+		std::vector<std::weak_ptr<Object>> m_LightRefs;
 		std::weak_ptr<Object> m_beingBakingObjectRef;
 
 	public:
@@ -35,7 +35,8 @@ namespace Core
 		Camera * GetCamera();
 		void AddObject(std::shared_ptr<Object> object, Bool needSerialization = True);
 		void AddLight(std::shared_ptr<Object> object, Bool needSerialization = True);
-		Object* GetAreaLight() const;
+		int32 GetLightCount() const ;
+		Object* GetAreaLight(int32 Index) const;
 		Object* GetBeingBakingObject() const;
 
 		template <class Archive>

@@ -169,7 +169,7 @@
 
 			float RLVisable = texture(VisibilitySampler, uv1).x;
 			
-			Fij *= RLVisable;
+			Fij *= Visable;//RLVisable;
 			
 			vec3 Radiosity = ShooterEnergy.xyz * ShooterSurfaceArea.x * Fij;
 			vec3 albedo = texture(albedoSampler, uv0).xyz;

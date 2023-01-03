@@ -25,7 +25,6 @@ namespace Core
 	
 	struct Primitive
 	{
-		Bool LightPrimitive = False;
 		float ID;
 		float SurfaceArea;
 		float ScaledUV1Area;

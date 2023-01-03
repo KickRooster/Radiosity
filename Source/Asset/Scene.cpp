@@ -104,16 +104,20 @@ namespace Core
 	void Scene::AddLight(std::shared_ptr<Object> object, Bool needSerialization)
 	{
 		objects.push_back(object);
-
-		m_areaLightRef = object; 
+		m_LightRefs.push_back(object);
 
 		if (needSerialization)
 			serializedObjects.push_back(object);
 	}
 
-	Object* Scene::GetAreaLight() const
+	int32 Scene::GetLightCount() const
 	{
-		return m_areaLightRef.lock().get();
+		return m_LightRefs.size();
+	}
+	
+	Object* Scene::GetAreaLight(int32 Index) const
+	{
+		return m_LightRefs[Index].lock().get();
 	}
 
 	Object* Scene::GetBeingBakingObject() const

@@ -15,7 +15,8 @@ namespace Core
 		m_object2WorldITMatrix(Matrix4x4Identify),
 		position(Zero),
 		eulerAngle(Zero),
-		scale(Vector3(1.0f, 1.0f, 1.0f))
+		scale(Vector3(1.0f, 1.0f, 1.0f)),
+		Energy{1.0f, 1.0f, 1.0f}
 	{
 		id = idSeed;
 		++idSeed;
