@@ -121,6 +121,10 @@ namespace Core
 				maxV = pUV1s[i].y;
 		}
 
+		//	Force set maxU and maxV to 1.0.
+		maxU = 1.0f;
+		maxV = 1.0f;
+
 		float UScale = maxU / maxV * UVScaleSqrt;
 		float VScale = maxV / maxU * UVScaleSqrt;
 		

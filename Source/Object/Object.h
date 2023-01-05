@@ -44,6 +44,10 @@ namespace Core
 		Vector3 position;
 		Vector3 eulerAngle;
 		Vector3 scale;
+
+		//	Light property
+		float Color[3];
+		float Intensity;
 		float Energy[3];
 
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;

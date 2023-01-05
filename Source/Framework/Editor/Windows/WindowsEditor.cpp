@@ -21,9 +21,9 @@ namespace Core
 	{
 		m_arealLightMaterial = std::make_shared<Material>();
 
-		m_arealLightMaterial->glVertexShader = m_assetManager->glVertexShaderMap["default"];
+		m_arealLightMaterial->glVertexShader = m_assetManager->glVertexShaderMap["light"];
 		m_arealLightMaterial->glVertexShader.lock()->Attach(m_arealLightMaterial.get());
-		m_arealLightMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["default"];
+		m_arealLightMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["light"];
 		m_arealLightMaterial->glFragmentShader.lock()->Attach(m_arealLightMaterial.get());
 
 		m_arealLightMaterial->albedoTexture = m_assetManager->textureMap["default"];
@@ -76,8 +76,8 @@ namespace Core
 		
 		m_areaLightMesh = std::make_shared<StaticMesh>();
 
-		int32 XCount = 8;
-		int32 YCount = 8;
+		int32 XCount = 10;
+		int32 YCount = 10;
 		float XCountF = static_cast<float>(XCount);
 		float YCountF = static_cast<float>(XCount);
 
@@ -90,7 +90,8 @@ namespace Core
 		m_areaLightMesh->indexCount = XCount * YCount * 6;
 		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
 		
-		float lightScale = 10.0f;
+		Vector3 PhysicalSize = Vector3(10, 10, 0);
+		Vector4 LightScale = Vector4(PhysicalSize.x / XCount, PhysicalSize.y / YCount, 0, 1.0);
 		int32 VertexCursor = 0;
 		
 		for (int32 i = 0; i < YCount; ++i)
@@ -98,13 +99,19 @@ namespace Core
 			for (int j = 0; j < XCount; ++j)
 			{
 				Vector4 P0 = Vector4(-XCount / 2 +  j, -YCount / 2 + i, 0, 1.0);
+				P0 *= LightScale;
 				Vector4 P1 = Vector4(-XCount / 2 +  j + 1, -YCount / 2 + i, 0, 1.0);
+				P1 *= LightScale;
 				Vector4 P2 = Vector4(-XCount / 2 +  j, -YCount / 2 + i + 1, 0, 1.0);
-
+				P2 *= LightScale;
+				
 				Vector4 P3 = Vector4(-XCount / 2 +  j + 1, -YCount / 2, 0, 1.0);
+				P3 *= LightScale;
 				Vector4 P4 = Vector4(-XCount / 2 +  j + 1, -YCount / 2 + i + 1, 0, 1.0);
+				P4 *= LightScale;
 				Vector4 P5 = Vector4(-XCount / 2 +  j, -YCount / 2 + i + 1, 0, 1.0);
-
+				P5 *= LightScale;
+				
 				m_areaLightMesh->pPositions[VertexCursor] = P0;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
@@ -1138,7 +1145,14 @@ namespace Core
 			break;
 		}
 
-		ImGui::ColorEdit3("Energy", pSelectedObject->Energy);
+		ImGui::ColorEdit3("Light Color", pSelectedObject->Color);
+		pSelectedObject->glRenderableUnit->material.lock()->albedoColor[0] = pSelectedObject->Color[0];
+		pSelectedObject->glRenderableUnit->material.lock()->albedoColor[1] = pSelectedObject->Color[1];
+		pSelectedObject->glRenderableUnit->material.lock()->albedoColor[2] = pSelectedObject->Color[2];
+		ImGui::InputFloat("Intensity(cd/m^2)", &pSelectedObject->Intensity);
+		pSelectedObject->Energy[0] = pSelectedObject->Color[0] * pSelectedObject->Intensity;
+		pSelectedObject->Energy[1] = pSelectedObject->Color[1] * pSelectedObject->Intensity;
+		pSelectedObject->Energy[2] = pSelectedObject->Color[2] * pSelectedObject->Intensity;
 
 		ImGui::End();
 
@@ -1152,7 +1166,7 @@ namespace Core
 	{
 		ImGuizmo::BeginFrame(regionSize);
 
-		ImGui::Begin("Matrix Inspector");
+		ImGui::Begin("Inspector");
 
 		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix(), pSelectedObject);
 	}
@@ -1505,7 +1519,25 @@ namespace Core
 			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 
 			SaveLightmap(BeingBakingObject->name, RadiosityTextureWidth, RadiosityTextureHeight);
+
+			//BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = BeingBakingObject->name;
+			//m_assetManager->ScanLightmap();
+			//m_assetManager->ReloadLightmap();
 		}
+
+		//if (ImGui::Button("Stitch Lightmap"))
+		//{
+		//	Object* BeingBakingObject = m_scene->GetBeingBakingObject();
+		//	
+		//	std::shared_ptr<StaticMesh> staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.lock();
+		//	std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
+		//	std::shared_ptr<Texture> lightmap = m_assetManager->lightmapMap[material->lightmapName];
+		//	
+		//	if (staticMesh && lightmap)
+		//	{
+		//		llss::Stitch(staticMesh, lightmap);
+		//	}
+		//}
 
 		ImGui::End();
 
@@ -1832,7 +1864,6 @@ namespace Core
 						iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
 						++iter)
 				{
-					//	TODO:	要捋清用什么物理单位
 					iter->second.Energy.x = AreaLight->Energy[0];
 					iter->second.Energy.y = AreaLight->Energy[1];
 					iter->second.Energy.z = AreaLight->Energy[2];

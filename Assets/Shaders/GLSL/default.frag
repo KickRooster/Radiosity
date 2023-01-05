@@ -57,8 +57,4 @@
 			 
 			 out_Color.xyz = albedo * irradiance;
 			 out_Color.w = 1.0;
-			 if (customData.x == 39)
-			 {
-				//out_Color.xyz = vec3(0, 1, 0);
-			 }
 		};

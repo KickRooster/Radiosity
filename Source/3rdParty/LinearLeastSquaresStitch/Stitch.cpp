@@ -536,13 +536,8 @@ namespace llss
 		}
 	}
 	
-	void FindSeamEdges(std::shared_ptr<Core::StaticMesh> mesh, std::vector<SeamEdge>& seamEdges, int W, int H, Core::Vector4 lightmapPram, Core::Bool flipY)
+	void FindSeamEdges(std::shared_ptr<Core::StaticMesh> mesh, std::vector<SeamEdge>& seamEdges, int W, int H, Core::Bool flipY)
 	{
-		float offsetX = lightmapPram.x;
-		float offsetY = lightmapPram.y;
-		float scaleX = lightmapPram.z;
-		float scaleY = lightmapPram.w;
-
 		using namespace std;
 		struct tupleHasher // Hash pairs of vectors
 		{
@@ -583,8 +578,8 @@ namespace llss
 					lightmapUV1.y = 1.0f - lightmapUV1.y;
 				}
 
-				Vec2 uv0 = Vec2(lightmapUV0.x * scaleX + offsetX, lightmapUV0.y * scaleY + offsetY);
-				Vec2 uv1 = Vec2(lightmapUV1.x * scaleX + offsetX, lightmapUV1.y * scaleY + offsetY);
+				Vec2 uv0 = Vec2(lightmapUV0.x, lightmapUV0.y);
+				Vec2 uv1 = Vec2(lightmapUV1.x, lightmapUV1.y);
 
 				// Try to find the "opposite" edge (note: reversing the order of verts here)	
 				auto otherEdge = edgeMap.find(make_tuple(v1, v0));
@@ -976,17 +971,11 @@ namespace llss
 		}
 	}
 
-	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, std::shared_ptr<Core::Texture> lightmap, std::shared_ptr<Core::Texture> maskMap, Core::Vector4 lightmapPram, Core::int32 objectID)
+	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, std::shared_ptr<Core::Texture> lightmap)
 	{
-		float offsetX = lightmapPram.x;
-		float offsetY = lightmapPram.y;
-		float scaleX = lightmapPram.z;
-		float scaleY = lightmapPram.w;
-
 		int W, H, comp;
 		RGBA* rawLightmap = (RGBA*)lightmap->pImage;
-		RGBA* rawMaskMap = (RGBA*)maskMap->pImage;
-
+		
 		W = lightmap->width;
 		H = lightmap->height;
 		comp = 4;
@@ -998,7 +987,7 @@ namespace llss
 
 		//	UV坐标从左下角开始,读写贴图时都是左上角开始.
 		Core::Bool flipY = True;
-		FindSeamEdges(mesh, seamEdges, W, H, lightmapPram, flipY);
+		FindSeamEdges(mesh, seamEdges, W, H, flipY);
 
 		////	Dilation
 		//for (size_t i = 0; i < seamEdges.size(); ++i)
@@ -1016,10 +1005,7 @@ namespace llss
 		{
 			for (int j = 0; j < W; ++j)
 			{
-				if (rawMaskMap[i * W + j].R == objectID)
-				{
-					coverageBuf(j, i) = 1;
-				}
+				coverageBuf(j, i) = 1;
 			}
 		}
 

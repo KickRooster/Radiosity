@@ -40,7 +40,6 @@ namespace Core
 		const ANSICHAR * staticMeshFullPath = "C:\\Radiosity\\Assets\\StaticMeshes";
 		const ANSICHAR * textureFullPath = "C:\\Radiosity\\Assets\\Textures";
 		const ANSICHAR * lightmapFullPath = "C:\\Radiosity\\Assets\\Lightmaps";
-		const ANSICHAR * maskMapFullPath = "C:\\Radiosity\\Assets\\MaskMaps";
 		const ANSICHAR * materialFullPath = "C:\\Radiosity\\Assets\\Materials";
 
 		const ANSICHAR * defaultGLVertexShaderName = "default";

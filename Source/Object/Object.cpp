@@ -16,6 +16,8 @@ namespace Core
 		position(Zero),
 		eulerAngle(Zero),
 		scale(Vector3(1.0f, 1.0f, 1.0f)),
+		Color{1.0f, 1.0f, 1.0f},
+		Intensity(1.0),
 		Energy{1.0f, 1.0f, 1.0f}
 	{
 		id = idSeed;
