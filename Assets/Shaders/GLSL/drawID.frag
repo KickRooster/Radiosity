@@ -14,7 +14,7 @@
 		in vec2 uv5;
 		in vec2 uv6;
 		in vec2 uv7;
-		uniform sampler2D albedoSampler;
+		
 		layout (std140, binding = 0) uniform CameraUniformData
 		{
 			mat4 viewPerspectiveProjectionMatrix;
@@ -59,8 +59,4 @@
 			ProjectedPos.z += 0.5;
 			attch0.xyz = vec3(customData.x, ProjectedPos.z, customData.x);
 			attch0.w = 1.0;
-
-			vec3 albedo = texture(albedoSampler, uv0).xyz;
-			attch1.xyz = albedo;
-			attch1.w = 1.0;
 		};

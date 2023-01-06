@@ -28,6 +28,15 @@ namespace Core
 		float m_scale_y;
 		float m_scale_z;
 
+		Bool m_isLight;
+		float m_color_r;
+		float m_color_g;
+		float m_color_b;
+		float m_intensity;
+		float m_energy_r;
+		float m_energy_g;
+		float m_energy_b;
+
 	private:
 		Matrix4x4 m_object2WorldMatrix;
 		Matrix4x4 m_world2ObjectMatrix;
@@ -36,7 +45,7 @@ namespace Core
 	public:
 		static int32 idSeed;
 		int32 id;
-
+		
 		ctd::string name;
 		ctd::string staticMeshName;
 		ctd::string materialName;
@@ -46,6 +55,7 @@ namespace Core
 		Vector3 scale;
 
 		//	Light property
+		Bool IsLight;
 		float Color[3];
 		float Intensity;
 		float Energy[3];
@@ -68,7 +78,6 @@ namespace Core
 		void AfterComputeFormFactor();
 		void BeforePickShooter(OpenGLDevice * pDevice);
 		void AfterPickShooter();
-		void ViewCubeMap(OpenGLDevice * pDevice);
 		void SetShootingPrimitive(float PrimitiveID);
 		Matrix4x4 * GetObject2WorldMatrix() ;
 		Vector3 GetZDirection();
@@ -90,6 +99,15 @@ namespace Core
 			m_scale_x = scale.x;
 			m_scale_y = scale.y;
 			m_scale_z = scale.z;
+
+			m_isLight = IsLight;
+			m_color_r = Color[0];
+			m_color_g = Color[1];
+			m_color_b = Color[2];
+			m_intensity = Intensity;
+			m_energy_r = Energy[0];
+			m_energy_g = Energy[1];
+			m_energy_b = Energy[2];
 		}
 
 		void AfterLoad()
@@ -105,6 +123,15 @@ namespace Core
 			scale.x = m_scale_x;
 			scale.y = m_scale_y;
 			scale.z = m_scale_z;
+
+			IsLight = m_isLight;
+			Color[0] = m_color_r;
+			Color[1] = m_color_g;
+			Color[2] = m_color_b;
+			Intensity = m_intensity;
+			Energy[0] = m_energy_r;
+			Energy[1] = m_energy_g;
+			Energy[2] = m_energy_b;
 		}
 
 		template <class Archive>
@@ -122,7 +149,15 @@ namespace Core
 				m_eulerAngle_z,
 				m_scale_x,
 				m_scale_y,
-				m_scale_z
+				m_scale_z,
+				m_isLight,
+				m_color_r,
+				m_color_g,
+				m_color_b,
+				m_intensity,
+				m_energy_r,
+				m_energy_g,
+				m_energy_b
 			);
 		}
 

@@ -22,6 +22,7 @@ namespace Core
 		FileType_RLSL_Frame,
 		FileType_TextureInfo,
 		FileType_Texture,
+		FileType_Lightmap,		//	Not actually supported, only for filter lightmaps for editor.
 		FileType_Material,
 		FileType_StaticMesh,
 		FileType_FBX,

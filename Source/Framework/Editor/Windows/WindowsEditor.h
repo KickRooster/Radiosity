@@ -34,12 +34,11 @@ namespace Core
 		std::unique_ptr<GLFrameBuffer> m_GLFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLColorAttach;			//	uint8
 
-		std::unique_ptr<GLFrameBuffer> m_GLDebugViewFrameBuffer;
-		std::unique_ptr<GLTexture> m_GLDebugViewColorAttach;
-
 		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLPositionAttach;
 		std::unique_ptr<GLTexture> m_GLNormalAttach;
+		std::unique_ptr<GLTexture> m_GLMaskAttach;
+		float* m_pMaskRawData;
 
 		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition;	//	float
 		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal;	//	float
@@ -65,7 +64,6 @@ namespace Core
 		const int32 PrimitiveIDTextureHeight = 1024;
 		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
 		std::shared_ptr<GLTexture> m_primitiveIDCubeMap;
-		std::shared_ptr<GLTexture> m_primitiveAlbedoCubeMap;
 
 		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
@@ -89,7 +87,6 @@ namespace Core
 		std::shared_ptr<Material> m_DrawGBufferMaterial;
 		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
-		std::shared_ptr<Material> m_ViewCubeMapMaterial;
 		std::shared_ptr<Material> m_PickShooterMaterial;
 		std::shared_ptr<StaticMesh> m_areaLightMesh;
 		std::shared_ptr<StaticMesh> m_postprocessMesh;
@@ -105,10 +102,12 @@ namespace Core
 		//	Create immediately.
 		std::shared_ptr<Object> createObject(std::weak_ptr<Prefab> prefab);
 		//	Create for serialized.
-		std::shared_ptr<Object> createObject(std::shared_ptr<Object> object);
+		std::shared_ptr<Object> InstantiateObject(std::shared_ptr<Object> object);
+		std::shared_ptr<Object> InstantiateAreaLight(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createAreaLight(int32 Index);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, int32 Width, int32 Height);
+		void FetchMaskMap(int32 Width, int32 Height, const float* MaskMapRawData, uint8* MaskMapUint8Data);
 
 		uint32 ReverseBits(uint32 Value);
 		Vector2 Hammersley(uint32 Index, uint32 NumSamples);
@@ -122,7 +121,6 @@ namespace Core
 		virtual void Initialize(int32 width, int32 height) override;
 		virtual void Tick(float deltaTime, int32 width, int32 height, InputState & inputState) override;
 		virtual void Render(int32 width, int32 height) override;
-		virtual void ViewCubeMap() override;
 		virtual void Bake() override;
 		virtual ~WindowsEditor();
 	};

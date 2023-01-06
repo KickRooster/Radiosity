@@ -16,6 +16,7 @@ namespace Core
 		position(Zero),
 		eulerAngle(Zero),
 		scale(Vector3(1.0f, 1.0f, 1.0f)),
+		IsLight(False),
 		Color{1.0f, 1.0f, 1.0f},
 		Intensity(1.0),
 		Energy{1.0f, 1.0f, 1.0f}
@@ -205,20 +206,6 @@ namespace Core
 		glRenderableUnit->InactivePickShooter();
 	}
 	
-	void Object::ViewCubeMap(OpenGLDevice* pDevice)
-	{
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
-
-		glRenderableUnit->ActiveViewCubeMap();
-		pDevice->DrawElements(
-			GLTopology_Triangles,
-			glRenderableUnit->staticMesh.lock()->indexCount,
-			GLDataType_UnsignedInt,
-			Null);
-		glRenderableUnit->InactiveCubeMap();
-	}
-
 	void Object::SetShootingPrimitive(float PrimitiveID)
 	{
 		rlRenderableUnit->Activate();

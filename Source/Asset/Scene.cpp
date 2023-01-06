@@ -82,7 +82,6 @@ namespace Core
 		{
 			iter->get()->Render(pDevice);
 		}
-
 		pDevice->AfterRender();
 	}
 

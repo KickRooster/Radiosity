@@ -4,9 +4,6 @@ namespace Core
 {
 	TextureInfo::TextureInfo()
 	{
-		/*wrapMode = TextureWrapMode_Clamp;
-		filterMode = TextureFilterMode_Bilinear;
-		format = TextureFormat_SRGBA32;*/
 	}
 
 	void TextureInfo::BeginUse()

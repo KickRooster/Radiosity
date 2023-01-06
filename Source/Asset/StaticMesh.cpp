@@ -50,13 +50,6 @@ namespace Core
 
 		PrimitiveMap.empty();
 		
-		if (pUV1s)
-		{
-			delete[] pUV1s;
-		}
-		pUV1s = new Vector2[vertexCount];
-		memcpy(pUV1s, pUV0s, sizeof(Vector2) * vertexCount);
-		
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
 		{
 			pPrimitiveIDs[triangleIndex] = triangleIndex;

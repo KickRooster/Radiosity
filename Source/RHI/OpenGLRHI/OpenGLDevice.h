@@ -27,7 +27,6 @@ namespace Core
 		void BeginBasePass(int32 width, int32 height);
 		void BeginVisibisityPass(int32 width, int32 height);
 		void BeginReconstrucionPass(int32 width, int32 height);
-		void BeginViewCubeMapPass(int32 width, int32 height);
 		void BeginPickPass(int32 width, int32 height);
 		void AfterRender();
 		void BeforePostprocess(int32 xOffset, int32 yOffset, int32 width, int32 height);

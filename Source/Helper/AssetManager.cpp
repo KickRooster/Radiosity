@@ -290,6 +290,7 @@ namespace Core
 			textureInfoFullPathName.append(fileName);
 			textureInfoFullPathName.append(textureInfoExt);
 
+			//	Load texture from DCC as SRGB format for gamma correcting.
 			textureInfoRef.lock()->format = TextureFormat_SRGBA32;
 			textureInfoRef.lock()->wrapMode = TextureWrapMode_Clamp;
 			textureInfoRef.lock()->filterMode = TextureFilterMode_Bilinear;

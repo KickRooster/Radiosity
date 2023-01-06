@@ -6,21 +6,56 @@
 				<ptr_wrapper>
 					<id>2147483649</id>
 					<data>
-						<value0>polySurface5</value0>
-						<value1>polySurface5</value1>
-						<value2>polySurface5</value2>
+						<value0>BP_Common_Village_02_Mat</value0>
+						<value1>BP_Common_Village_02_Mat</value1>
+						<value2>BP_Common_Village_02_Mat</value2>
 						<value3>0</value3>
-						<value4>-3.7084617614746094</value4>
-						<value5>12.709552764892578</value5>
-						<value6>0</value6>
+						<value4>0</value4>
+						<value5>0</value5>
+						<value6>-90</value6>
 						<value7>-0</value7>
 						<value8>0</value8>
-						<value9>2</value9>
-						<value10>3</value10>
-						<value11>1.5</value11>
+						<value9>0.97734910249710083</value9>
+						<value10>1</value10>
+						<value11>1</value11>
+						<value12>0</value12>
+						<value13>0</value13>
+						<value14>0</value14>
+						<value15>0</value15>
+						<value16>0</value16>
+						<value17>0</value17>
+						<value18>0</value18>
+						<value19>0</value19>
 					</data>
 				</ptr_wrapper>
 			</value0>
+			<value1>
+				<ptr_wrapper>
+					<id>2147483650</id>
+					<data>
+						<value0>Area Light 0</value0>
+						<value1></value1>
+						<value2></value2>
+						<value3>613.6427001953125</value3>
+						<value4>1211.788330078125</value4>
+						<value5>-231.70481872558594</value5>
+						<value6>90</value6>
+						<value7>-0</value7>
+						<value8>0</value8>
+						<value9>179.99803161621094</value9>
+						<value10>100.00000762939453</value10>
+						<value11>1</value11>
+						<value12>1</value12>
+						<value13>1</value13>
+						<value14>0.99998998641967773</value14>
+						<value15>0.99998998641967773</value15>
+						<value16>5</value16>
+						<value17>5</value17>
+						<value18>4.9999499320983887</value18>
+						<value19>4.9999499320983887</value19>
+					</data>
+				</ptr_wrapper>
+			</value1>
 		</value0>
 	</value0>
 </cereal>

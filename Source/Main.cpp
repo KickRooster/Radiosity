@@ -266,7 +266,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		pFramework->Tick(deltaTime, g_windowState.width, g_windowState.height, g_inputState);
 		pFramework->Render(g_windowState.width, g_windowState.height);
-		pFramework->ViewCubeMap();
 		pFramework->Bake();
 		
 		SDL_GL_SwapWindow(pSDLWindow);

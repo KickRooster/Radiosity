@@ -172,33 +172,6 @@ namespace Core
 		glCheckError();
 	}
 
-	void OpenGLDevice::BeginViewCubeMapPass(int32 width, int32 height)
-	{
-		glClearColor(0, 0, 0, 1.0f);
-		glCheckError();
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glCheckError();
-
-		glViewport(0, 0, width, height);
-		glCheckError();
-
-		glFrontFace(GL_CCW);
-		glCheckError();
-
-		glEnable(GL_CULL_FACE);
-		glCheckError();
-
-		glCullFace(GL_BACK);
-		glCheckError();
-
-		glEnable(GL_DEPTH_TEST);
-		glCheckError();
-
-		glDepthFunc(GL_LESS);
-		glCheckError();
-	}
-
 	void OpenGLDevice::BeginPickPass(int32 width, int32 height)
 	{
 		glClearColor(0, 0, 0, 0);
@@ -231,7 +204,6 @@ namespace Core
 	
 	void OpenGLDevice::AfterRender()
 	{
-
 	}
 
 	void OpenGLDevice::BeforePostprocess(int32 xOffset, int32 yOffset, int32 width, int32 height)

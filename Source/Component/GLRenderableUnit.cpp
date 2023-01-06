@@ -23,11 +23,6 @@ namespace Core
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->BeginUse();
 
-		if (!ViewCubeMapMaterial.expired())
-		{
-			ViewCubeMapMaterial.lock()->BeginUse();	
-		}
-
 		if (!PickShooterMaterial.expired())
 		{
 			PickShooterMaterial.lock()->BeginUse();
@@ -104,24 +99,6 @@ namespace Core
 
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->Inactivate();
-	}
-
-	void GLRenderableUnit::ActiveViewCubeMap()
-	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Activate();
-
-		if (!ViewCubeMapMaterial.expired())
-			ViewCubeMapMaterial.lock()->Activate();
-	}
-
-	void GLRenderableUnit::InactiveCubeMap()
-	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Inactivate();
-
-		if (!ViewCubeMapMaterial.expired())
-			ViewCubeMapMaterial.lock()->Inactivate();
 	}
 
 	void GLRenderableUnit::ActivePickShooter()

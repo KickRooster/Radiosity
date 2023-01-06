@@ -971,11 +971,12 @@ namespace llss
 		}
 	}
 
-	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, std::shared_ptr<Core::Texture> lightmap)
+	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, std::shared_ptr<Core::Texture> lightmap, Core::uint8* maskMapRawData)
 	{
 		int W, H, comp;
 		RGBA* rawLightmap = (RGBA*)lightmap->pImage;
-		
+		RGBA* rawMaskMap = (RGBA*)maskMapRawData;
+
 		W = lightmap->width;
 		H = lightmap->height;
 		comp = 4;
@@ -985,8 +986,8 @@ namespace llss
 		// Find all edges that have different UVs on the two sides
 		std::vector<SeamEdge> seamEdges;
 
-		//	UV坐标从左下角开始,读写贴图时都是左上角开始.
-		Core::Bool flipY = True;
+		//	UV????????????,??д???????????????.
+		Core::Bool flipY = False;
 		FindSeamEdges(mesh, seamEdges, W, H, flipY);
 
 		////	Dilation
@@ -1005,7 +1006,14 @@ namespace llss
 		{
 			for (int j = 0; j < W; ++j)
 			{
-				coverageBuf(j, i) = 1;
+				if (rawMaskMap[i * W + j].R > 0)
+				{
+					coverageBuf(j, i) = 1;
+				}
+				else
+				{
+					coverageBuf(j, i) = 0;
+				}
 			}
 		}
 

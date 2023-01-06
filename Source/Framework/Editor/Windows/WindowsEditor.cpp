@@ -58,14 +58,6 @@ namespace Core
 		
 		//////////////////////////////////////////////////////////////////////////
 		
-		m_ViewCubeMapMaterial = std::make_shared<Material>();
-		m_ViewCubeMapMaterial->glVertexShader = m_assetManager->glVertexShaderMap["viewCubeMap"];
-		m_ViewCubeMapMaterial->glVertexShader.lock()->Attach(m_ViewCubeMapMaterial.get());
-		m_ViewCubeMapMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["viewCubeMap"];
-		m_ViewCubeMapMaterial->glFragmentShader.lock()->Attach(m_ViewCubeMapMaterial.get());
-		
-		//////////////////////////////////////////////////////////////////////////
-		
 		m_PickShooterMaterial = std::make_shared<Material>();
 		m_PickShooterMaterial->glVertexShader = m_assetManager->glVertexShaderMap["pickShooter"];
 		m_PickShooterMaterial->glVertexShader.lock()->Attach(m_PickShooterMaterial.get());
@@ -300,6 +292,21 @@ namespace Core
 					++index;
 				}
 				break;
+			case FileType_Lightmap:
+				for (map<string, shared_ptr<Texture>>::iterator iter = m_assetManager->lightmapMap.begin();
+					iter != m_assetManager->lightmapMap.end();
+					++iter)
+				{
+					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), pfileSelections + index, ImGuiSelectableFlags_DontClosePopups))
+					{
+						selectedIndex = index;
+						selectedFileName = iter->first;
+						break;
+					}
+					
+					++index;
+				}
+				break;
 			case FileType_GLSL_Vertex:
 				for (map<string, shared_ptr<GLSL>>::iterator iter = m_assetManager->glVertexShaderMap.begin();
 					iter != m_assetManager->glVertexShaderMap.end();
@@ -414,11 +421,10 @@ namespace Core
 
 			if (ImGui::Button("Create Light"))
 			{
-				static int32 Index = 0;
+				int32 Index = m_scene->GetLightCount();
 				std::shared_ptr<Object> lightObject = createAreaLight(Index);
-				++Index;
 				lightObject->Initialize(m_GLDevice.get(), True);
-				m_scene->AddLight(lightObject, False);
+				m_scene->AddLight(lightObject, True);
 			}
 
 			if (ImGui::Button("Save All"))
@@ -788,6 +794,16 @@ namespace Core
 					selectedFileLastFrameIndexInInspector = InvalidIndex;
 				}
 
+				//	Lightmap
+				if (ImGui::RadioButton("Lightmap", &radioIndex, 4))
+				{
+					ImGui::OpenPopup("Lightmap...");
+
+					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+					selectedFileIndexInInspector = InvalidIndex;
+					selectedFileLastFrameIndexInInspector = InvalidIndex;
+				}
+
 				//	GL Vertex Shader
 				if (ImGui::RadioButton("GL VS", &radioIndex, 5))
 				{
@@ -921,6 +937,28 @@ namespace Core
 
 				if (!selectedMaterial.expired())
 					ImGui::Button(selectedMaterial.lock()->roughnessTextureName.c_str());
+
+				//	Lightmap
+				popupFileSelectingTick(
+					FileType_Lightmap,
+					"Lightmap...",
+					fileSelectionsInInspector,
+					selectedFileIndexInInspector,
+					selectedFileLastFrameIndexInInspector,
+					inputState,
+					pressedOK,
+					fileName);
+
+				if (pressedOK)
+				{
+					selectedMaterial.lock()->lightmapName = fileName;
+					selectedMaterial.lock()->lightmapTexture = m_assetManager->lightmapMap[fileName];
+					selectedMaterial.lock()->lightmapTexture.lock()->BeginUse();
+					pressedOK = False;
+				}
+
+				if (!selectedMaterial.expired())
+					ImGui::Button(selectedMaterial.lock()->lightmapName.c_str());
 				
 				//	GL Vertex Shader
 				popupFileSelectingTick(
@@ -1167,7 +1205,7 @@ namespace Core
 		ImGuizmo::BeginFrame(regionSize);
 
 		ImGui::Begin("Inspector");
-
+		
 		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix(), pSelectedObject);
 	}
 
@@ -1197,7 +1235,6 @@ namespace Core
 		defaultObject->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
-		defaultObject->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
 		defaultObject->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
 
 		defaultObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
@@ -1205,13 +1242,15 @@ namespace Core
 		defaultObject->rlRenderableUnit->material = material;
 		material->rlVertexShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
 		material->rlRayShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
+
+		defaultObject->IsLight = False;
 		
 		defaultObject->Initialize(m_GLDevice.get(), False);
 
 		return defaultObject;
 	}
 
-	std::shared_ptr<Object> WindowsEditor::createObject(std::shared_ptr<Object> object)
+	std::shared_ptr<Object> WindowsEditor::InstantiateObject(std::shared_ptr<Object> object)
 	{
 		object->glRenderableUnit = std::make_unique<GLRenderableUnit>();
 		object->glRenderableUnit->staticMesh = m_assetManager->staticMeshMap[object->staticMeshName];
@@ -1231,7 +1270,6 @@ namespace Core
 		object->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
-		object->glRenderableUnit->ViewCubeMapMaterial = m_ViewCubeMapMaterial;
 		object->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
 
 		object->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
@@ -1247,6 +1285,17 @@ namespace Core
 		return object;
 	}
 
+	std::shared_ptr<Object> WindowsEditor::InstantiateAreaLight(std::shared_ptr<Object> object)
+	{
+		object->glRenderableUnit = std::make_unique<GLRenderableUnit>();
+		object->glRenderableUnit->staticMesh = m_areaLightMesh;
+		object->glRenderableUnit->material = m_arealLightMaterial;
+		
+		object->Initialize(m_GLDevice.get(), True);
+
+		return object;
+	}
+	
 	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index)
 	{
 		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
@@ -1259,6 +1308,8 @@ namespace Core
 		
 		areaLight->position = Vector3(0, 2.0f, 25.0f);
 		areaLight->eulerAngle = Vector3(180.0f, 0, 0);
+
+		areaLight->IsLight = True;
 
 		return areaLight;
 	}
@@ -1357,6 +1408,29 @@ namespace Core
 		delete[] LightmapRawData;
 	}
 
+	void WindowsEditor::FetchMaskMap(int32 Width, int32 Height, const float* MaskMapRawData, uint8* MaskMapUint8Data)
+	{
+		for (int32 i = 0; i < Height; ++i)
+		{
+			for (int32 j = 0; j < Width; ++j)
+			{
+				float R = MaskMapRawData[(i * Width + j) * 4 + 0];
+				float G = MaskMapRawData[(i * Width + j) * 4 + 1];
+				float B = MaskMapRawData[(i * Width + j) * 4 + 2];
+				//float A = MaskMapRawData[(i * Width + j) * 4 + 3];
+
+				int32 IntR = static_cast<int32>(R * 255.0f);
+				int32 IntG = static_cast<int32>(G * 255.0f);
+				int32 IntB = static_cast<int32>(B * 255.0f);
+				
+				MaskMapUint8Data[(i * Width + j) * 4 + 0] = Clamp(IntR, 0, 255);
+				MaskMapUint8Data[(i * Width + j) * 4 + 1] = Clamp(IntG, 0, 255);
+				MaskMapUint8Data[(i * Width + j) * 4 + 2] = Clamp(IntB, 0, 255);
+				MaskMapUint8Data[(i * Width + j) * 4 + 3] = 255;
+			}
+		}
+	}
+	
 	uint32 WindowsEditor::ReverseBits(uint32 Value)
 	{
 		Value = (Value << 16u) | (Value >> 16u); 
@@ -1389,13 +1463,13 @@ namespace Core
 		m_RLDevice(std::make_unique<RLDevice>()),
 		m_guiWrapper(std::make_unique<GUIWrapper>()),
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_GLDebugViewFrameBuffer(std::make_unique<GLFrameBuffer>()),
 		m_RLBakingObjectPosition(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_RLBakingObjectNormal(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_RLBakeFrameBuffer(std::make_unique<RLFrameBuffer>()),
 		m_RLBakeColorAttach(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_RLBakePackingBuffer(std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer)),
 		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
+		m_pMaskRawData(Null),
 		m_frameCount(0),
 		m_baking(False),
 		m_thresold(0.0001f)
@@ -1403,12 +1477,6 @@ namespace Core
 		//	Visibility Pass
 		m_primitiveIDCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 		m_primitiveIDCubeMap->LoadImage(
-		PrimitiveIDTextureWidth,
-		PrimitiveIDTextureHeight,
-		Null);
-
-		m_primitiveAlbedoCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-		m_primitiveAlbedoCubeMap->LoadImage(
 		PrimitiveIDTextureWidth,
 		PrimitiveIDTextureHeight,
 		Null);
@@ -1468,7 +1536,14 @@ namespace Core
 			iter != m_scene->serializedObjects.end();
 			++iter)
 		{
-			m_scene->AddObject(createObject(*iter), False);
+			if ((*iter)->IsLight)
+			{
+				m_scene->AddLight(InstantiateAreaLight(*iter), False);
+			}
+			else
+			{
+				m_scene->AddObject(InstantiateObject(*iter), False);
+			}
 		}
 		
 		m_guiWrapper->Initialize(width, height);
@@ -1518,26 +1593,28 @@ namespace Core
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 
-			SaveLightmap(BeingBakingObject->name, RadiosityTextureWidth, RadiosityTextureHeight);
+			string LightmapName = BeingBakingObject->name;
+			SaveLightmap(LightmapName, RadiosityTextureWidth, RadiosityTextureHeight);
 
-			//BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = BeingBakingObject->name;
-			//m_assetManager->ScanLightmap();
-			//m_assetManager->ReloadLightmap();
+			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
+			m_assetManager->ScanLightmap();
+			m_assetManager->ReloadLightmap();
+			
+			//	Stitch
+			std::shared_ptr<StaticMesh> staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.lock();
+			std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
+			std::shared_ptr<Texture> lightmap = m_assetManager->lightmapMap[material->lightmapName];
+
+			uint8* MaskMapUint8 = new uint8[lightmap->width * lightmap->height * 4];
+			FetchMaskMap(lightmap->width, lightmap->height, m_pMaskRawData, MaskMapUint8);
+			
+			llss::Stitch(staticMesh, lightmap, MaskMapUint8);
+			
+			delete[] MaskMapUint8;
+
+			m_assetManager->ScanLightmap();
+			m_assetManager->ReloadLightmap();
 		}
-
-		//if (ImGui::Button("Stitch Lightmap"))
-		//{
-		//	Object* BeingBakingObject = m_scene->GetBeingBakingObject();
-		//	
-		//	std::shared_ptr<StaticMesh> staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.lock();
-		//	std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
-		//	std::shared_ptr<Texture> lightmap = m_assetManager->lightmapMap[material->lightmapName];
-		//	
-		//	if (staticMesh && lightmap)
-		//	{
-		//		llss::Stitch(staticMesh, lightmap);
-		//	}
-		//}
 
 		ImGui::End();
 
@@ -1560,7 +1637,7 @@ namespace Core
 			if (rasterizedViewHeight <= 0)
 				rasterizedViewHeight = 128;
 
-			m_GLColorAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLColorAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_GLColorAttach->LoadImage(
 				rasterizedViewWidth,
 				rasterizedViewHeight,
@@ -1598,53 +1675,10 @@ namespace Core
 		ImGui::Begin("CubeMap View");
 		ImVec2 DebugViewRegion = ImGui::GetContentRegionAvail();
 
-		int32 DebugViewWidth = static_cast<int32>(DebugViewRegion.x);
-		int32 DebugViewHeight = static_cast<int32>(DebugViewRegion.y);
-
-		if (DebugViewWidth != m_GLDebugViewFrameBuffer->GetWidth() ||
-			DebugViewHeight != m_GLDebugViewFrameBuffer->GetHeight())
-		{
-			if (DebugViewWidth <= 0)
-				DebugViewWidth = 128;
-
-			if (DebugViewHeight <= 0)
-				DebugViewHeight = 128;
-
-			m_GLDebugViewColorAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_UnsignedByte, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_GLDebugViewColorAttach->LoadImage(
-				DebugViewWidth,
-				DebugViewHeight,
-				Null);
-
-			m_GLDebugViewFrameBuffer->Resize(DebugViewWidth, DebugViewHeight);
-			m_GLDebugViewFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLDebugViewColorAttach->GetTarget(), m_GLDebugViewColorAttach.get());
-
-			//	XXX:	这里和GL光栅化的视口尺一致,现在没问题.
-			m_scene->GetCamera()->ascept = DebugViewRegion.x / DebugViewRegion.y;
-			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
-		}
-
-		//if (m_RadiosityTexture.get())
-		//{
-		//	ImGui::Image(
-		//		reinterpret_cast<void *>(m_RadiosityTexture->GetID64()),
-		//		DebugViewRegion,
-		//		ImVec2(0, 1.0f),
-		//		ImVec2(1.0f, 0));
-		//}
-		//else
-		//{
-		//	ImGui::Image(
-		//		reinterpret_cast<void *>(m_GLDebugViewColorAttach->GetID64()),
-		//		DebugViewRegion,
-		//		ImVec2(0, 1.0f),
-		//		ImVec2(1.0f, 0));
-		//}
-
-		if (m_GLNormalAttach)
+		if (m_GLMaskAttach)
 		{
 			ImGui::Image(
-				reinterpret_cast<void *>(m_GLNormalAttach->GetID64()),
+				reinterpret_cast<void *>(m_GLMaskAttach->GetID64()),
 			DebugViewRegion,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -1755,24 +1789,12 @@ namespace Core
 	}
 
 	void WindowsEditor::Render(int32 width, int32 height)
-	{	
+	{
 		m_GLFrameBuffer->Activate();
 		m_scene->Render(m_GLDevice.get(), m_GLFrameBuffer->GetWidth(), m_GLFrameBuffer->GetHeight());
 		m_GLFrameBuffer->Inactivate();
 		
 		m_guiWrapper->Render(width, height);
-	}
-
-	void WindowsEditor::ViewCubeMap()
-	{
-		m_GLDebugViewFrameBuffer->Activate();
-		m_GLDevice->BeginViewCubeMapPass(m_GLDebugViewFrameBuffer->GetWidth(), m_GLDebugViewFrameBuffer->GetHeight());
-		m_scene->GetCamera()->UpdataGLParam(m_GLDevice.get());
-		Object* BeingBakingObject = m_scene->GetBeingBakingObject();
-		BeingBakingObject->glRenderableUnit->ViewCubeMapMaterial.lock()->IDCumeMap = m_primitiveAlbedoCubeMap;
-		m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_CubeMatrices, sizeof(CubeMatrices), &CubeMatrices);
-		BeingBakingObject->ViewCubeMap(m_GLDevice.get());
-		m_GLDebugViewFrameBuffer->Inactivate();
 	}
 	
 	void WindowsEditor::Bake()
@@ -1800,12 +1822,6 @@ namespace Core
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 			
-			m_RadiosityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_RadiosityTexture->LoadImage(
-			RadiosityTextureWidth,
-			RadiosityTextureHeight,
-			Null);
-
 			float* BlackData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			for (int32 i = 0; i < RadiosityTextureWidth * RadiosityTextureHeight; ++i)
 			{
@@ -1844,6 +1860,12 @@ namespace Core
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->ResidualImage1 = m_ResidualImage1;
 
 			delete[] BlackData;
+
+			m_RadiosityTexture = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_RadiosityTexture->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			Null);
 			
 			m_reconstructionPassFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_reconstructionPassFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
@@ -1884,11 +1906,18 @@ namespace Core
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			Null);
+
+			m_GLMaskAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLMaskAttach->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
+			Null);
 			
 			m_GLGBufferFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
 			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach->GetTarget(), m_GLPositionAttach.get());
 			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach->GetTarget(), m_GLNormalAttach.get());
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor2, m_GLMaskAttach->GetTarget(), m_GLMaskAttach.get());
 			
 			m_GLGBufferFrameBuffer->Activate();
 			{
@@ -1899,9 +1928,16 @@ namespace Core
 
 			float* m_pPositionRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			float* m_pNormalRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+
+			if (m_pMaskRawData)
+			{
+				delete[] m_pMaskRawData;
+			}
+			m_pMaskRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			
 			m_GLPositionAttach->Fetch(m_pPositionRawData);
 			m_GLNormalAttach->Fetch(m_pNormalRawData);
+			m_GLMaskAttach->Fetch(m_pMaskRawData);
 			
 			m_RLBakingObjectPosition->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pPositionRawData);
 			m_RLBakingObjectNormal->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pNormalRawData);
@@ -1925,8 +1961,6 @@ namespace Core
 			RemainingPrimitives.pop();
 
 			std::unique_ptr<Object> PrimitiveObject = CreateObject(ShootingPrimitive);
-			
-			BeingBakingObject->glRenderableUnit->DrawIDMaterial.lock()->albedoTexture = m_assetManager->textureMap["Sponza_Bricks_a_Albedo"];
 			
 			//	RL Visibility
 			{
@@ -1962,6 +1996,8 @@ namespace Core
 				m_RLBakePackingBuffer->Unmap();
 				m_RLBakePackingBuffer->Inactivate();
 			}
+
+			goto across;
 			
 			//	Visibility Pass
 			{
@@ -1979,7 +2015,7 @@ namespace Core
 				
 				//	+X
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_X, m_primitiveIDCubeMap.get());
-				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_X, m_primitiveAlbedoCubeMap.get());
+				//m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_X, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
@@ -1995,7 +2031,6 @@ namespace Core
 				
 				//	-X
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_X, m_primitiveIDCubeMap.get());
-				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Negative_X, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
@@ -2011,7 +2046,6 @@ namespace Core
 				
 				//	+Y
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_Y, m_primitiveIDCubeMap.get());
-				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_Y, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
@@ -2027,7 +2061,6 @@ namespace Core
 				
 				//	-Y
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_Y, m_primitiveIDCubeMap.get());
-				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Negative_Y, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
@@ -2043,7 +2076,6 @@ namespace Core
 				
 				//	+Z
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Positive_Z, m_primitiveIDCubeMap.get());
-				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Positive_Z, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
@@ -2059,7 +2091,6 @@ namespace Core
 				
 				//	-Z
 				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor0, GLTextureTarget_CubeMap_Negative_Z, m_primitiveIDCubeMap.get());
-				m_visibilityPassFrameBuffer->AttachColor(GLAttachIndexColor1, GLTextureTarget_CubeMap_Negative_Z, m_primitiveAlbedoCubeMap.get());
 				m_visibilityPassFrameBuffer->Activate();
 				{
 					m_GLDevice->BeginVisibisityPass(PrimitiveIDTextureWidth, PrimitiveIDTextureHeight);
@@ -2073,6 +2104,8 @@ namespace Core
 				m_visibilityPassFrameBuffer->Inactivate();
 				m_visibilityPassFrameBuffer->ClearAttaches();
 			}
+
+			across:
 
 			//	Reconstruction Pass
 			m_reconstructionPassFrameBuffer->Activate();
@@ -2271,5 +2304,10 @@ namespace Core
 	{
 		delete[] m_pRadiosityImageRawData;
 		delete[] m_pResidualImageRawData;
+		
+		if (m_pMaskRawData)
+		{
+			delete[] m_pMaskRawData;
+		}
 	}
 }

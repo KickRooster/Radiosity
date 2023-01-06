@@ -58,6 +58,46 @@
 		
 		layout(location = 0) out vec4 attch0;
 
+				vec2 MapUV(vec2 UVCoord, float Red, float Green, float Blue)
+		{
+			float fR = round(Red * 255.0);
+			int r = int(fR);
+
+			float fG = round(Green * 255.0);
+			int g = int(fG);
+
+			float fB = round(Blue * 255.0);
+			int b = int(fB);
+
+			vec2 uv = abs(fract(UVCoord));
+
+			if (b == 0 && g != 255) // 255 x 255
+			{
+    			vec2 origin512 = vec2(r % 4, floor(r / 4)) / 4;
+    			vec2 origin256 = vec2(g % 2, floor(g / 2)) / 2 / 4;
+    			vec2 origin = origin512 + origin256;
+
+    			return origin + uv / 8;
+			}
+			else if (b == 0 && g == 255) // 512 x 255
+			{
+    			vec2 origin512 = vec2(r % 4, floor(r / 4)) / 4;
+    			vec2 origin = origin512;
+
+    			return origin + uv / 4;
+			}
+			else if (b == 255) // 512 x 512
+			{
+    			vec2 origin512 = vec2(r % 4, floor(r / 4)) / 4;
+    			vec2 origin512_256 = vec2(floor(g / 2), g % 2 / vec2(2)) / 4;
+    			vec2 origin = origin512 + origin512_256;
+
+    			return origin + vec2(uv.x / 4, uv.y / 4 / 2);
+			}
+
+			return vec2(0, 0);
+		}
+
 		void main()
 		{
 			vec4 RecvPos = object2World * pos;
@@ -71,108 +111,13 @@
 			const float pi = 3.1415926535;
 			float Fij = max(cosi * cosj, 0) / (pi * distance2 + ShooterSurfaceArea.x);
 
-			vec3 SampleDir = normalize(RecvPos.xyz - ShooterPosition.xyz);
-
-			//	Construct sampling vector from 6 perspective matrices.
-			float DotPositiveX = dot(SampleDir, vec3(1.0, 0, 0));
-			float DotNegativeX = dot(SampleDir, vec3(-1.0, 0, 0));
-			float DotPositiveY = dot(SampleDir, vec3(0, 1.0, 0));
-			float DotNegativeY = dot(SampleDir, vec3(0, -1.0, 0));
-			float DotPositiveZ = dot(SampleDir, vec3(0, 0, 1.0));
-			float DotNegativeZ = dot(SampleDir, vec3(0, 0, -1.0));
-
-			float MaxDot = max(DotPositiveX, DotNegativeX);
-			MaxDot = max(MaxDot, DotPositiveY);
-			MaxDot = max(MaxDot, DotNegativeY);
-			MaxDot = max(MaxDot, DotPositiveZ);
-			MaxDot = max(MaxDot, DotNegativeZ);
-
-			if (MaxDot == DotPositiveX)
-			{
-				vec4 ProjectedPos = ViewProjection_Positive_X * RecvPos;
-				ProjectedPos.xyz /= ProjectedPos.w;
-
-				SampleDir.x = 1.0;
-				SampleDir.y = -ProjectedPos.y;
-				SampleDir.z = -ProjectedPos.x;
-			}
-			else if (MaxDot == DotNegativeX)
-			{
-				vec4 ProjectedPos = ViewProjection_Negative_X * RecvPos;
-				ProjectedPos.xyz /= ProjectedPos.w;
-
-				SampleDir.x = -1.0;
-				SampleDir.y = -ProjectedPos.y;
-				SampleDir.z = ProjectedPos.x;
-			}
-			else if (MaxDot == DotPositiveY)
-			{
-				vec4 ProjectedPos = ViewProjection_Positive_Y * RecvPos;
-				ProjectedPos.xyz /= ProjectedPos.w;
-				
-				SampleDir.x = ProjectedPos.x;
-				SampleDir.y = 1.0;
-				SampleDir.z = ProjectedPos.y;
-			}
-			else if (MaxDot == DotNegativeY)
-			{
-				vec4 ProjectedPos = ViewProjection_Negative_Y * RecvPos;
-				ProjectedPos.xyz /= ProjectedPos.w;
-
-				SampleDir.x = ProjectedPos.x;
-				SampleDir.y = -1.0;
-				SampleDir.z = -ProjectedPos.y;
-			}
-			else if (MaxDot == DotPositiveZ)
-			{
-				vec4 ProjectedPos = ViewProjection_Positive_Z * RecvPos;
-				ProjectedPos.xyz /= ProjectedPos.w;
-
-				SampleDir.x = ProjectedPos.x;
-				SampleDir.y = -ProjectedPos.y;
-				SampleDir.z = 1.0;
-			}
-			else
-			{
-				vec4 ProjectedPos = ViewProjection_Negative_Z * RecvPos;
-				ProjectedPos.xyz /= ProjectedPos.w;
-
-				SampleDir.x = -ProjectedPos.x;
-				SampleDir.y = -ProjectedPos.y;
-				SampleDir.z = -1.0;
-			}
-
-			vec3 CubeMap = texture(IDCubeMapSampler, SampleDir).xyz;
-			
-			float Visable;
-			if (CubeMap.x == customData.x)
-			{
-				Visable = 1.0f;
-			}
-			else
-			{
-				vec4 PerspectiveProjectedPos = viewPerspectiveProjectionMatrix * RecvPos;
-				PerspectiveProjectedPos.xyz /= PerspectiveProjectedPos.w;
-				PerspectiveProjectedPos.z *= 0.5;
-				PerspectiveProjectedPos.z += 0.5;
-
-				//	XXX:	manually biased.
-				if (PerspectiveProjectedPos.z < CubeMap.y + 0.001)
-				{
-					Visable = 1.0f;
-				}
-				else
-				{
-					Visable = 0;
-				}
-			}
-
 			float RLVisable = texture(VisibilitySampler, uv1).x;
 			
 			Fij *= RLVisable;
 			
 			vec3 Radiosity = ShooterEnergy.xyz * ShooterSurfaceArea.x * Fij;
-			vec3 albedo = texture(albedoSampler, uv0).xyz;
+			vec2 MappedUV = MapUV(uv0, color.r, color.g, color.b);
+			vec3 albedo = texture(albedoSampler, MappedUV).xyz;
 			vec3 Residual = albedo * Radiosity;
 
 			if (FrameCount.x % 2 == 0)

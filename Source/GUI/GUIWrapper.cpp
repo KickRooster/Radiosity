@@ -46,7 +46,7 @@ namespace Core
 #if (SDL_MAJOR_VERSION >= 2) && (SDL_MINOR_VERSION >= 0) && (SDL_PATCHLEVEL >= 4)   
 		if ((SDL_GetWindowFlags(pSDLWindow) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_MOUSE_CAPTURE)) != 0)
 			io.MousePos = ImVec2((float)mx, (float)my);
-		//	FIXME:	调用SDL_CaptureMouse就造成移动&旋转摄像机时卡顿.
+		//	FIXME:	????SDL_CaptureMouse????????&?????????????.
 		//bool any_mouse_button_down = false;
 		//for (int n = 0; n < IM_ARRAYSIZE(io.MouseDown); n++)
 		//	any_mouse_button_down |= io.MouseDown[n];
