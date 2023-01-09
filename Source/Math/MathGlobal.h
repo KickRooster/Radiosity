@@ -79,7 +79,8 @@ namespace Core
 	const Vector3 Vector3Dummy = Vector3(0, 0, 0);
 
 	const Vector4 Vector4Dummy = Vector4(0, 0, 0, 0);
-
+	
+	uint8 Clamp(uint8 value, uint8 left, uint8 right);
 	int32 Clamp(int32 value, int32 left, int32 right);
 	int32 ClampToLeft(int32 value, int32 left);
 	int32 ClampToRight(int32 value, int32 right);

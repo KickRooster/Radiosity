@@ -12,5 +12,5 @@
 
 namespace llss
 {
-	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, std::shared_ptr<Core::Texture> lightmap, Core::uint8* maskMapRawData);
+	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, Core::int32 Width, Core::int32 Height, float* lightmapRawData, float* maskMapRawData);
 }

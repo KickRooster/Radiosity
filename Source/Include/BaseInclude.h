@@ -1,15 +1,15 @@
 #pragma once
 
-//	智能指针
+//	???????
 #include <memory>
 
-//	断言
+//	????
 #include <assert.h>
 
-//	平台相关定义
+//	????????
 #include "../Platform/Platform.h"
 
-//	定义好,方便日后更换STL库
+//	?????,??????????STL??
 #define ctd std
 
 #define VECTOR_INCLUDE_PATH <vector>
@@ -31,7 +31,7 @@ const Core::int32 InvalidIndex = -1;
 
 namespace Core
 {
-	//	错误代码,无错误.
+	//	???????,?????.
 	extern ErrorCode ErrorCode_OK;
 
 	struct InputState
@@ -66,7 +66,7 @@ namespace Core
 	};
 }
 /*
-//	暂不使用这些.
+//	????????Щ.
 #define STDCALL __stdcall
 #define CDECL __cdecl  
 #define FASTCALL __fastcall

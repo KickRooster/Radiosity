@@ -31,7 +31,7 @@ namespace Core
 		virtual void AfterLoad() override;
 		void Initialize(OpenGLDevice * pDevice, int32 width, int32 height);
 		void Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState);
-		void Render(OpenGLDevice * pDevice, int32 width, int32 height);
+		void Render(OpenGLDevice * pDevice, int32 width, int32 height, Bool LightmapEncodingInRGBM);
 		Camera * GetCamera();
 		void AddObject(std::shared_ptr<Object> object, Bool needSerialization = True);
 		void AddLight(std::shared_ptr<Object> object, Bool needSerialization = True);

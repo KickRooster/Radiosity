@@ -91,6 +91,9 @@ namespace Core
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
 		
 		glRenderableUnit->Activate();
+		glRenderableUnit->material.lock()->albedoColor[0] = Color[0];
+		glRenderableUnit->material.lock()->albedoColor[1] = Color[1];
+		glRenderableUnit->material.lock()->albedoColor[2] = Color[2];
 		glRenderableUnit->material.lock()->SetAlbedoColor();
 		pDevice->DrawElements(
 			GLTopology_Triangles,

@@ -4,6 +4,7 @@
 namespace Core
 {
 	Material::Material()
+		:IsBeingBaking(False)
 	{
 
 	}
@@ -150,7 +151,7 @@ namespace Core
 			roughnessTexture.lock()->Activate();
 		}
 
-		if (!lightmapImageTexture.expired())
+		if (IsBeingBaking && !lightmapImageTexture.expired())
 		{
 			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, lightmapSamplerName.c_str());
 			++SamplerSlotIndex;

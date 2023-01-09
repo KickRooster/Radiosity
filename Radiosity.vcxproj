@@ -171,6 +171,8 @@
     <ClCompile Include="Source\Helper\TextureOperator.cpp" />
     <ClCompile Include="Source\Include\BaseInclude.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Math\Color.cpp" />
+    <ClCompile Include="Source\Math\LinearColor.cpp" />
     <ClCompile Include="Source\Math\MathGlobal.cpp" />
     <ClCompile Include="Source\Math\Matrix3x3.cpp" />
     <ClCompile Include="Source\Math\Matrix4x4.cpp" />
@@ -324,6 +326,8 @@
     <ClInclude Include="Source\Helper\TextureOperator.h" />
     <ClInclude Include="Source\Helper\Helper.h" />
     <ClInclude Include="Source\Include\BaseInclude.h" />
+    <ClInclude Include="Source\Math\Color.h" />
+    <ClInclude Include="Source\Math\LinearColor.h" />
     <ClInclude Include="Source\Math\MathBase.h" />
     <ClInclude Include="Source\Math\MathGlobal.h" />
     <ClInclude Include="Source\Math\Matrix3x3.h" />

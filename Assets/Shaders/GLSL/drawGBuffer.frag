@@ -22,6 +22,7 @@
 			vec4 position;
 			vec4 NearFar;
 			ivec4 FrameCount;
+			ivec4 RGBMEncoding;
 		};
 		layout (std140, binding = 1) uniform CubeMatrices
 		{

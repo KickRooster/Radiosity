@@ -2,6 +2,9 @@
 #include <OpenRL/OpenRL.h>
 #include <OpenRL/rl.h>
 #include <BaseInclude.h>
+
+#include "Vector4.h"
+
 #include STRING_INCLUDE_PATH
 
 namespace Core
@@ -93,6 +96,11 @@ namespace Core
 	{
 		RLTextureFilterMode_Point,
 		RLTextureFilterMode_Bilinear,
+	};
+
+	struct RLShootingPrimitive
+	{
+		Vector4 Positions[4];
 	};
 
 	void ErrorCatcher(RLenum error, const void* privateData, size_t privateSize, const char* message, void* userData);

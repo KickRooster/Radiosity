@@ -606,19 +606,19 @@ namespace llss
 
 	struct RGB
 	{
-		unsigned char R, G, B;
-		unsigned char& operator[](size_t ix)
+		float R, G, B;
+		float& operator[](size_t ix)
 		{
-			return ((unsigned char*)this)[ix];
+			return ((float*)this)[ix];
 		}
 	};
 
 	struct RGBA
 	{
-		unsigned char R, G, B, A;
-		unsigned char& operator[](size_t ix)
+		float R, G, B, A;
+		float& operator[](size_t ix)
 		{
-			return ((unsigned char*)this)[ix];
+			return ((float*)this)[ix];
 		}
 	};
 
@@ -641,7 +641,7 @@ namespace llss
 		float r = clamp(color.x - color.y + color.z, 0, 255);
 		float g = clamp(color.x + color.y, 0, 255);
 		float b = clamp(color.x - color.y - color.z, 0, 255);
-		return RGBA{ (unsigned char)roundf(r),(unsigned char)roundf(g),(unsigned char)roundf(b), 255};
+		return RGBA{ r, g, b, 1.0f};
 	}
 
 	bool isInside(int x, int y, Vec2 ea, Vec2 eb)
@@ -701,10 +701,7 @@ namespace llss
 		if (numPixels > 0)
 		{
 			sum = sum / (float)numPixels;
-			sum.x = min(255.0f, roundf(sum.x));
-			sum.y = min(255.0f, roundf(sum.y));
-			sum.z = min(255.0f, roundf(sum.z));
-			return RGBA{ (unsigned char)sum.x, (unsigned char)sum.y, (unsigned char)sum.z, 0 };
+			return RGBA{ sum.x, sum.y, sum.z, 0 };
 		}
 		else
 		{
@@ -944,9 +941,9 @@ namespace llss
 
 			curcorRGBA = lightmapRGBA(x, y);
 
-			if (curcorRGBA.R == 0 &&
-				curcorRGBA.G == 0 &&
-				curcorRGBA.B == 0)
+			if (curcorRGBA.R == 0. &&
+				curcorRGBA.G == 0. &&
+				curcorRGBA.B == 0.)
 			{
 				//	Dilation
 				//		[00]
@@ -971,14 +968,14 @@ namespace llss
 		}
 	}
 
-	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, std::shared_ptr<Core::Texture> lightmap, Core::uint8* maskMapRawData)
+	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, Core::int32 Width, Core::int32 Height, float* lightmapRawData, float* maskMapRawData)
 	{
 		int W, H, comp;
-		RGBA* rawLightmap = (RGBA*)lightmap->pImage;
+		RGBA* rawLightmap = (RGBA*)lightmapRawData;
 		RGBA* rawMaskMap = (RGBA*)maskMapRawData;
 
-		W = lightmap->width;
-		H = lightmap->height;
+		W = Width;
+		H = Height;
 		comp = 4;
 
 		array2d<RGBA> lightmapRGBA(rawLightmap, W, H);
@@ -986,7 +983,7 @@ namespace llss
 		// Find all edges that have different UVs on the two sides
 		std::vector<SeamEdge> seamEdges;
 
-		//	UV????????????,??§Õ???????????????.
+		//	UV????????????,???????????????????.
 		Core::Bool flipY = False;
 		FindSeamEdges(mesh, seamEdges, W, H, flipY);
 
@@ -1050,21 +1047,6 @@ namespace llss
 			lightmapRGBA(pi.x, pi.y) = YCoCgToRGB(colorYCoCg);
 		}
 
-		memcpy(lightmap->pImage, lightmapRGBA.data.get(), sizeof(unsigned char) * comp * W * H);
-
-		lightmap->UploadToGL();
-
-		size_t pos = lightmap->fullPathName.find(lightmap->fileName);
-
-		ctd::string pathName = lightmap->fullPathName.substr(0, pos);
-
-		ctd::string stitchedName = pathName + lightmap->fileName + "_.png";
-
-		Core::TextureOperator::SavePNG(
-			stitchedName.c_str(),
-			lightmap->info->format,
-			static_cast<Core::uint8 *>(lightmap->pImage),
-			lightmap->width,
-			lightmap->height);
+		memcpy(lightmapRawData, lightmapRGBA.data.get(), sizeof(float) * comp * W * H);
 	}
 }

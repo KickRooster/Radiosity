@@ -6,7 +6,7 @@
 #include "../3rdParty/LinearLeastSquaresStitch/Sitich.h"
 #include "../../../Helper/Helper.h"
 #include <queue>
-
+#include "LinearColor.h"
 
 #include STRING_INCLUDE_PATH
 #include VECTOR_INCLUDE_PATH
@@ -955,6 +955,8 @@ namespace Core
 					selectedMaterial.lock()->lightmapTexture = m_assetManager->lightmapMap[fileName];
 					selectedMaterial.lock()->lightmapTexture.lock()->BeginUse();
 					pressedOK = False;
+					m_LightmapLoadFromDisk = True;
+					selectedMaterial.lock()->IsBeingBaking = False;
 				}
 
 				if (!selectedMaterial.expired())
@@ -1005,8 +1007,13 @@ namespace Core
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
 
-				ImGui::BeginChild("Albedo Color", ImVec2(0, 50), true, 0);
-				ImGui::ColorEdit4("Color", selectedMaterial.lock()->albedoColor);
+				ImGui::BeginChild("Material Panel", ImVec2(0, 50), true, 0);
+				ImGui::ColorEdit4("Albedo Color", selectedMaterial.lock()->albedoColor);
+				if (ImGui::RadioButton("Use Runtime Radiosity", selectedMaterial.lock()->IsBeingBaking))
+				{
+					selectedMaterial.lock()->IsBeingBaking = !selectedMaterial.lock()->IsBeingBaking;
+					m_LightmapLoadFromDisk = !m_LightmapLoadFromDisk;
+				}
 				ImGui::EndChild();
 			}
 			else if (selectedCategory == AssetType_Texture || selectedCategory == AssetType_Lightmap && selectedFileIndex != InvalidIndex)
@@ -1184,9 +1191,6 @@ namespace Core
 		}
 
 		ImGui::ColorEdit3("Light Color", pSelectedObject->Color);
-		pSelectedObject->glRenderableUnit->material.lock()->albedoColor[0] = pSelectedObject->Color[0];
-		pSelectedObject->glRenderableUnit->material.lock()->albedoColor[1] = pSelectedObject->Color[1];
-		pSelectedObject->glRenderableUnit->material.lock()->albedoColor[2] = pSelectedObject->Color[2];
 		ImGui::InputFloat("Intensity(cd/m^2)", &pSelectedObject->Intensity);
 		pSelectedObject->Energy[0] = pSelectedObject->Color[0] * pSelectedObject->Intensity;
 		pSelectedObject->Energy[1] = pSelectedObject->Color[1] * pSelectedObject->Intensity;
@@ -1364,36 +1368,26 @@ namespace Core
 		return PrimitiveObject;
 	}
 	
-	void WindowsEditor::SaveLightmap(std::string Name, int32 Width, int32 Height)
+	void WindowsEditor::SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height)
 	{
-		if ((m_frameCount - 1) % 2 == 0)
-		{
-			m_RadiosityImage1->Fetch(m_pRadiosityImageRawData);
-		}
-		else
-		{
-			m_RadiosityImage0->Fetch(m_pRadiosityImageRawData);
-		}
-
 		uint8* LightmapRawData = new uint8[Width * Height * sizeof(uint8) * 4];
 
 		for (int32 i = 0; i < Height; ++i)
 		{
 			for (int32 j = 0; j < Width; ++j)
 			{
-				float R = m_pRadiosityImageRawData[(i * Width + j) * 4 + 0];
-				float G = m_pRadiosityImageRawData[(i * Width + j) * 4 + 1];
-				float B = m_pRadiosityImageRawData[(i * Width + j) * 4 + 2];
-				//float A = m_pRadiosityImageRawData[(i * Width + j) * 4 + 3];
+				float R = RadiosityImageRawData[(i * Width + j) * 4 + 0];
+				float G = RadiosityImageRawData[(i * Width + j) * 4 + 1];
+				float B = RadiosityImageRawData[(i * Width + j) * 4 + 2];
+				float A = 1.0f;
 
-				int32 IntR = static_cast<int32>(R * 255.0f);
-				int32 IntG = static_cast<int32>(G * 255.0f);
-				int32 IntB = static_cast<int32>(B * 255.0f);
-				
-				LightmapRawData[(i * Width + j) * 4 + 0] = Clamp(IntR, 0, 255);
-				LightmapRawData[(i * Width + j) * 4 + 1] = Clamp(IntG, 0, 255);
-				LightmapRawData[(i * Width + j) * 4 + 2] = Clamp(IntB, 0, 255);
-				LightmapRawData[(i * Width + j) * 4 + 3] = 255;
+				LinearColor HDR = LinearColor(R, G, B, A);
+				Color RGBM = HDR.ToRGBM();
+
+				LightmapRawData[(i * Width + j) * 4 + 0] = RGBM.R;
+				LightmapRawData[(i * Width + j) * 4 + 1] = RGBM.G;
+				LightmapRawData[(i * Width + j) * 4 + 2] = RGBM.B;
+				LightmapRawData[(i * Width + j) * 4 + 3] = RGBM.A;
 			}
 		}
 		
@@ -1408,29 +1402,6 @@ namespace Core
 		delete[] LightmapRawData;
 	}
 
-	void WindowsEditor::FetchMaskMap(int32 Width, int32 Height, const float* MaskMapRawData, uint8* MaskMapUint8Data)
-	{
-		for (int32 i = 0; i < Height; ++i)
-		{
-			for (int32 j = 0; j < Width; ++j)
-			{
-				float R = MaskMapRawData[(i * Width + j) * 4 + 0];
-				float G = MaskMapRawData[(i * Width + j) * 4 + 1];
-				float B = MaskMapRawData[(i * Width + j) * 4 + 2];
-				//float A = MaskMapRawData[(i * Width + j) * 4 + 3];
-
-				int32 IntR = static_cast<int32>(R * 255.0f);
-				int32 IntG = static_cast<int32>(G * 255.0f);
-				int32 IntB = static_cast<int32>(B * 255.0f);
-				
-				MaskMapUint8Data[(i * Width + j) * 4 + 0] = Clamp(IntR, 0, 255);
-				MaskMapUint8Data[(i * Width + j) * 4 + 1] = Clamp(IntG, 0, 255);
-				MaskMapUint8Data[(i * Width + j) * 4 + 2] = Clamp(IntB, 0, 255);
-				MaskMapUint8Data[(i * Width + j) * 4 + 3] = 255;
-			}
-		}
-	}
-	
 	uint32 WindowsEditor::ReverseBits(uint32 Value)
 	{
 		Value = (Value << 16u) | (Value >> 16u); 
@@ -1471,6 +1442,7 @@ namespace Core
 		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_pMaskRawData(Null),
 		m_frameCount(0),
+		m_LightmapLoadFromDisk(False),
 		m_baking(False),
 		m_thresold(0.0001f)
 	{
@@ -1550,7 +1522,7 @@ namespace Core
 
 		m_rlShootingPrimitiveBuffer = std::make_unique<RLBuffer>(RLBufferTarget_UniformBlockBuffer);
 		m_rlShootingPrimitiveBuffer->name = "ShootingPrimitive";
-		m_rlShootingPrimitiveBuffer->AllocateMemorySpace(sizeof(RLPrimitive), RLBufferUsage_DynamicDraw);
+		m_rlShootingPrimitiveBuffer->AllocateMemorySpace(sizeof(RLShootingPrimitive), RLBufferUsage_DynamicDraw);
 	}
 
 	void WindowsEditor::Tick(float deltaTime, int32 width, int32 height, InputState & inputState)
@@ -1590,28 +1562,29 @@ namespace Core
 		{
 			Object* BeingBakingObject = m_scene->GetBeingBakingObject();
 
+			if ((m_frameCount - 1) % 2 == 0)
+			{
+				m_RadiosityImage1->Fetch(m_pRadiosityImageRawData);
+			}
+			else
+			{
+				m_RadiosityImage0->Fetch(m_pRadiosityImageRawData);
+			}
+
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 
 			string LightmapName = BeingBakingObject->name;
-			SaveLightmap(LightmapName, RadiosityTextureWidth, RadiosityTextureHeight);
-
+			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
-			m_assetManager->ScanLightmap();
-			m_assetManager->ReloadLightmap();
 			
-			//	Stitch
 			std::shared_ptr<StaticMesh> staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.lock();
 			std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
-			std::shared_ptr<Texture> lightmap = m_assetManager->lightmapMap[material->lightmapName];
+			llss::Stitch(staticMesh, RadiosityTextureWidth, RadiosityTextureHeight, m_pRadiosityImageRawData, m_pMaskRawData);
 
-			uint8* MaskMapUint8 = new uint8[lightmap->width * lightmap->height * 4];
-			FetchMaskMap(lightmap->width, lightmap->height, m_pMaskRawData, MaskMapUint8);
+			LightmapName += "_";
+			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			
-			llss::Stitch(staticMesh, lightmap, MaskMapUint8);
-			
-			delete[] MaskMapUint8;
-
 			m_assetManager->ScanLightmap();
 			m_assetManager->ReloadLightmap();
 		}
@@ -1791,7 +1764,7 @@ namespace Core
 	void WindowsEditor::Render(int32 width, int32 height)
 	{
 		m_GLFrameBuffer->Activate();
-		m_scene->Render(m_GLDevice.get(), m_GLFrameBuffer->GetWidth(), m_GLFrameBuffer->GetHeight());
+		m_scene->Render(m_GLDevice.get(), m_GLFrameBuffer->GetWidth(), m_GLFrameBuffer->GetHeight(), m_LightmapLoadFromDisk);
 		m_GLFrameBuffer->Inactivate();
 		
 		m_guiWrapper->Render(width, height);
@@ -1814,6 +1787,8 @@ namespace Core
 		
 		if (m_frameCount == 0)
 		{
+			m_LightmapLoadFromDisk = False;
+			BeingBakingObject->glRenderableUnit->material.lock()->IsBeingBaking = True;
 			BeingBakingObject->BeforeBaking();
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->albedoTexture = BeingBakingObject->glRenderableUnit->material.lock()->albedoTexture;
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
@@ -1968,7 +1943,7 @@ namespace Core
 				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 				
 				m_rlShootingPrimitiveBuffer->Activate();
-				RLPrimitive* RLPrimitiveData = (RLPrimitive*)m_rlShootingPrimitiveBuffer->Map(RLBufferAccessFlag_ReadWrite);
+				RLShootingPrimitive* RLPrimitiveData = (RLShootingPrimitive*)m_rlShootingPrimitiveBuffer->Map(RLBufferAccessFlag_ReadWrite);
 				RLPrimitiveData->Positions[0] = ShootingPrimitive.CentroidPosition;
 				RLPrimitiveData->Positions[1] = ShootingPrimitive.Positions[0];
 				RLPrimitiveData->Positions[2] = ShootingPrimitive.Positions[1];

@@ -105,6 +105,17 @@ namespace Core
 		return glm::length(v);
 	}
 
+	uint8 Clamp(uint8 value, uint8 left, uint8 right)
+	{
+		if (value < left)
+			return left;
+
+		if (value > right)
+			return right;
+
+		return value;
+	}
+
 	int32 Clamp(int32 value, int32 left, int32 right)
 	{
 		if (value < left)

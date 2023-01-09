@@ -16,6 +16,7 @@ namespace Core
 		Vector4 Position;
 		Vector4 NearFar;	//	near,far,
 		int32 FrameCount[4];
+		int32 RGBMEncoding[4];
 	};
 
 	struct CubeMatrices
@@ -85,6 +86,8 @@ namespace Core
 		float ascept;
 		float fovY;
 		int32 frameCount;
+		//	XXX:	shoule be moved out from camera.
+		Bool LightmapEncodingInRGBM;
 		OrthoProjectionParams OrthoParams;
 		
 		Vector3 position;

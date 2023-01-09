@@ -21,7 +21,6 @@ namespace Core
 {
 	class WindowsEditor : public IFramework
 	{
-	private:
 		const ctd::string startSceneName = "default";
 
 		std::shared_ptr<AssetManager> m_assetManager;
@@ -50,11 +49,6 @@ namespace Core
 		std::unique_ptr<RLTexture2D> m_RLHammersleyTexture;
 		std::unique_ptr<RLBuffer> m_rlShootingPrimitiveBuffer;
 
-		struct RLPrimitive
-		{
-			Vector4 Positions[4];
-		};
-
 		Bool m_baking;
 		float m_thresold;
 		float m_currentMaxY;
@@ -79,6 +73,7 @@ namespace Core
 		Matrix3x3 AdobeRGBD65XYZToRGB;
 		
 		int32 m_frameCount;
+		Bool m_LightmapLoadFromDisk;
 		
 		Object * m_pSelectedObject;
 
@@ -106,9 +101,8 @@ namespace Core
 		std::shared_ptr<Object> InstantiateAreaLight(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> createAreaLight(int32 Index);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
-		void SaveLightmap(std::string Name, int32 Width, int32 Height);
-		void FetchMaskMap(int32 Width, int32 Height, const float* MaskMapRawData, uint8* MaskMapUint8Data);
-
+		void SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height);
+		
 		uint32 ReverseBits(uint32 Value);
 		Vector2 Hammersley(uint32 Index, uint32 NumSamples);
 		Vector3 UniformSampleHemisphere(float u, float v);

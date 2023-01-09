@@ -164,6 +164,10 @@ namespace Core
 		CameraUniformData.FrameCount[1] = frameCount;
 		CameraUniformData.FrameCount[2] = frameCount;
 		CameraUniformData.FrameCount[3] = frameCount;
+		CameraUniformData.RGBMEncoding[0] = LightmapEncodingInRGBM;
+		CameraUniformData.RGBMEncoding[1] = LightmapEncodingInRGBM;
+		CameraUniformData.RGBMEncoding[2] = LightmapEncodingInRGBM;
+		CameraUniformData.RGBMEncoding[3] = LightmapEncodingInRGBM;
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_CameraUniformData, sizeof(CameraUniformData), &CameraUniformData);
 	}
 

@@ -22,6 +22,7 @@
 			vec4 position;
 			vec4 NearFar;
 			ivec4 FrameCount;
+			ivec4 RGBMEncoding;
 		};
 		layout (std140, binding = 1) uniform CubeMatrices
 		{
@@ -90,13 +91,25 @@
 			return vec2(0, 0);
 		}
 
+		vec3 RGBMDecode(vec4 rgbm, float MaxValue )
+		{
+			return rgbm.rgb * (rgbm.a * MaxValue);
+		}
+
 		void main()
 		{
 			vec2 MappedUV = MapUV(uv0, color.r, color.g, color.b);
 			vec3 albedo = texture(albedoSampler, MappedUV).xyz;
-			vec3 irradiance = texture(lightmapSampler, uv1).xyz;
+			vec4 irradiance = texture(lightmapSampler, uv1);
 
-			out_Color.xyz = albedo * irradiance;
+			if (RGBMEncoding[0] > 0)
+			{
+				vec4 RGBM = irradiance;
+				vec3 DecodedRGBM = RGBMDecode(RGBM, 16.0);
+				irradiance.rgb = DecodedRGBM * DecodedRGBM;
+			}
+
+			out_Color.xyz = albedo * irradiance.rgb;
 
 			float gamma = 2.2;
     		out_Color.rgb = pow(out_Color.rgb, vec3(1.0 / gamma));

@@ -68,13 +68,11 @@ namespace Core
 		m_camera->Tick(deltaTime, inputState);
 	}
 	
-	void Scene::Render(OpenGLDevice * pDevice, int32 width, int32 height)
+	void Scene::Render(OpenGLDevice * pDevice, int32 width, int32 height, Bool LightmapEncodingInRGBM)
 	{
  		pDevice->BeforeRender(width, height);
+		m_camera->LightmapEncodingInRGBM = LightmapEncodingInRGBM;
 		m_camera->UpdataGLParam(pDevice);
-
-		//Vector3 lightDir = Normalize(m_dirLightRef.lock()->GetYDirection());
-		//pDevice->UploadGlobalShaderData(GLShaderDataAlias_LightParam, sizeof(lightDir), &lightDir);
 
 		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 			iter != objects.end();

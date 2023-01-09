@@ -84,6 +84,7 @@ namespace Core
 		std::weak_ptr<GLImageTexture> lightmapImageTexture;
 
 		Bool IsOccluder;
+		Bool IsBeingBaking;
 
 		//	TODO:	�������ܻ���id
 		ctd::string glVertexShaderName;
@@ -114,7 +115,6 @@ namespace Core
 		const ctd::string lightmapSamplerName = "lightmapSampler";
 		const ctd::string idName = "id";
 		const ctd::string albedoColorName = "albedoColor";
-		//const ctd::string bounceProbablilityName = "bounceProbablility";
 
 		Material();
 		Material(Material & mat);
