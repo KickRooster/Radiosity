@@ -24,12 +24,12 @@ namespace Core
 
 		const ctd::string GetLightmapName(int32 lightmapIndex)
 		{
-			return lightmapNamePrefix + ctd::to_string(lightmapIndex);;
+			return lightmapNamePrefix + ctd::to_string(lightmapIndex);
 		}
 
 		const ctd::string GetMaskMapName(int32 lightmapIndex)
 		{
-			return maskMapNamePrefix + ctd::to_string(lightmapIndex);;
+			return maskMapNamePrefix + ctd::to_string(lightmapIndex);
 		}
 	};
 }

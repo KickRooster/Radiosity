@@ -209,19 +209,6 @@ namespace Core
 	{
 		glRenderableUnit->InactiveComputingFormFactor();
 	}
-
-	void Object::BeforePickShooter(OpenGLDevice* pDevice)
-	{
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
-
-		glRenderableUnit->ActivePickShooter();
-	}
-
-	void Object::AfterPickShooter()
-	{
-		glRenderableUnit->InactivePickShooter();
-	}
 	
 	void Object::SetShootingPrimitive(float PrimitiveID)
 	{

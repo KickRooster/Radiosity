@@ -56,15 +56,6 @@ namespace Core
 		m_ComputeFormFactorMaterial->glFragmentShader.lock()->Attach(m_ComputeFormFactorMaterial.get());
 		
 		//////////////////////////////////////////////////////////////////////////
-		
-		m_PickShooterMaterial = std::make_shared<Material>();
-		m_PickShooterMaterial->glVertexShader = m_assetManager->glVertexShaderMap["pickShooter"];
-		m_PickShooterMaterial->glVertexShader.lock()->Attach(m_PickShooterMaterial.get());
-		m_PickShooterMaterial->glFragmentShader = m_assetManager->glFragmentShaderMap["pickShooter"];
-		m_PickShooterMaterial->glFragmentShader.lock()->Attach(m_PickShooterMaterial.get());
-		
-		//////////////////////////////////////////////////////////////////////////
-		
 		m_areaLightMesh = std::make_shared<StaticMesh>();
 
 		int32 XCount = 10;
@@ -152,38 +143,6 @@ namespace Core
 				++VertexCursor;
 			}
 		}
-		//////////////////////////////////////////////////////////////////////////
-		m_postprocessMesh = std::make_shared<StaticMesh>();
-		m_postprocessMesh->pPositions = new Vector4[3];
-		m_postprocessMesh->pUV0s = new Vector2[3];
-		m_postprocessMesh->vertexCount = 3;
-
-		m_postprocessMesh->pPositions[0].x = -1.0f;
-		m_postprocessMesh->pPositions[0].y = -1.0f;
-		m_postprocessMesh->pPositions[0].z = 0.9f;
-		m_postprocessMesh->pPositions[0].w = 1.0f;
-		m_postprocessMesh->pUV0s[0].x = 0;
-		m_postprocessMesh->pUV0s[0].y = 1.0f;
-
-		m_postprocessMesh->pPositions[1].x = 3.0f;
-		m_postprocessMesh->pPositions[1].y = -1.0f;
-		m_postprocessMesh->pPositions[1].z = 0.9f;
-		m_postprocessMesh->pPositions[1].w = 1.0f;
-		m_postprocessMesh->pUV0s[1].x = 2.0f;
-		m_postprocessMesh->pUV0s[1].y = 1.0f;
-
-		m_postprocessMesh->pPositions[2].x = -1.0f;
-		m_postprocessMesh->pPositions[2].y = 3.0f;
-		m_postprocessMesh->pPositions[2].z = 0.9f;
-		m_postprocessMesh->pPositions[2].w = 1.0f;
-		m_postprocessMesh->pUV0s[2].x = 0;
-		m_postprocessMesh->pUV0s[2].y = -1.0f;
-
-		m_postprocessMesh->pIndices = new uint32[3];
-		m_postprocessMesh->indexCount = 3;
-		m_postprocessMesh->pIndices[0] = 0;
-		m_postprocessMesh->pIndices[1] = 1;
-		m_postprocessMesh->pIndices[2] = 2;
 	}
 
 	void WindowsEditor::panelSceneObjects()
@@ -1269,7 +1228,6 @@ namespace Core
 		defaultObject->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		defaultObject->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
-		defaultObject->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
 
 		defaultObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
 		defaultObject->rlRenderableUnit->staticMesh = m_assetManager->staticMeshMap[prefab.lock()->staticMeshName];
@@ -1305,7 +1263,6 @@ namespace Core
 		object->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		object->glRenderableUnit->DrawIDMaterial = m_DrawIDMaterial;
 		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
-		object->glRenderableUnit->PickShooterMaterial = m_PickShooterMaterial;
 
 		object->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
 		object->rlRenderableUnit->staticMesh = m_assetManager->staticMeshMap[object->staticMeshName];
@@ -1597,7 +1554,7 @@ namespace Core
 			m_baking = True;
 		}
 		
-		ImGui::SliderFloat("Threshold: ", &m_thresholdY, 0, 0.05f, "%.5f");
+		ImGui::SliderFloat("Threshold: ", &m_thresholdY, 0.0001f, 0.05f, "%.5f");
 		std::string YString = "Current Y: ";
 		YString += to_string(m_currentMaxY);
 		ImGui::Text(YString.c_str());
