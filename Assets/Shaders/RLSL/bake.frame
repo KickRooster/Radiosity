@@ -62,7 +62,7 @@ void main()
 		vec3 Direction = ShootingPrimitive.Positions[i] - WorldPosition;
 
 		createRay();
-   		rl_OutRay.origin              = WorldPosition;
+   		rl_OutRay.origin              = WorldPosition + WorldNormal * vec3(0.005, 0.005, 0.005);	//	Offset origin
 		rl_OutRay.direction           = normalize(Direction);
 		rl_OutRay.defaultPrimitive    = environmentPrimitive;
 		emitRay();

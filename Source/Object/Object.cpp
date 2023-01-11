@@ -19,7 +19,9 @@ namespace Core
 		IsLight(False),
 		Color{1.0f, 1.0f, 1.0f},
 		Intensity(1.0),
-		Energy{1.0f, 1.0f, 1.0f}
+		Energy{1.0f, 1.0f, 1.0f},
+		LightmapResolution(LightmapResolution_Invalid),
+		ResolutionString(Null)
 	{
 		id = idSeed;
 		++idSeed;
@@ -59,6 +61,11 @@ namespace Core
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
 		
 		glRenderableUnit->BeginUse();
+
+		if (LightmapResolution != LightmapResolution_Invalid)
+		{
+			ResolutionString = LightmapResolutionItems[LightmapResolution];
+		}
 	}
 	
 	void Object::Tick(float deltaTime, OpenGLDevice * pDevice)
@@ -118,8 +125,15 @@ namespace Core
 
 	void Object::BeforeBaking()
 	{
-		glRenderableUnit->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix);
-
+		if (IsLight)
+		{
+			glRenderableUnit->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix, LightmapResolution_Invalid);
+		}
+		else
+		{
+			glRenderableUnit->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix, LightmapResolution);
+		}
+		
 		if (rlRenderableUnit)
 		{
 			rlRenderableUnit->Commit();

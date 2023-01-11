@@ -36,6 +36,7 @@ namespace Core
 		float m_energy_r;
 		float m_energy_g;
 		float m_energy_b;
+		int32 m_lightmap_resolution;
 
 	private:
 		Matrix4x4 m_object2WorldMatrix;
@@ -59,7 +60,10 @@ namespace Core
 		float Color[3];
 		float Intensity;
 		float Energy[3];
-
+		//	For baking object only for editor.
+		LightmapResolution LightmapResolution;
+		const ANSICHAR* ResolutionString;
+		
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
 		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;
 		
@@ -108,6 +112,7 @@ namespace Core
 			m_energy_r = Energy[0];
 			m_energy_g = Energy[1];
 			m_energy_b = Energy[2];
+			m_lightmap_resolution = LightmapResolution;
 		}
 
 		void AfterLoad()
@@ -132,6 +137,7 @@ namespace Core
 			Energy[0] = m_energy_r;
 			Energy[1] = m_energy_g;
 			Energy[2] = m_energy_b;
+			LightmapResolution = static_cast<Core::LightmapResolution>(m_lightmap_resolution);
 		}
 
 		template <class Archive>
@@ -157,7 +163,8 @@ namespace Core
 				m_intensity,
 				m_energy_r,
 				m_energy_g,
-				m_energy_b
+				m_energy_b,
+				m_lightmap_resolution
 			);
 		}
 

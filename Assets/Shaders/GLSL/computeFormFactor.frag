@@ -59,7 +59,7 @@
 		
 		layout(location = 0) out vec4 attch0;
 
-				vec2 MapUV(vec2 UVCoord, float Red, float Green, float Blue)
+		vec2 MapUV(vec2 UVCoord, float Red, float Green, float Blue)
 		{
 			float fR = round(Red * 255.0);
 			int r = int(fR);

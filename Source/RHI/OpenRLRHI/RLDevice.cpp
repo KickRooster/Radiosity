@@ -118,12 +118,15 @@ namespace Core
 
 	void RLDevice::UpdateAhead()
 	{
+		m_bakeProgram->DetachShader(m_bakeFrameShader.lock()->GetRLShader());
 		m_environmentProgram->DetachShader(m_vertexShader.lock()->GetRLShader());
 		m_environmentProgram->DetachShader(m_rayShader.lock()->GetRLShader());
 	}
 
 	void RLDevice::UpdateBehind()
 	{
+		m_bakeProgram->AttachShader(m_bakeFrameShader.lock()->GetRLShader());
+		m_bakeProgram->Link();
 		m_environmentProgram->AttachShader(m_vertexShader.lock()->GetRLShader());
 		m_environmentProgram->AttachShader(m_rayShader.lock()->GetRLShader());
 		m_environmentProgram->Link();

@@ -64,9 +64,27 @@ namespace Core
 		int32 height = 0;
 		ANSICHAR * titleName;
 	};
+
+	enum LightmapResolution
+	{
+		LightmapResolution_Invalid = -1,
+		LightmapResolution_8x8,
+		LightmapResolution_16x16,
+		LightmapResolution_32x32,
+		LightmapResolution_64x64,
+		LightmapResolution_128x128,
+		LightmapResolution_256x256,
+		LightmapResolution_512x512,
+		LightmapResolution_1024x1024,
+		LightmapResolution_Count,
+	};
+
+	const ANSICHAR* LightmapResolutionItems[];
+
+	int32 GetLightmapSideLength(LightmapResolution Resolution);
 }
 /*
-//	????????§».
+//	??????????.
 #define STDCALL __stdcall
 #define CDECL __cdecl  
 #define FASTCALL __fastcall

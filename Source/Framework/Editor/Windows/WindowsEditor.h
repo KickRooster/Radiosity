@@ -13,6 +13,7 @@
 #include "../../../Helper/AtlasManager.h"
 #include "../../../Asset/Scene.h"
 #include "Matrix3x3.h"
+#include <queue>
 
 #include VECTOR_INCLUDE_PATH
 
@@ -50,8 +51,9 @@ namespace Core
 		std::unique_ptr<RLBuffer> m_rlShootingPrimitiveBuffer;
 
 		Bool m_baking;
-		float m_thresold;
+		float m_thresholdY;
 		float m_currentMaxY;
+		std::queue<Primitive> RemainingPrimitives;
 
 		//	Visibility Pass
 		const int32 PrimitiveIDTextureWidth = 1024;

@@ -40,7 +40,7 @@ namespace Core
 		return abs(crossValue) * 0.5f;
 	}
 
-	void StaticMesh::PrepareCustomDataAndPrimitiveMap(Matrix4x4 Object2World)
+	void StaticMesh::PrepareCustomDataAndPrimitiveMap(Matrix4x4 Object2World, LightmapResolution TargetResolution)
 	{
 		m_totalSurfaceArea = 0;
 		m_totalUVArea = 0;
@@ -48,7 +48,7 @@ namespace Core
 		float* pPrimitiveSurfaceAreas = new float[vertexCount / 3];
 		int32* pPrimitiveIDs = new int32[vertexCount / 3];
 
-		PrimitiveMap.empty();
+		PrimitiveMap.clear();
 		
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
 		{
@@ -98,32 +98,29 @@ namespace Core
 			
 			PrimitiveMap[triangleIndex] = Primitive;
 		}
-		
-		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit * m_totalSurfaceArea / m_totalUVArea;
-		float UVScaleSqrt = sqrt(UVScale);
-		
-		float maxU = 0;
-		float maxV = 0;
 
-		for (int32 i = 0; i < vertexCount; ++i)
+		float UVSASqrt = sqrt(m_totalUVArea);
+		float SASqrt = sqrt(m_totalSurfaceArea);
+		
+		if (TargetResolution != LightmapResolution_Invalid)
 		{
-			if (pUV1s[i].x > maxU)
-				maxU = pUV1s[i].x;
+			float SideLength = static_cast<float>(GetLightmapSideLength(TargetResolution));
 
-			if (pUV1s[i].y > maxV)
-				maxV = pUV1s[i].y;
+			//	Update TexelsPerUnit according to TargetResolution,	used for light mesh later.
+			LightmappingSetting::Instance()->TexelsPerUnit = SideLength * UVSASqrt / SASqrt;
 		}
+		
+		float UVScale = LightmappingSetting::Instance()->TexelsPerUnit * SASqrt / UVSASqrt;
+		
+		float maxU = 1.0;
+		float maxV = 1.0;
 
-		//	Force set maxU and maxV to 1.0.
-		maxU = 1.0f;
-		maxV = 1.0f;
-
-		float UScale = maxU / maxV * UVScaleSqrt;
-		float VScale = maxV / maxU * UVScaleSqrt;
+		float UScale = maxU * UVScale;
+		float VScale = maxV * UVScale;
 		
 		m_radiosityTextureWidth = ceil(maxU * UScale);
 		m_radiosityTextureHeight = ceil(maxV * VScale);
-
+		
 		if (pCustomData)
 		{
 			delete[] pCustomData;
@@ -815,9 +812,9 @@ namespace Core
 		return m_local2World;
 	}
 
-	void StaticMesh::BeforeBaking(Matrix4x4 Object2World)
+	void StaticMesh::BeforeBaking(Matrix4x4 Object2World, LightmapResolution TargetResolution)
 	{
-		PrepareCustomDataAndPrimitiveMap(Object2World);
+		PrepareCustomDataAndPrimitiveMap(Object2World, TargetResolution);
 		uploadToGPU();
 	}
 

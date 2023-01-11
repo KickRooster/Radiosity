@@ -5,7 +5,6 @@
 #include "../../../Helper/TextureOperator.h"
 #include "../3rdParty/LinearLeastSquaresStitch/Sitich.h"
 #include "../../../Helper/Helper.h"
-#include <queue>
 #include "LinearColor.h"
 
 #include STRING_INCLUDE_PATH
@@ -83,66 +82,72 @@ namespace Core
 		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
 		
 		Vector3 PhysicalSize = Vector3(10, 10, 0);
-		Vector4 LightScale = Vector4(PhysicalSize.x / XCount, PhysicalSize.y / YCount, 0, 1.0);
+		Vector4 LightScale = Vector4(PhysicalSize.x / static_cast<float>(XCount), PhysicalSize.y / static_cast<float>(YCount), 0, 1.0);
 		int32 VertexCursor = 0;
 		
 		for (int32 i = 0; i < YCount; ++i)
 		{ 
-			for (int j = 0; j < XCount; ++j)
+			for (int32 j = 0; j < XCount; ++j)
 			{
-				Vector4 P0 = Vector4(-XCount / 2 +  j, -YCount / 2 + i, 0, 1.0);
+				Vector4 P0 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i), 0, 1.0f);
 				P0 *= LightScale;
-				Vector4 P1 = Vector4(-XCount / 2 +  j + 1, -YCount / 2 + i, 0, 1.0);
+				Vector4 P1 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j) + 1.0f, -static_cast<float>(YCount) / 2.0f + static_cast<float>(i), 0, 1.0f);
 				P1 *= LightScale;
-				Vector4 P2 = Vector4(-XCount / 2 +  j, -YCount / 2 + i + 1, 0, 1.0);
+				Vector4 P2 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0f);
 				P2 *= LightScale;
 				
-				Vector4 P3 = Vector4(-XCount / 2 +  j + 1, -YCount / 2, 0, 1.0);
+				Vector4 P3 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j) + 1.0f, -static_cast<float>(YCount) / 2.0f + static_cast<float>(i), 0, 1.0f);
 				P3 *= LightScale;
-				Vector4 P4 = Vector4(-XCount / 2 +  j + 1, -YCount / 2 + i + 1, 0, 1.0);
+				Vector4 P4 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j) + 1.0f, -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0f);
 				P4 *= LightScale;
-				Vector4 P5 = Vector4(-XCount / 2 +  j, -YCount / 2 + i + 1, 0, 1.0);
+				Vector4 P5 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0);
 				P5 *= LightScale;
 				
 				m_areaLightMesh->pPositions[VertexCursor] = P0;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
-				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
-				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				Vector2 UV0 = Vector2(static_cast<float>(j) / XCountF, static_cast<float>(i) / YCountF);
+				m_areaLightMesh->pUV0s[VertexCursor] = UV0;
+				m_areaLightMesh->pUV1s[VertexCursor] = UV0;
 				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 				
 				m_areaLightMesh->pPositions[VertexCursor] = P1;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
-				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
-				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				Vector2 UV1 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, static_cast<float>(i) / YCountF);
+				m_areaLightMesh->pUV0s[VertexCursor] = UV1;
+				m_areaLightMesh->pUV1s[VertexCursor] = UV1;
 				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 
 				m_areaLightMesh->pPositions[VertexCursor] = P2;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
-				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 1.0f) / YCountF);
-				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 1.0f) / YCountF);
+				Vector2 UV2 = Vector2(static_cast<float>(j) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
+				m_areaLightMesh->pUV0s[VertexCursor] = UV2;
+				m_areaLightMesh->pUV1s[VertexCursor] = UV2;
 				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 				
 				m_areaLightMesh->pPositions[VertexCursor] = P3;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
-				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
-				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 0.0f) / YCountF);
+				Vector2 UV3 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, static_cast<float>(i) / YCountF);
+				m_areaLightMesh->pUV0s[VertexCursor] = UV3;
+				m_areaLightMesh->pUV1s[VertexCursor] = UV3;
 				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 
 				m_areaLightMesh->pPositions[VertexCursor] = P4;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
-				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 1.0f) / YCountF);
-				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 1.0f) / XCountF, (j + 1.0f) / YCountF);
+				Vector2 UV4 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
+				m_areaLightMesh->pUV0s[VertexCursor] = UV4;
+				m_areaLightMesh->pUV1s[VertexCursor] = UV4;
 				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 
 				m_areaLightMesh->pPositions[VertexCursor] = P5;
 				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
-				m_areaLightMesh->pUV0s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
-				m_areaLightMesh->pUV1s[VertexCursor] = Vector2((i + 0.0f) / XCountF, (j + 0.0f) / YCountF);
+				Vector2 UV5 = Vector2(static_cast<float>(j) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
+				m_areaLightMesh->pUV0s[VertexCursor] = UV5;
+				m_areaLightMesh->pUV1s[VertexCursor] = UV5;
 				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 			}
@@ -1190,12 +1195,37 @@ namespace Core
 			break;
 		}
 
-		ImGui::ColorEdit3("Light Color", pSelectedObject->Color);
-		ImGui::InputFloat("Intensity(cd/m^2)", &pSelectedObject->Intensity);
-		pSelectedObject->Energy[0] = pSelectedObject->Color[0] * pSelectedObject->Intensity;
-		pSelectedObject->Energy[1] = pSelectedObject->Color[1] * pSelectedObject->Intensity;
-		pSelectedObject->Energy[2] = pSelectedObject->Color[2] * pSelectedObject->Intensity;
+		if (pSelectedObject->IsLight)
+		{
+			ImGui::ColorEdit3("Light Color", pSelectedObject->Color);
+			ImGui::InputFloat("Intensity(cd/m^2)", &pSelectedObject->Intensity);
+			pSelectedObject->Energy[0] = pSelectedObject->Color[0] * pSelectedObject->Intensity;
+			pSelectedObject->Energy[1] = pSelectedObject->Color[1] * pSelectedObject->Intensity;
+			pSelectedObject->Energy[2] = pSelectedObject->Color[2] * pSelectedObject->Intensity;
+		}
+		else
+		{
+			if (ImGui::BeginCombo("Lightmap Resolution", pSelectedObject->ResolutionString))
+			{
+				for (int32 i = LightmapResolution_Invalid + 1; i < LightmapResolution_Count; ++i)
+				{
+					Bool IsSelected = (pSelectedObject->LightmapResolution == i);
 
+					if (ImGui::Selectable(LightmapResolutionItems[i], IsSelected))
+					{
+						pSelectedObject->LightmapResolution = static_cast<LightmapResolution>(i);
+						pSelectedObject->ResolutionString = LightmapResolutionItems[i];
+					}
+				
+					if (IsSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+		}
+		
 		ImGui::End();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -1247,6 +1277,7 @@ namespace Core
 		material->rlVertexShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
 		material->rlRayShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
 
+		defaultObject->LightmapResolution = LightmapResolution_256x256;
 		defaultObject->IsLight = False;
 		
 		defaultObject->Initialize(m_GLDevice.get(), False);
@@ -1312,7 +1343,8 @@ namespace Core
 		
 		areaLight->position = Vector3(0, 2.0f, 25.0f);
 		areaLight->eulerAngle = Vector3(180.0f, 0, 0);
-
+		//	Should not be exported to editor panel.
+		areaLight->LightmapResolution = LightmapResolution_Invalid;
 		areaLight->IsLight = True;
 
 		return areaLight;
@@ -1358,9 +1390,10 @@ namespace Core
 		PrimitiveObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
 		PrimitiveObject->rlRenderableUnit->staticMesh = PrimitiveMesh;
 		PrimitiveObject->rlRenderableUnit->material = PrimitiveMaterial;
-		
-		PrimitiveMaterial->rlVertexShader.lock()->Attach(PrimitiveObject->rlRenderableUnit.get());
-		PrimitiveMaterial->rlRayShader.lock()->Attach(PrimitiveObject->rlRenderableUnit.get());
+
+		//	Primitive Object will only being existing in one frame, so we disable its shader reload.
+		//PrimitiveMaterial->rlVertexShader.lock()->Attach(PrimitiveObject->rlRenderableUnit.get());
+		//PrimitiveMaterial->rlRayShader.lock()->Attach(PrimitiveObject->rlRenderableUnit.get());
 
 		PrimitiveMesh->BeginUse();
 		PrimitiveObject->rlRenderableUnit->Commit();
@@ -1444,7 +1477,7 @@ namespace Core
 		m_frameCount(0),
 		m_LightmapLoadFromDisk(False),
 		m_baking(False),
-		m_thresold(0.0001f)
+		m_thresholdY(0.01f)
 	{
 		//	Visibility Pass
 		m_primitiveIDCubeMap = std::make_unique<GLTexture>(GLTextureTarget_CubeMAP, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
@@ -1540,24 +1573,39 @@ namespace Core
 
 		ImGui::Begin("Main Window", &mainOpened, windowFlags);
 		menuBar();
-		if (ImGui::Button("GL Reload Shader"))
+		if (ImGui::Button("GLSL Reload"))
 		{
 			m_assetManager->ReloadGLShader();
 		}
-		if (ImGui::Button("Bake"))
+		ImGui::SameLine();
+		if (ImGui::Button("RLSL Reload"))
 		{
-			m_baking = !m_baking;
+			m_assetManager->ReloadRLShader();
+		}
+		if (m_baking && ImGui::Button("Stop"))
+		{
+			m_baking = False;
+			m_currentMaxY = 0;
+			
+			while (!RemainingPrimitives.empty())
+			{
+				RemainingPrimitives.pop();
+			}
+		}
+		else if (!m_baking && ImGui::Button("Bake"))
+		{
+			m_baking = True;
 		}
 		
-		ImGui::SliderFloat("Thresold: ", &m_thresold, 0, 0.05, "%.6f");
+		ImGui::SliderFloat("Threshold: ", &m_thresholdY, 0, 0.05f, "%.5f");
 		std::string YString = "Current Y: ";
 		YString += to_string(m_currentMaxY);
 		ImGui::Text(YString.c_str());
-
+		
 		string BakingInfo = "Frame: ";
 		BakingInfo += to_string(m_frameCount - 1);
 		ImGui::Text(BakingInfo.c_str());
-
+		
 		if (ImGui::Button("Save Lightmap"))
 		{
 			Object* BeingBakingObject = m_scene->GetBeingBakingObject();
@@ -1645,7 +1693,7 @@ namespace Core
 		ImGui::SetNextWindowPos(ImVec2(600, 0));
 		ImGui::SetNextWindowSize(ImVec2(600, 600));
 
-		ImGui::Begin("CubeMap View");
+		ImGui::Begin("Mask View");
 		ImVec2 DebugViewRegion = ImGui::GetContentRegionAvail();
 
 		if (m_GLMaskAttach)
@@ -1663,7 +1711,7 @@ namespace Core
 			ImGui::SetNextWindowPos(ImVec2(1200, 0));
 			ImGui::SetNextWindowSize(ImVec2(600, 600));
 
-			ImGui::Begin("Radiosity View");
+			ImGui::Begin("Visibility View");
 			ImVec2 ProfileViewRegion = ImGui::GetContentRegionAvail();
 		
 			//ImGui::Image(
@@ -1672,7 +1720,7 @@ namespace Core
 			//	ProfileViewRegion,
 			//	ImVec2(0, 1.0f),
 			//	ImVec2(1.0f, 0));
-//
+
 			ImGui::Image(
 				reinterpret_cast<void *>(m_GLVisibilityTexture->GetID64()),
 				ProfileViewRegion,
@@ -1774,9 +1822,7 @@ namespace Core
 	{
 		if (!m_baking)
 			return;
-
-		static queue<Primitive> RemainingPrimitives;
-
+		
 		if (RemainingPrimitives.empty())
 		{
 			m_frameCount = 0;
@@ -1789,6 +1835,7 @@ namespace Core
 		{
 			m_LightmapLoadFromDisk = False;
 			BeingBakingObject->glRenderableUnit->material.lock()->IsBeingBaking = True;
+			//	XXX:	BeingBakingObject->BeforeBaking() must be called before Light::BeforeBaking(),
 			BeingBakingObject->BeforeBaking();
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->albedoTexture = BeingBakingObject->glRenderableUnit->material.lock()->albedoTexture;
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
@@ -1857,8 +1904,8 @@ namespace Core
 				Object* AreaLight = m_scene->GetAreaLight(i);
 				
 				AreaLight->BeforeBaking();
-				for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.begin();
-						iter != AreaLight->glRenderableUnit.get()->staticMesh.lock().get()->PrimitiveMap.end();
+				for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit->staticMesh.lock()->PrimitiveMap.begin();
+						iter != AreaLight->glRenderableUnit->staticMesh.lock()->PrimitiveMap.end();
 						++iter)
 				{
 					iter->second.Energy.x = AreaLight->Energy[0];
@@ -1934,7 +1981,7 @@ namespace Core
 		{
 			Primitive ShootingPrimitive = RemainingPrimitives.front();
 			RemainingPrimitives.pop();
-
+			
 			std::unique_ptr<Object> PrimitiveObject = CreateObject(ShootingPrimitive);
 			
 			//	RL Visibility
@@ -2181,7 +2228,7 @@ namespace Core
 				{
 					m_ResidualImage0->Fetch(m_pResidualImageRawData);
 				}
-
+				
 				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
 				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
 
@@ -2229,7 +2276,7 @@ namespace Core
 				RGB.z /= ScaledUV1Area;
 				m_currentMaxY = RGB.r * 0.30f + RGB.g * 0.59f + RGB.b * 0.11f;
 
-				if (m_currentMaxY < m_thresold)
+				if (m_currentMaxY < m_thresholdY)
 				{
 					m_baking = False;
 					return ;
@@ -2265,14 +2312,6 @@ namespace Core
 		}
 		
 		++m_frameCount;
-
-		//m_baking = False;
-		
-		//m_frameCount = 0;
-		//while (!RemainingPrimitives.empty())
-		//{
-		//	RemainingPrimitives.pop();
-		//}
 	}
 
 	WindowsEditor::~WindowsEditor()

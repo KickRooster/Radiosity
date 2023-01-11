@@ -81,7 +81,7 @@ namespace Core
 		float getArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
 		float getTriangleArea(const Vector3 & v0, const Vector3 & v1, const Vector3 & v2);
 		float getTriangleArea(const Vector2 & v0, const Vector2 & v1, const Vector2 & v2);
-		void PrepareCustomDataAndPrimitiveMap(Matrix4x4 Object2World);
+		void PrepareCustomDataAndPrimitiveMap(Matrix4x4 Object2World, LightmapResolution TargetResolution);
 		ErrorCode uploadToGPU();
 		void load();
 
@@ -124,7 +124,7 @@ namespace Core
 		int32 indexCount;
 
 		std::map<int32, Primitive> PrimitiveMap;
-
+		
 		StaticMesh();
 		virtual void BeginUse() override;
 		virtual void Reload() override;
@@ -161,7 +161,7 @@ namespace Core
 		void SetLocal2World(Matrix4x4 local2World);
 		Matrix4x4 GetLocal2World() const;
 
-		void BeforeBaking(Matrix4x4 Object2World);
+		void BeforeBaking(Matrix4x4 Object2World, LightmapResolution TargetResolution);
 		
 		void CalculateOrthoParameters(int32 StartPrimitive, int32 PrimitiveCount, const Matrix4x4& View, float& OutLeftMost, float& OutRightMost, float& OutBottomMost, float& OutTopMost, float& OutZNear, float& OutZFar);
 		
