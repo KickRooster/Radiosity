@@ -33,14 +33,14 @@ namespace Core
 	class AssetManager
 	{
 	private:
-		const ANSICHAR * sceneFullPath = "C:\\Radiosity\\Assets\\Scenes";
-		const ANSICHAR * prefabFullPath = "C:\\Radiosity\\Assets\\Prefabs";
-		const ANSICHAR * glShaderFullPath = "C:\\Radiosity\\Assets\\Shaders\\GLSL";
-		const ANSICHAR * rlShaderFullPath = "C:\\Radiosity\\Assets\\Shaders\\RLSL";
-		const ANSICHAR * staticMeshFullPath = "C:\\Radiosity\\Assets\\StaticMeshes";
-		const ANSICHAR * textureFullPath = "C:\\Radiosity\\Assets\\Textures";
-		const ANSICHAR * lightmapFullPath = "C:\\Radiosity\\Assets\\Lightmaps";
-		const ANSICHAR * materialFullPath = "C:\\Radiosity\\Assets\\Materials";
+		const ANSICHAR * sceneFullPath = ".\\Assets\\Scenes";
+		const ANSICHAR * prefabFullPath = ".\\Assets\\Prefabs";
+		const ANSICHAR * glShaderFullPath = ".\\Assets\\Shaders\\GLSL";
+		const ANSICHAR * rlShaderFullPath = ".\\Assets\\Shaders\\RLSL";
+		const ANSICHAR * staticMeshFullPath = ".\\Assets\\StaticMeshes";
+		const ANSICHAR * textureFullPath = ".\\Assets\\Textures";
+		const ANSICHAR * lightmapFullPath = ".\\Assets\\Lightmaps";
+		const ANSICHAR * materialFullPath = ".\\Assets\\Materials";
 
 		const ANSICHAR * defaultGLVertexShaderName = "default";
 		const ANSICHAR * defaultGLFragmentShaderName = "default";
@@ -48,8 +48,6 @@ namespace Core
 		const ANSICHAR * defaultRLRayShaderName = "default";
 		
 		const ANSICHAR * defaultAlbedoTextureName = "default";
-
-		//ANSICHAR * projectFullPath = "E:\\Projects\\Template0";
 
 		void processScene(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName);
 		void processPrefab(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName);
