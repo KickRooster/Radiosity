@@ -102,6 +102,7 @@ namespace Core
 		std::shared_ptr<Object> createAreaLight(int32 Index);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height);
+		void InstantiateScene(Scene* CurrentScene);
 		
 		uint32 ReverseBits(uint32 Value);
 		Vector2 Hammersley(uint32 Index, uint32 NumSamples);

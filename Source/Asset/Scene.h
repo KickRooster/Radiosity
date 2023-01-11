@@ -29,7 +29,7 @@ namespace Core
 		virtual void Reload() override;
 		virtual void BeforeSave() override;
 		virtual void AfterLoad() override;
-		void Initialize(OpenGLDevice * pDevice, int32 width, int32 height);
+		void Initialize();
 		void Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState);
 		void Render(OpenGLDevice * pDevice, int32 width, int32 height, Bool LightmapEncodingInRGBM);
 		Camera * GetCamera();

@@ -622,7 +622,7 @@ namespace Core
 			height);
 	}
 
-	void AssetManager::CreateScene(const ANSICHAR * pName)
+	std::shared_ptr<Scene> AssetManager::CreateScene(const ANSICHAR * pName)
 	{
 		shared_ptr<Scene> scene = make_shared<Scene>();
 
@@ -633,12 +633,12 @@ namespace Core
 		scene->fullPathName = sceneFullPath;
 		scene->fullPathName += "\\";
 		scene->fullPathName += scene->fileNameWithExt;
-
-		FileOperator::SerializeXML(scene->fullPathName.c_str(), scene);
 		
 		sceneMap[pName] = scene;
-	}
 
+		return scene;
+	}
+	
 	void AssetManager::CreatePrefab(const ANSICHAR * pName)
 	{
 		shared_ptr<Prefab> prefab = make_shared<Prefab>();

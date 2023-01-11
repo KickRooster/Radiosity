@@ -487,6 +487,7 @@ namespace Core
 			int32 index = 0;
 			static weak_ptr<Scene> selectedScene;
 			static weak_ptr<Prefab> selectedPrefab;
+			static weak_ptr<StaticMesh> selectedStaticMesh;
 			static weak_ptr<Material> selectedMaterial;
 			static weak_ptr<Texture> selectedTexture;
 
@@ -559,6 +560,7 @@ namespace Core
 					if (ImGui::Selectable(iter->second->fileNameWithExt.c_str(), &fileSelections[index]))
 					{
 						selectedFileIndex = index;
+						selectedStaticMesh = iter->second;
 						break;
 					}
 
@@ -704,6 +706,46 @@ namespace Core
 				if (!selectedPrefab.expired())
 					ImGui::Button(selectedPrefab.lock()->materialName.c_str());
 
+				ImGui::EndChild();
+				ImGui::PopStyleVar();
+			}
+			if (selectedCategory == AssetType_StaticMesh && selectedFileIndex != InvalidIndex)
+			{
+				ImGui::NextColumn();
+
+				ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+				ImGui::BeginChild("Inspector", ImVec2(0, 300), true, 0);
+
+				ImGui::Columns(1);
+
+				if (ImGui::Button("Open its scene"))
+				{
+					std::string SceneName = selectedStaticMesh.lock()->fileName;
+					
+					if (m_assetManager->sceneMap.find(SceneName) != m_assetManager->sceneMap.end())
+					{
+						m_scene = m_assetManager->sceneMap[SceneName];
+
+						InstantiateScene(m_scene.get());
+					}
+					else
+					{
+						m_scene = m_assetManager->CreateScene(SceneName.c_str());
+
+						for (map<string, shared_ptr<Prefab>>::iterator iter = m_assetManager->prefabMap.begin();
+							iter != m_assetManager->prefabMap.end();
+							++iter)
+						{
+							if (iter->second->fileName == selectedStaticMesh.lock()->fileName)
+							{
+								m_scene->AddObject(createObject(iter->second));
+							}
+						}
+					}
+
+					m_scene->Initialize();
+				}
+				
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
 			}
@@ -1392,6 +1434,24 @@ namespace Core
 		delete[] LightmapRawData;
 	}
 
+	void WindowsEditor::InstantiateScene(Scene* CurrentScene)
+	{
+		//	ʵ�������������л��õĶ���
+		for (vector<std::shared_ptr<Object>>::iterator iter = CurrentScene->serializedObjects.begin();
+			iter != CurrentScene->serializedObjects.end();
+			++iter)
+		{
+			if ((*iter)->IsLight)
+			{
+				CurrentScene->AddLight(InstantiateAreaLight(*iter), False);
+			}
+			else
+			{
+				CurrentScene->AddObject(InstantiateObject(*iter), False);
+			}
+		}
+	}
+	
 	uint32 WindowsEditor::ReverseBits(uint32 Value)
 	{
 		Value = (Value << 16u) | (Value >> 16u); 
@@ -1484,35 +1544,21 @@ namespace Core
 			m_assetManager->rlRayShaderMap["environment"],
 			m_assetManager->rlFrameShaderMap["bake"]);
 
-		if (m_assetManager->sceneMap.find(startSceneName) != m_assetManager->sceneMap.end())
-			m_scene = m_assetManager->sceneMap[startSceneName];
-		else
-			m_scene = std::make_shared<Scene>();
-
-		m_scene->Initialize(m_GLDevice.get(), width, height);
-
 		createBuiltinResources();
-
-		//	ʵ�������������л��õĶ���
-		for (vector<std::shared_ptr<Object>>::iterator iter = m_scene->serializedObjects.begin();
-			iter != m_scene->serializedObjects.end();
-			++iter)
-		{
-			if ((*iter)->IsLight)
-			{
-				m_scene->AddLight(InstantiateAreaLight(*iter), False);
-			}
-			else
-			{
-				m_scene->AddObject(InstantiateObject(*iter), False);
-			}
-		}
 		
 		m_guiWrapper->Initialize(width, height);
 
 		m_rlShootingPrimitiveBuffer = std::make_unique<RLBuffer>(RLBufferTarget_UniformBlockBuffer);
 		m_rlShootingPrimitiveBuffer->name = "ShootingPrimitive";
 		m_rlShootingPrimitiveBuffer->AllocateMemorySpace(sizeof(RLShootingPrimitive), RLBufferUsage_DynamicDraw);
+
+		if (m_assetManager->sceneMap.find(startSceneName) != m_assetManager->sceneMap.end())
+			m_scene = m_assetManager->sceneMap[startSceneName];
+		else
+			m_scene = std::make_shared<Scene>();
+		
+		InstantiateScene(m_scene.get());
+		m_scene->Initialize();
 	}
 
 	void WindowsEditor::Tick(float deltaTime, int32 width, int32 height, InputState & inputState)
@@ -1626,6 +1672,15 @@ namespace Core
 
 			m_scene->GetCamera()->ascept = rasterizedRegion.x / rasterizedRegion.y;
 			m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
+		}
+		else
+		{
+			//	Open new scene, new camera created.
+			if (m_scene->GetCamera()->ascept == 0.0)
+			{
+				m_scene->GetCamera()->ascept = rasterizedRegion.x / rasterizedRegion.y;
+				m_scene->GetCamera()->UpdatePerspectiveProjectionMatrix();
+			}
 		}
 
 		ImGui::Image(

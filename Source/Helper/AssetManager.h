@@ -102,7 +102,7 @@ namespace Core
 		void ReloadLightmap();
 		void SaveLightmap(const ANSICHAR * name, TextureFormat textureFormat, uint8 * pPixels, int32 width, int32 height);
 		
-		void CreateScene(const ANSICHAR * pName);
+		std::shared_ptr<Scene> CreateScene(const ANSICHAR * pName);
 		void CreatePrefab(const ANSICHAR * pName);
 		void CreateMaterial(const ANSICHAR * pName);
 
