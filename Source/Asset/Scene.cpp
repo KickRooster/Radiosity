@@ -104,6 +104,12 @@ namespace Core
 			serializedObjects.push_back(object);
 	}
 
+	void Scene::Clear()
+	{
+		objects.clear();
+		m_LightRefs.clear();
+	}
+
 	int32 Scene::GetLightCount() const
 	{
 		return m_LightRefs.size();

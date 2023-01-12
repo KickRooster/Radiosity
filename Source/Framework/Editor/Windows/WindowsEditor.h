@@ -75,7 +75,7 @@ namespace Core
 		Matrix3x3 AdobeRGBD65XYZToRGB;
 		
 		int32 m_frameCount;
-		Bool m_LightmapLoadFromDisk;
+		Bool m_LightmapEncodingInRGBM;
 		
 		Object * m_pSelectedObject;
 

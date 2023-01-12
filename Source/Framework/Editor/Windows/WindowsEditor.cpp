@@ -712,6 +712,11 @@ namespace Core
 
 				if (ImGui::Button("Open its scene"))
 				{
+					if (m_scene)
+					{
+						m_scene->Clear();
+					}
+					
 					std::string SceneName = selectedStaticMesh.lock()->fileName;
 					
 					if (m_assetManager->sceneMap.find(SceneName) != m_assetManager->sceneMap.end())
@@ -735,6 +740,11 @@ namespace Core
 						}
 					}
 
+					if (m_scene->GetBeingBakingObject() && m_scene->GetBeingBakingObject()->glRenderableUnit->material.lock()->lightmapName == "DummyLightmap")
+					{
+						m_LightmapEncodingInRGBM = False;
+					}
+					
 					m_scene->Initialize();
 				}
 				
@@ -953,8 +963,12 @@ namespace Core
 					selectedMaterial.lock()->lightmapTexture = m_assetManager->lightmapMap[fileName];
 					selectedMaterial.lock()->lightmapTexture.lock()->BeginUse();
 					pressedOK = False;
-					m_LightmapLoadFromDisk = True;
 					selectedMaterial.lock()->IsBeingBaking = False;
+
+					if (fileName != "DummyLightmap")
+					{
+						m_LightmapEncodingInRGBM = True;
+					}
 				}
 
 				if (!selectedMaterial.expired())
@@ -1052,7 +1066,11 @@ namespace Core
 				if (ImGui::RadioButton("Use Runtime Radiosity", selectedMaterial.lock()->IsBeingBaking))
 				{
 					selectedMaterial.lock()->IsBeingBaking = !selectedMaterial.lock()->IsBeingBaking;
-					m_LightmapLoadFromDisk = !m_LightmapLoadFromDisk;
+
+					if (selectedMaterial.lock()->lightmapName != "DummyLightmap")
+					{
+						m_LightmapEncodingInRGBM = !m_LightmapEncodingInRGBM;
+					}
 				}
 				ImGui::EndChild();
 			}
@@ -1526,7 +1544,7 @@ namespace Core
 		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_pMaskRawData(Null),
 		m_frameCount(0),
-		m_LightmapLoadFromDisk(False),
+		m_LightmapEncodingInRGBM(False),
 		m_baking(False),
 		m_thresholdY(0.01f)
 	{
@@ -1642,6 +1660,17 @@ namespace Core
 			std::shared_ptr<Object> lightObject = createAreaLight(Index);
 			lightObject->Initialize(m_GLDevice.get(), True);
 			m_scene->AddLight(lightObject, True);
+		}
+
+		ImGui::SameLine();
+
+		if (m_LightmapEncodingInRGBM)
+		{
+			ImGui::Text("RGBM");
+		}
+		else
+		{
+			ImGui::Text("Linear");
 		}
 		
 		ImGui::SliderFloat("Threshold: ", &m_thresholdY, 0.0001f, 0.05f, "%.5f");
@@ -1868,7 +1897,7 @@ namespace Core
 	void WindowsEditor::Render(int32 width, int32 height)
 	{
 		m_GLFrameBuffer->Activate();
-		m_scene->Render(m_GLDevice.get(), m_GLFrameBuffer->GetWidth(), m_GLFrameBuffer->GetHeight(), m_LightmapLoadFromDisk);
+		m_scene->Render(m_GLDevice.get(), m_GLFrameBuffer->GetWidth(), m_GLFrameBuffer->GetHeight(), m_LightmapEncodingInRGBM);
 		m_GLFrameBuffer->Inactivate();
 		
 		m_guiWrapper->Render(width, height);
@@ -1889,7 +1918,7 @@ namespace Core
 		
 		if (m_frameCount == 0)
 		{
-			m_LightmapLoadFromDisk = False;
+			m_LightmapEncodingInRGBM = False;
 			BeingBakingObject->glRenderableUnit->material.lock()->IsBeingBaking = True;
 			//	XXX:	BeingBakingObject->BeforeBaking() must be called before Light::BeforeBaking(),
 			BeingBakingObject->BeforeBaking();
