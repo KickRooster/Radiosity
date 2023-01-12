@@ -334,7 +334,7 @@ namespace Core
 	void WindowsEditor::panelAssets(InputState & inputState)
 	{
 		ImGui::SetNextWindowPos(ImVec2(600, 600));
-		ImGui::SetNextWindowSize(ImVec2(600, 400));
+		ImGui::SetNextWindowSize(ImVec2(1200, 400));
 
 		ImGui::Begin("Assets");
 		{
@@ -344,52 +344,44 @@ namespace Core
 			Bool pressedOK = False;
 			string fileName;
 
-			if (ImGui::Button("Create Scene"))
-				ImGui::OpenPopup("Scene");
+			// if (ImGui::Button("Create Scene"))
+			// 	ImGui::OpenPopup("Scene");
+			//
+			// popupNamingTick("Scene", m_assetManager->sceneExt, inputState, pressedOK, fileName);
+			//
+			// if (pressedOK)
+			// {
+			// 	m_assetManager->CreateScene(fileName.c_str());
+			// 	pressedOK = False;
+			// }
+			//
+			// ImGui::SameLine();
 
-			popupNamingTick("Scene", m_assetManager->sceneExt, inputState, pressedOK, fileName);
+			// if (ImGui::Button("Create Prefab"))
+			// 	ImGui::OpenPopup("Prefab");
+			//
+			// popupNamingTick("Prefab", m_assetManager->prefabExt, inputState, pressedOK, fileName);
+			//
+			// if (pressedOK)
+			// {
+			// 	m_assetManager->CreatePrefab(fileName.c_str());
+			// 	pressedOK = False;
+			// }
+			//
+			// ImGui::SameLine();
 
-			if (pressedOK)
-			{
-				m_assetManager->CreateScene(fileName.c_str());
-				pressedOK = False;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Create Prefab"))
-				ImGui::OpenPopup("Prefab");
-
-			popupNamingTick("Prefab", m_assetManager->prefabExt, inputState, pressedOK, fileName);
-
-			if (pressedOK)
-			{
-				m_assetManager->CreatePrefab(fileName.c_str());
-				pressedOK = False;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Create Material"))
-				ImGui::OpenPopup("Material");
-
-			popupNamingTick("Material", m_assetManager->materialExt, inputState, pressedOK, fileName);
-
-			if (pressedOK)
-			{
-				m_assetManager->CreateMaterial(fileName.c_str());
-				pressedOK = False;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Create Light"))
-			{
-				int32 Index = m_scene->GetLightCount();
-				std::shared_ptr<Object> lightObject = createAreaLight(Index);
-				lightObject->Initialize(m_GLDevice.get(), True);
-				m_scene->AddLight(lightObject, True);
-			}
+			// if (ImGui::Button("Create Material"))
+			// 	ImGui::OpenPopup("Material");
+			//
+			// popupNamingTick("Material", m_assetManager->materialExt, inputState, pressedOK, fileName);
+			//
+			// if (pressedOK)
+			// {
+			// 	m_assetManager->CreateMaterial(fileName.c_str());
+			// 	pressedOK = False;
+			// }
+			//
+			// ImGui::SameLine();
 
 			if (ImGui::Button("Save All"))
 				m_assetManager->SaveAll();
@@ -419,17 +411,17 @@ namespace Core
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 			ImGui::BeginChild("Category", ImVec2(0, 300), true, 0);
 
-			if (ImGui::Selectable("Scene", &categorySelections[AssetType_Scene]))
-			{
-				selectedCategory = AssetType_Scene;
-				categoryName = "Scene";
-			}
+			//if (ImGui::Selectable("Scene", &categorySelections[AssetType_Scene]))
+			//{
+			//	selectedCategory = AssetType_Scene;
+			//	categoryName = "Scene";
+			//}
 
-			if (ImGui::Selectable("Prefab", &categorySelections[AssetType_Prefab]))
-			{
-				selectedCategory = AssetType_Prefab;
-				categoryName = "Prefab";
-			}
+			//if (ImGui::Selectable("Prefab", &categorySelections[AssetType_Prefab]))
+			//{
+			//	selectedCategory = AssetType_Prefab;
+			//	categoryName = "Prefab";
+			//}
 
 			if (ImGui::Selectable("Static Mesh", &categorySelections[AssetType_StaticMesh]))
 			{
@@ -455,11 +447,11 @@ namespace Core
 				categoryName = "Lightmap";
 			}
 
-			if (ImGui::Selectable("GLSL", &categorySelections[AssetType_GLShader]))
-			{
-				selectedCategory = AssetType_GLShader;
-				categoryName = "GLSL";
-			}
+			//if (ImGui::Selectable("GLSL", &categorySelections[AssetType_GLShader]))
+			//{
+			//	selectedCategory = AssetType_GLShader;
+			//	categoryName = "GLSL";
+			//}
 			
 			if (selectedCategory != selectedCategoryLastFrame)
 			{
@@ -661,8 +653,8 @@ namespace Core
 					selectedFileLastFrameIndexInInspector = InvalidIndex;
 				}
 
-				if (ImGui::Button("Add to Scene"))
-					m_scene->AddObject(createObject(selectedPrefab));
+				//if (ImGui::Button("Add to Scene"))
+				//	m_scene->AddObject(createObject(selectedPrefab));
 
 				ImGui::NextColumn();
 
@@ -771,34 +763,34 @@ namespace Core
 				}
 
 				//	Normal Map
-				if (ImGui::RadioButton("Normal Map", &radioIndex, 1))
-				{
-					ImGui::OpenPopup("Normal Map...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-				}
+				// if (ImGui::RadioButton("Normal Map", &radioIndex, 1))
+				// {
+				// 	ImGui::OpenPopup("Normal Map...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// }
 
 				//	Metallic Map
-				if (ImGui::RadioButton("Metallic Map", &radioIndex, 2))
-				{
-					ImGui::OpenPopup("Metallic Map...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-				}
+				// if (ImGui::RadioButton("Metallic Map", &radioIndex, 2))
+				// {
+				// 	ImGui::OpenPopup("Metallic Map...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// }
 
 				//	Roughness Map
-				if (ImGui::RadioButton("Roughness Map", &radioIndex, 3))
-				{
-					ImGui::OpenPopup("Roughness Map...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-				}
+				// if (ImGui::RadioButton("Roughness Map", &radioIndex, 3))
+				// {
+				// 	ImGui::OpenPopup("Roughness Map...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// }
 
 				//	Lightmap
 				if (ImGui::RadioButton("Lightmap", &radioIndex, 4))
@@ -811,48 +803,48 @@ namespace Core
 				}
 
 				//	GL Vertex Shader
-				if (ImGui::RadioButton("GL VS", &radioIndex, 5))
-				{
-					ImGui::OpenPopup("GL Vertex Shader...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-					ImGui::SameLine();
-				}
+				// if (ImGui::RadioButton("GL VS", &radioIndex, 5))
+				// {
+				// 	ImGui::OpenPopup("GL Vertex Shader...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// 	ImGui::SameLine();
+				// }
 
 				//	GL Fragment Shader
-				if (ImGui::RadioButton("GL FS", &radioIndex, 6))
-				{
-					ImGui::OpenPopup("GL Fragment Shader...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-					ImGui::SameLine();
-				}
+				// if (ImGui::RadioButton("GL FS", &radioIndex, 6))
+				// {
+				// 	ImGui::OpenPopup("GL Fragment Shader...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// 	ImGui::SameLine();
+				// }
 
 				//	RL Vertex Shader
-				if (ImGui::RadioButton("RL VS", &radioIndex, 7))
-				{
-					ImGui::OpenPopup("RL Vertex Shader...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-					ImGui::SameLine();
-				}
+				// if (ImGui::RadioButton("RL VS", &radioIndex, 7))
+				// {
+				// 	ImGui::OpenPopup("RL Vertex Shader...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// 	ImGui::SameLine();
+				// }
 
 				//	RL Ray Shader
-				if (ImGui::RadioButton("RL RS", &radioIndex, 8))
-				{
-					ImGui::OpenPopup("RL Ray Shader...");
-
-					memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
-					selectedFileIndexInInspector = InvalidIndex;
-					selectedFileLastFrameIndexInInspector = InvalidIndex;
-					ImGui::SameLine();
-				}
+				// if (ImGui::RadioButton("RL RS", &radioIndex, 8))
+				// {
+				// 	ImGui::OpenPopup("RL Ray Shader...");
+				//
+				// 	memset(fileSelectionsInInspector, false, sizeof(fileSelectionsInInspector[0]) * maxFileSize);
+				// 	selectedFileIndexInInspector = InvalidIndex;
+				// 	selectedFileLastFrameIndexInInspector = InvalidIndex;
+				// 	ImGui::SameLine();
+				// }
 
 				ImGui::NextColumn();
 
@@ -879,70 +871,70 @@ namespace Core
 					ImGui::Button(selectedMaterial.lock()->albedoTextureName.c_str());
 
 				//	Normal Map
-				popupFileSelectingTick(
-					FileType_Texture,
-					"Normal Map...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->normalMapName = fileName;
-					selectedMaterial.lock()->normalMap = m_assetManager->textureMap[fileName];
-					selectedMaterial.lock()->normalMap.lock()->BeginUse();
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->normalMapName.c_str());
+				// popupFileSelectingTick(
+				// 	FileType_Texture,
+				// 	"Normal Map...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->normalMapName = fileName;
+				// 	selectedMaterial.lock()->normalMap = m_assetManager->textureMap[fileName];
+				// 	selectedMaterial.lock()->normalMap.lock()->BeginUse();
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->normalMapName.c_str());
 
 				//	Metallic Map
-				popupFileSelectingTick(
-					FileType_Texture,
-					"Metallic Map...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->metallicTextureName = fileName;
-					selectedMaterial.lock()->metallicTexture = m_assetManager->textureMap[fileName];
-					selectedMaterial.lock()->metallicTexture.lock()->BeginUse();
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->metallicTextureName.c_str());
+				// popupFileSelectingTick(
+				// 	FileType_Texture,
+				// 	"Metallic Map...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->metallicTextureName = fileName;
+				// 	selectedMaterial.lock()->metallicTexture = m_assetManager->textureMap[fileName];
+				// 	selectedMaterial.lock()->metallicTexture.lock()->BeginUse();
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->metallicTextureName.c_str());
 
 				//	Roughness Map
-				popupFileSelectingTick(
-					FileType_Texture,
-					"Roughness Map...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->roughnessTextureName = fileName;
-					selectedMaterial.lock()->roughnessTexture = m_assetManager->textureMap[fileName];
-					selectedMaterial.lock()->roughnessTexture.lock()->BeginUse();
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->roughnessTextureName.c_str());
+				// popupFileSelectingTick(
+				// 	FileType_Texture,
+				// 	"Roughness Map...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->roughnessTextureName = fileName;
+				// 	selectedMaterial.lock()->roughnessTexture = m_assetManager->textureMap[fileName];
+				// 	selectedMaterial.lock()->roughnessTexture.lock()->BeginUse();
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->roughnessTextureName.c_str());
 
 				//	Lightmap
 				popupFileSelectingTick(
@@ -969,52 +961,94 @@ namespace Core
 					ImGui::Button(selectedMaterial.lock()->lightmapName.c_str());
 				
 				//	GL Vertex Shader
-				popupFileSelectingTick(
-					FileType_GLSL_Vertex,
-					"GL Vertex Shader...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
+				// popupFileSelectingTick(
+				// 	FileType_GLSL_Vertex,
+				// 	"GL Vertex Shader...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->glVertexShaderName = fileName;
+				// 	selectedMaterial.lock()->glVertexShader = m_assetManager->glVertexShaderMap[fileName];
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->glVertexShaderName.c_str());
 
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->glVertexShaderName = fileName;
-					selectedMaterial.lock()->glVertexShader = m_assetManager->glVertexShaderMap[fileName];
-					pressedOK = False;
-				}
+				//	GL Fragment Shader
+				// popupFileSelectingTick(
+				// 	FileType_GLSL_Fragment,
+				// 	"GL Fragment Shader...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->glFragmentShaderName = fileName;
+				// 	selectedMaterial.lock()->glFragmentShader = m_assetManager->glFragmentShaderMap[fileName];
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->glFragmentShaderName.c_str());
 
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->glVertexShaderName.c_str());
+				//	RL Vertex Shader
+				// popupFileSelectingTick(
+				// 	FileType_RLSL_Vertex,
+				// 	"RL Vertex Shader...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->rlVertexShaderName = fileName;
+				// 	selectedMaterial.lock()->rlVertexShader = m_assetManager->rlVertexShaderMap[fileName];
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->rlVertexShaderName.c_str());
 
-				//	GLSL Fragment Shader
-				popupFileSelectingTick(
-					FileType_GLSL_Fragment,
-					"GL Fragment Shader...",
-					fileSelectionsInInspector,
-					selectedFileIndexInInspector,
-					selectedFileLastFrameIndexInInspector,
-					inputState,
-					pressedOK,
-					fileName);
-
-				if (pressedOK)
-				{
-					selectedMaterial.lock()->glFragmentShaderName = fileName;
-					selectedMaterial.lock()->glFragmentShader = m_assetManager->glFragmentShaderMap[fileName];
-					pressedOK = False;
-				}
-
-				if (!selectedMaterial.expired())
-					ImGui::Button(selectedMaterial.lock()->glFragmentShaderName.c_str());
-
+				//	RL Ray Shader
+				// popupFileSelectingTick(
+				// 	FileType_RLSL_Ray,
+				// 	"RL Ray Shader...",
+				// 	fileSelectionsInInspector,
+				// 	selectedFileIndexInInspector,
+				// 	selectedFileLastFrameIndexInInspector,
+				// 	inputState,
+				// 	pressedOK,
+				// 	fileName);
+				//
+				// if (pressedOK)
+				// {
+				// 	selectedMaterial.lock()->rlRayShaderName = fileName;
+				// 	selectedMaterial.lock()->rlRayShader = m_assetManager->rlRayShaderMap[fileName];
+				// 	pressedOK = False;
+				// }
+				//
+				// if (!selectedMaterial.expired())
+				// 	ImGui::Button(selectedMaterial.lock()->rlRayShaderName.c_str());
+				
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
 
 				ImGui::BeginChild("Material Panel", ImVec2(0, 50), true, 0);
-				ImGui::ColorEdit4("Albedo Color", selectedMaterial.lock()->albedoColor);
+				//ImGui::ColorEdit4("Albedo Color", selectedMaterial.lock()->albedoColor);
 				if (ImGui::RadioButton("Use Runtime Radiosity", selectedMaterial.lock()->IsBeingBaking))
 				{
 					selectedMaterial.lock()->IsBeingBaking = !selectedMaterial.lock()->IsBeingBaking;
@@ -1598,6 +1632,16 @@ namespace Core
 		else if (!m_baking && ImGui::Button("Bake"))
 		{
 			m_baking = True;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Create Light"))
+		{
+			int32 Index = m_scene->GetLightCount();
+			std::shared_ptr<Object> lightObject = createAreaLight(Index);
+			lightObject->Initialize(m_GLDevice.get(), True);
+			m_scene->AddLight(lightObject, True);
 		}
 		
 		ImGui::SliderFloat("Threshold: ", &m_thresholdY, 0.0001f, 0.05f, "%.5f");
