@@ -23,9 +23,9 @@ InputState g_inputState;
 WindowsState g_windowState;
 
 #define WINDOW_POSITION_X 0
-#define WINDOW_POSITION_Y 0
+#define WINDOW_POSITION_Y 28
 #define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1000
+#define WINDOW_HEIGHT 1060
 
 uint32 g_frameCount = 0;
 uint32 g_tickCountPrev = 0;
@@ -98,7 +98,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_windowState.yPos = WINDOW_POSITION_Y;
 	g_windowState.width = WINDOW_WIDTH;
 	g_windowState.height = WINDOW_HEIGHT;
-	g_windowState.titleName = "T";
+	g_windowState.titleName = "Radiosity";
 
 	pSDLWindow = SDL_CreateWindow(
 		g_windowState.titleName,
@@ -107,6 +107,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		g_windowState.width,
 		g_windowState.height,
 		flags);
+
+	//SDL_SetWindowFullscreen(pSDLWindow, SDL_WINDOW_FULLSCREEN);
 
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
@@ -252,15 +254,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 					g_inputState.leftShiftDown = e.type == SDL_KEYDOWN;
 
 				break;
-			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				g_windowState.width = e.window.data1;
-				g_windowState.height = e.window.data2;
-				break;
 			case SDL_TEXTINPUT:
 				io.AddInputCharactersUTF8(e.text.text);
 				break;
 			case SDL_WINDOWEVENT_CLOSE:
 				break;
+			}
+
+			if (e.type == SDL_WINDOWEVENT)
+			{
+				switch (e.window.event)
+				{
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					g_windowState.width = e.window.data1;
+					g_windowState.height = e.window.data2;
+					break;
+				default:
+					break ;
+				}
 			}
 		}
 
