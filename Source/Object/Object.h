@@ -37,6 +37,7 @@ namespace Core
 		float m_energy_g;
 		float m_energy_b;
 		int32 m_lightmap_resolution;
+		int32 m_light_precision;
 
 	private:
 		Matrix4x4 m_object2WorldMatrix;
@@ -63,6 +64,8 @@ namespace Core
 		//	For baking object only for editor.
 		LightmapResolution LightmapResolution;
 		const ANSICHAR* ResolutionString;
+		LightPrecision LightPrecision;
+		const ANSICHAR* PrecisionString;
 		
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
 		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;
@@ -111,6 +114,7 @@ namespace Core
 			m_energy_g = Energy[1];
 			m_energy_b = Energy[2];
 			m_lightmap_resolution = LightmapResolution;
+			m_light_precision = LightPrecision;
 		}
 
 		void AfterLoad()
@@ -136,6 +140,7 @@ namespace Core
 			Energy[1] = m_energy_g;
 			Energy[2] = m_energy_b;
 			LightmapResolution = static_cast<Core::LightmapResolution>(m_lightmap_resolution);
+			LightPrecision = static_cast<Core::LightPrecision>(m_light_precision);
 		}
 
 		template <class Archive>
@@ -162,7 +167,8 @@ namespace Core
 				m_energy_r,
 				m_energy_g,
 				m_energy_b,
-				m_lightmap_resolution
+				m_lightmap_resolution,
+				m_light_precision
 			);
 		}
 

@@ -82,6 +82,21 @@ namespace Core
 	const ANSICHAR* LightmapResolutionItems[];
 
 	int32 GetLightmapSideLength(LightmapResolution Resolution);
+
+	enum LightPrecision
+	{
+		LightPrecision_Invalid = -1,
+		LightPrecision_VeryLow,
+		LightPrecision_Low,
+		LightPrecision_Middle,
+		LightPrecision_High,
+		LightPrecision_HyperHigh,
+		LightPrecision_Count
+	};
+
+	const ANSICHAR* LightPrecisionItems[];
+
+	float GetLightTriangleCountPerSide(LightPrecision Precision);
 }
 /*
 //	??????????.

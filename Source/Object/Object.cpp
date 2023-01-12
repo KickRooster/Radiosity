@@ -21,7 +21,9 @@ namespace Core
 		Intensity(1.0),
 		Energy{1.0f, 1.0f, 1.0f},
 		LightmapResolution(LightmapResolution_Invalid),
-		ResolutionString(Null)
+		ResolutionString(Null),
+		LightPrecision(LightPrecision_Middle),
+		PrecisionString(Null)
 	{
 		id = idSeed;
 		++idSeed;
@@ -65,6 +67,11 @@ namespace Core
 		if (LightmapResolution != LightmapResolution_Invalid)
 		{
 			ResolutionString = LightmapResolutionItems[LightmapResolution];
+		}
+
+		if (LightPrecision != LightPrecision_Invalid)
+		{
+			PrecisionString = LightPrecisionItems[LightPrecision];
 		}
 	}
 	

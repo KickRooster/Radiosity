@@ -1277,6 +1277,26 @@ namespace Core
 				}
 				ImGui::EndCombo();
 			}
+
+			if (ImGui::BeginCombo("Light Precision", pSelectedObject->PrecisionString))
+			{
+				for (int32 i = LightPrecision_Invalid + 1; i < LightPrecision_Count; ++i)
+				{
+					Bool IsSelected = (pSelectedObject->LightPrecision == i);
+
+					if (ImGui::Selectable(LightPrecisionItems[i], IsSelected))
+					{
+						pSelectedObject->LightPrecision = static_cast<LightPrecision>(i);
+						pSelectedObject->PrecisionString = LightPrecisionItems[i];
+					}
+				
+					if (IsSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
 		}
 		
 		ImGui::End();

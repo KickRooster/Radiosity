@@ -53,4 +53,41 @@ namespace Core
 
 		return SizeLength;
 	}
+
+	const ANSICHAR* LightPrecisionItems[] = {
+		"VeryLow",
+		"Low",
+		"Middle",
+		"High",
+		"HyperHigh",
+	};
+	
+	float GetLightTriangleCountPerSide (LightPrecision Precision)
+	{
+		float TriangleCountPerSide ;
+		
+		switch (Precision)
+		{
+		case LightPrecision_VeryLow:
+			TriangleCountPerSide = 0.01f;
+			break ;
+		case LightPrecision_Low:
+			TriangleCountPerSide = 0.05f;
+			break ;
+		case LightPrecision_Middle:
+			TriangleCountPerSide = 0.1f;
+			break ;
+		case LightPrecision_High:
+			TriangleCountPerSide = 0.5f;
+			break ;
+		case LightPrecision_HyperHigh:
+			TriangleCountPerSide = 1.0f;
+			break ;
+		default:
+			TriangleCountPerSide = 0;
+			break;
+		}
+
+		return TriangleCountPerSide;
+	}
 }
