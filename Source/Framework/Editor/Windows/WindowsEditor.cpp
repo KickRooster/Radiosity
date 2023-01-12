@@ -1392,8 +1392,8 @@ namespace Core
 		areaLight->glRenderableUnit->staticMesh = m_areaLightMesh;
 		areaLight->glRenderableUnit->material = m_arealLightMaterial;
 		
-		areaLight->position = Vector3(0, 2.0f, 25.0f);
-		areaLight->eulerAngle = Vector3(180.0f, 0, 0);
+		areaLight->position = Vector3(0, 0, 0);
+		areaLight->eulerAngle = Vector3(-90.0f, 0, 0);
 		//	Should not be exported to editor panel.
 		areaLight->LightmapResolution = LightmapResolution_Invalid;
 		areaLight->IsLight = True;
@@ -1627,16 +1627,16 @@ namespace Core
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 
 		ImGui::Begin("Main Window", &mainOpened, windowFlags);
-		menuBar();
-		if (ImGui::Button("GLSL Reload"))
-		{
-			m_assetManager->ReloadGLShader();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("RLSL Reload"))
-		{
-			m_assetManager->ReloadRLShader();
-		}
+		//menuBar();
+		//if (ImGui::Button("GLSL Reload"))
+		//{
+		//	m_assetManager->ReloadGLShader();
+		//}
+		//ImGui::SameLine();
+		//if (ImGui::Button("RLSL Reload"))
+		//{
+		//	m_assetManager->ReloadRLShader();
+		//}
 		
 		if (ImGui::Button("Create Light"))
 		{
