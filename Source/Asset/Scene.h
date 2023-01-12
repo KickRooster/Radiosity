@@ -35,6 +35,7 @@ namespace Core
 		Camera * GetCamera();
 		void AddObject(std::shared_ptr<Object> object, Bool needSerialization = True);
 		void AddLight(std::shared_ptr<Object> object, Bool needSerialization = True);
+		void RemoveObject(Object* object);
 		void Clear();
 		int32 GetLightCount() const ;
 		Object* GetAreaLight(int32 Index) const;

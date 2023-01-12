@@ -1637,6 +1637,25 @@ namespace Core
 		{
 			m_assetManager->ReloadRLShader();
 		}
+		
+		if (ImGui::Button("Create Light"))
+		{
+			int32 Index = m_scene->GetLightCount();
+			std::shared_ptr<Object> lightObject = createAreaLight(Index);
+			lightObject->Initialize(m_GLDevice.get(), True);
+			m_scene->AddLight(lightObject, True);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Delete Light"))
+		{
+			if (m_pSelectedObject && m_pSelectedObject->IsLight)
+			{
+				m_scene->RemoveObject(m_pSelectedObject);
+			}
+		}
+		
 		if (m_baking && ImGui::Button("Stop"))
 		{
 			m_baking = False;
@@ -1651,17 +1670,7 @@ namespace Core
 		{
 			m_baking = True;
 		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Create Light"))
-		{
-			int32 Index = m_scene->GetLightCount();
-			std::shared_ptr<Object> lightObject = createAreaLight(Index);
-			lightObject->Initialize(m_GLDevice.get(), True);
-			m_scene->AddLight(lightObject, True);
-		}
-
+		
 		ImGui::SameLine();
 
 		if (m_LightmapEncodingInRGBM)

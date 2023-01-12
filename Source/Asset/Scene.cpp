@@ -104,6 +104,31 @@ namespace Core
 			serializedObjects.push_back(object);
 	}
 
+	void Scene::RemoveObject(Object* object)
+	{
+		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
+					iter != objects.end();
+					++iter)
+		{
+			if (iter->get() == object)
+			{
+				objects.erase(iter);
+				break ;
+			}
+		}
+
+		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = serializedObjects.begin();
+					iter != serializedObjects.end();
+					++iter)
+		{
+			if (iter->get() == object)
+			{
+				serializedObjects.erase(iter);
+				break ;
+			}
+		}
+	}
+
 	void Scene::Clear()
 	{
 		objects.clear();

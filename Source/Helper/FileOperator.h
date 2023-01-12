@@ -13,7 +13,7 @@ namespace Core
 		static void * MapMemory(const ANSICHAR * fileFullPathName, Bool binaryFile = False);
 		static void UnmapMemory(void * pBytes);
 
-		//	序列化,写入
+		//	???л?,д??
 		template <class T>
 		static void SerializeXML(const ANSICHAR * fullPathName, T * t)
 		{
@@ -23,7 +23,7 @@ namespace Core
 			archive(*t);
 		}
 
-		//	序列化,写入[参数1为智能指针]
+		//	???л?,д??[????1????????]
 		template <class T>
 		static void SerializeXML(const ANSICHAR * fullPathName, T t)
 		{
@@ -33,7 +33,7 @@ namespace Core
 			archive(*t.get());
 		}
 
-		//	反序列化,读取
+		//	?????л?,???
 		template <class T>
 		static void DeserializeXML(const ANSICHAR * fullPathName, T * t)
 		{
@@ -49,7 +49,7 @@ namespace Core
 			}
 		}
 
-		//	反序列化,读取[参数1为智能指针]
+		//	?????л?,???[????1????????]
 		template <class T>
 		static void DeserializeXML(const ANSICHAR * fullPathName, T t)
 		{
