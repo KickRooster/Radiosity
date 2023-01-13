@@ -1574,7 +1574,7 @@ namespace Core
 		areaLight->eulerAngle = Vector3(-90.0f, 0, 0);
 		//	Should not be exported to editor panel.
 		areaLight->LightmapResolution = LightmapResolution_Invalid;
-		areaLight->LightPrecision = LightPrecision_Middle;
+		areaLight->LightPrecision = LightPrecision_Low;
 		areaLight->IsLight = True;
 
 		return areaLight;
@@ -1821,10 +1821,10 @@ namespace Core
 
 		ImGui::Begin("Main Window");//, &mainOpened, windowFlags);
 		//menuBar();
-		if (ImGui::Button("GLSL Reload"))
-		{
-			m_assetManager->ReloadGLShader();
-		}
+		//if (ImGui::Button("GLSL Reload"))
+		//{
+		//	m_assetManager->ReloadGLShader();
+		//}
 		//ImGui::SameLine();
 		//if (ImGui::Button("RLSL Reload"))
 		//{
@@ -1911,7 +1911,7 @@ namespace Core
 			std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
 			llss::Stitch(staticMesh, RadiosityTextureWidth, RadiosityTextureHeight, m_pRadiosityImageRawData, m_pMaskRawData);
 
-			LightmapName += "_";
+			LightmapName += "_Stitched";
 			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			
 			m_assetManager->ScanLightmap();

@@ -67,13 +67,13 @@ namespace Core
 		switch (Precision)
 		{
 		case LightPrecision_Low:
-			TriangleCountPerSide = 0.0078125f;
+			TriangleCountPerSide = 0.00390625f;
 			break ;
 		case LightPrecision_Middle:
-			TriangleCountPerSide = 0.015625f;
+			TriangleCountPerSide = 0.0078125f;
 			break ;
 		case LightPrecision_High:
-			TriangleCountPerSide = 0.03125f;
+			TriangleCountPerSide = 0.015625f;
 			break ;
 		default:
 			TriangleCountPerSide = 0;

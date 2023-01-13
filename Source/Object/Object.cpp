@@ -22,7 +22,7 @@ namespace Core
 		Energy{1.0f, 1.0f, 1.0f},
 		LightmapResolution(LightmapResolution_Invalid),
 		ResolutionString(Null),
-		LightPrecision(LightPrecision_Middle),
+		LightPrecision(LightPrecision_Invalid),
 		PrecisionString(Null),
 		XLength(1),
 		YLength(1),

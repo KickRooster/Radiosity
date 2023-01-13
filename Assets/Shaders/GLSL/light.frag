@@ -65,6 +65,6 @@
 			{
 				out_Color.xyz = vec3(0, 0, 0);
 			}
-			 
-			 out_Color.w = 1.0;
+			
+			out_Color.w = 1.0;
 		};

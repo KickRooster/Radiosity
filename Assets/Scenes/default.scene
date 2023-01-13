@@ -15,7 +15,7 @@
 						<value6>-90</value6>
 						<value7>-0</value7>
 						<value8>0</value8>
-						<value9>0.9993327260017395</value9>
+						<value9>0.99933254718780518</value9>
 						<value10>1</value10>
 						<value11>1</value11>
 						<value12>0</value12>
@@ -55,10 +55,10 @@
 						<value13>1</value13>
 						<value14>1</value14>
 						<value15>1</value15>
-						<value16>1</value16>
-						<value17>1</value17>
-						<value18>1</value18>
-						<value19>1</value19>
+						<value16>10</value16>
+						<value17>10</value17>
+						<value18>10</value18>
+						<value19>10</value19>
 						<value20>-1</value20>
 						<value21>0</value21>
 						<value22>2048</value22>
@@ -68,6 +68,105 @@
 					</data>
 				</ptr_wrapper>
 			</value1>
+			<value2>
+				<ptr_wrapper>
+					<id>2147483651</id>
+					<data>
+						<value0>Area Light 1</value0>
+						<value1></value1>
+						<value2></value2>
+						<value3>258.4527587890625</value3>
+						<value4>713.00213623046875</value4>
+						<value5>-687.08258056640625</value5>
+						<value6>179.13491821289063</value6>
+						<value7>-0</value7>
+						<value8>0</value8>
+						<value9>512</value9>
+						<value10>512</value10>
+						<value11>1</value11>
+						<value12>1</value12>
+						<value13>0.96078431606292725</value13>
+						<value14>0</value14>
+						<value15>0</value15>
+						<value16>5</value16>
+						<value17>4.8039216995239258</value17>
+						<value18>0</value18>
+						<value19>0</value19>
+						<value20>-1</value20>
+						<value21>0</value21>
+						<value22>512</value22>
+						<value23>512</value23>
+						<value24>1000</value24>
+						<value25>1000</value25>
+					</data>
+				</ptr_wrapper>
+			</value2>
+			<value3>
+				<ptr_wrapper>
+					<id>2147483652</id>
+					<data>
+						<value0>Area Light 2</value0>
+						<value1></value1>
+						<value2></value2>
+						<value3>439.26947021484375</value3>
+						<value4>808.16326904296875</value4>
+						<value5>294.486572265625</value5>
+						<value6>0</value6>
+						<value7>-0</value7>
+						<value8>0</value8>
+						<value9>768</value9>
+						<value10>512</value10>
+						<value11>1</value11>
+						<value12>1</value12>
+						<value13>0.49969196319580078</value13>
+						<value14>0</value14>
+						<value15>1</value15>
+						<value16>10</value16>
+						<value17>4.9969196319580078</value17>
+						<value18>0</value18>
+						<value19>10</value19>
+						<value20>-1</value20>
+						<value21>0</value21>
+						<value22>768</value22>
+						<value23>512</value23>
+						<value24>1000</value24>
+						<value25>1000</value25>
+					</data>
+				</ptr_wrapper>
+			</value3>
+			<value4>
+				<ptr_wrapper>
+					<id>2147483653</id>
+					<data>
+						<value0>Area Light 3</value0>
+						<value1></value1>
+						<value2></value2>
+						<value3>0</value3>
+						<value4>216.67442321777344</value4>
+						<value5>11.014434814453125</value5>
+						<value6>-90</value6>
+						<value7>-0</value7>
+						<value8>0</value8>
+						<value9>767.99993896484375</value9>
+						<value10>1024</value10>
+						<value11>1</value11>
+						<value12>1</value12>
+						<value13>1</value13>
+						<value14>1</value14>
+						<value15>1</value15>
+						<value16>1</value16>
+						<value17>1</value17>
+						<value18>1</value18>
+						<value19>1</value19>
+						<value20>-1</value20>
+						<value21>0</value21>
+						<value22>768</value22>
+						<value23>1024</value23>
+						<value24>1000</value24>
+						<value25>1000</value25>
+					</data>
+				</ptr_wrapper>
+			</value4>
 		</value0>
 	</value0>
 </cereal>
