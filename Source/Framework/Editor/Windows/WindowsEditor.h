@@ -84,9 +84,10 @@ namespace Core
 		std::shared_ptr<Material> m_DrawGBufferMaterial;
 		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
-		std::shared_ptr<StaticMesh> m_areaLightMesh;
+		std::shared_ptr<StaticMesh> m_DefaultLightMesh;
 
 		void createBuiltinResources();
+		std::shared_ptr<StaticMesh> CreateAreaLightMesh(int32 XLength, int32 YLength, LightPrecision Precision);
 
 		void panelSceneObjects();
 		void popupNamingTick(const ANSICHAR *pName, const ANSICHAR *pExtension, InputState & inputState, Bool & pressedOK, ctd::string & fileName);
@@ -103,6 +104,7 @@ namespace Core
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height);
 		void InstantiateScene(Scene* CurrentScene);
+		void RestoreLightMesh();
 		
 		uint32 ReverseBits(uint32 Value);
 		Vector2 Hammersley(uint32 Index, uint32 NumSamples);

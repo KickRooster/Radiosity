@@ -104,13 +104,24 @@ namespace Core
 			serializedObjects.push_back(object);
 	}
 
-	void Scene::RemoveObject(Object* object)
+	void Scene::RemoveLight(Object* Light)
 	{
+		for (std::vector<std::weak_ptr<Object>>::iterator iter = m_LightRefs.begin();
+			iter != m_LightRefs.end();
+			++iter)
+		{
+			if (iter->lock().get() == Light)
+			{
+				m_LightRefs.erase(iter);
+				break ;
+			}
+		}
+		
 		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 					iter != objects.end();
 					++iter)
 		{
-			if (iter->get() == object)
+			if (iter->get() == Light)
 			{
 				objects.erase(iter);
 				break ;
@@ -121,7 +132,7 @@ namespace Core
 					iter != serializedObjects.end();
 					++iter)
 		{
-			if (iter->get() == object)
+			if (iter->get() == Light)
 			{
 				serializedObjects.erase(iter);
 				break ;

@@ -55,11 +55,9 @@ namespace Core
 	}
 
 	const ANSICHAR* LightPrecisionItems[] = {
-		"VeryLow",
 		"Low",
 		"Middle",
 		"High",
-		"HyperHigh",
 	};
 	
 	float GetLightTriangleCountPerSide (LightPrecision Precision)
@@ -68,20 +66,14 @@ namespace Core
 		
 		switch (Precision)
 		{
-		case LightPrecision_VeryLow:
-			TriangleCountPerSide = 0.01f;
-			break ;
 		case LightPrecision_Low:
-			TriangleCountPerSide = 0.05f;
+			TriangleCountPerSide = 0.0078125f;
 			break ;
 		case LightPrecision_Middle:
-			TriangleCountPerSide = 0.1f;
+			TriangleCountPerSide = 0.015625f;
 			break ;
 		case LightPrecision_High:
-			TriangleCountPerSide = 0.5f;
-			break ;
-		case LightPrecision_HyperHigh:
-			TriangleCountPerSide = 1.0f;
+			TriangleCountPerSide = 0.03125f;
 			break ;
 		default:
 			TriangleCountPerSide = 0;
@@ -89,5 +81,19 @@ namespace Core
 		}
 
 		return TriangleCountPerSide;
+	}
+
+	int32 GetMinSizeLength(LightPrecision Precision)
+	{
+		float TriangleCountPerSize = GetLightTriangleCountPerSide(Precision);
+
+		float MinSizeLength = 1.0f / TriangleCountPerSize;
+
+		if (MinSizeLength < 1.0f)
+		{
+			MinSizeLength = 1.0 ;
+		}
+
+		return static_cast<int32>(MinSizeLength);
 	}
 }

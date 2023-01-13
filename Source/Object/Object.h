@@ -38,6 +38,10 @@ namespace Core
 		float m_energy_b;
 		int32 m_lightmap_resolution;
 		int32 m_light_precision;
+		int32 m_x_length;
+		int32 m_y_length;
+		int32 m_max_x_length;
+		int32 m_max_y_length;
 
 	private:
 		Matrix4x4 m_object2WorldMatrix;
@@ -66,12 +70,17 @@ namespace Core
 		const ANSICHAR* ResolutionString;
 		LightPrecision LightPrecision;
 		const ANSICHAR* PrecisionString;
+		int32 XLength;
+		int32 YLength;
+		int32 MaxXLength;
+		int32 MaxYLength;
 		
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
 		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;
 		
 		Object();
 		void Initialize(OpenGLDevice * pDevice, Bool SerializedRTSAsLocal2World);
+		void UpdateTransformMatrix();
 		void Tick(float deltaTime, OpenGLDevice * pDevice);
 		void Render(OpenGLDevice * pDevice);
 		void RenderAsPostprocess(OpenGLDevice * pDevice, Vector4 & postprocessParam);
@@ -115,6 +124,10 @@ namespace Core
 			m_energy_b = Energy[2];
 			m_lightmap_resolution = LightmapResolution;
 			m_light_precision = LightPrecision;
+			m_x_length = XLength;
+			m_y_length = YLength;
+			m_max_x_length = MaxXLength;
+			m_max_y_length = MaxYLength;
 		}
 
 		void AfterLoad()
@@ -141,6 +154,10 @@ namespace Core
 			Energy[2] = m_energy_b;
 			LightmapResolution = static_cast<Core::LightmapResolution>(m_lightmap_resolution);
 			LightPrecision = static_cast<Core::LightPrecision>(m_light_precision);
+			XLength = m_x_length;
+			YLength = m_y_length;
+			MaxXLength = m_max_x_length;
+			MaxYLength = m_max_y_length;
 		}
 
 		template <class Archive>
@@ -168,7 +185,11 @@ namespace Core
 				m_energy_g,
 				m_energy_b,
 				m_lightmap_resolution,
-				m_light_precision
+				m_light_precision,
+				m_x_length,
+				m_y_length,
+				m_max_x_length,
+				m_max_y_length
 			);
 		}
 

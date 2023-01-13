@@ -23,7 +23,11 @@ namespace Core
 		LightmapResolution(LightmapResolution_Invalid),
 		ResolutionString(Null),
 		LightPrecision(LightPrecision_Middle),
-		PrecisionString(Null)
+		PrecisionString(Null),
+		XLength(1),
+		YLength(1),
+		MaxXLength(1000),
+		MaxYLength(1000)
 	{
 		id = idSeed;
 		++idSeed;
@@ -53,7 +57,7 @@ namespace Core
 		}
 		else
 		{
-			m_object2WorldMatrix = glRenderableUnit->staticMesh.lock()->GetLocal2World();
+			m_object2WorldMatrix = glRenderableUnit->staticMesh->GetLocal2World();
 		}
 		
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
@@ -73,6 +77,30 @@ namespace Core
 		{
 			PrecisionString = LightPrecisionItems[LightPrecision];
 		}
+	}
+
+	void Object::UpdateTransformMatrix()
+	{
+		float matrixTranslation[3];
+		float matrixRotation[3];
+		float matrixScale[3];
+
+		matrixTranslation[0] = position.x; 
+		matrixTranslation[1] = position.y;
+		matrixTranslation[2] = position.z;
+
+		matrixRotation[0] = eulerAngle.x;
+		matrixRotation[1] = eulerAngle.y;
+		matrixRotation[2] = eulerAngle.z;
+
+		matrixScale[0] = scale.x;
+		matrixScale[1] = scale.y;
+		matrixScale[2] = scale.z;
+
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, (float*)(&m_object2WorldMatrix));
+
+		m_world2ObjectMatrix = Inverse(m_object2WorldMatrix);
+		m_object2WorldITMatrix = Transpose(m_world2ObjectMatrix);
 	}
 	
 	void Object::Tick(float deltaTime, OpenGLDevice * pDevice)
@@ -111,7 +139,7 @@ namespace Core
 		glRenderableUnit->material.lock()->SetAlbedoColor();
 		pDevice->DrawElements(
 			GLTopology_Triangles,
-			glRenderableUnit->staticMesh.lock()->indexCount,
+			glRenderableUnit->staticMesh->indexCount,
 			GLDataType_UnsignedInt,
 			Null);
 		glRenderableUnit->Inactivate();
@@ -124,7 +152,7 @@ namespace Core
 		glRenderableUnit->Activate();
 		pDevice->DrawElements(
 			GLTopology_Triangles,
-			glRenderableUnit->staticMesh.lock()->indexCount,
+			glRenderableUnit->staticMesh->indexCount,
 			GLDataType_UnsignedInt,
 			Null);
 		glRenderableUnit->Inactivate();
@@ -134,11 +162,11 @@ namespace Core
 	{
 		if (IsLight)
 		{
-			glRenderableUnit->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix, LightmapResolution_Invalid);
+			glRenderableUnit->staticMesh->BeforeBaking(m_object2WorldMatrix, LightmapResolution_Invalid);
 		}
 		else
 		{
-			glRenderableUnit->staticMesh.lock()->BeforeBaking(m_object2WorldMatrix, LightmapResolution);
+			glRenderableUnit->staticMesh->BeforeBaking(m_object2WorldMatrix, LightmapResolution);
 		}
 		
 		if (rlRenderableUnit)
@@ -165,7 +193,7 @@ namespace Core
 		glRenderableUnit->ActiveDrawGBuffer();
 		pDevice->DrawElements(
 			GLTopology_Triangles,
-			glRenderableUnit->staticMesh.lock()->indexCount,
+			glRenderableUnit->staticMesh->indexCount,
 			GLDataType_UnsignedInt,
 			Null);
 		glRenderableUnit->InactiveDrawGBuffer();
@@ -179,7 +207,7 @@ namespace Core
 		glRenderableUnit->ActivateDrawingID();
 		pDevice->DrawElements(
 			GLTopology_Triangles,
-			glRenderableUnit->staticMesh.lock()->indexCount,
+			glRenderableUnit->staticMesh->indexCount,
 			GLDataType_UnsignedInt,
 			Null);
 		glRenderableUnit->InactivateDrawingID();
@@ -193,7 +221,7 @@ namespace Core
 		glRenderableUnit->ActiveComputingFormFactor();
 		pDevice->DrawElements(
 			GLTopology_Triangles,
-			glRenderableUnit->staticMesh.lock()->indexCount,
+			glRenderableUnit->staticMesh->indexCount,
 			GLDataType_UnsignedInt,
 			Null);
 		glRenderableUnit->InactiveComputingFormFactor();

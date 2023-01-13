@@ -8,7 +8,7 @@ namespace Core
 	class GLRenderableUnit
 	{
 	public:
-		std::weak_ptr<StaticMesh> staticMesh;
+		std::shared_ptr<StaticMesh> staticMesh;
 		std::weak_ptr<Material> material;
 		std::weak_ptr<Material> DrawGBufferMaterial;
 		std::weak_ptr<Material> DrawIDMaterial;

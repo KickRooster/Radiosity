@@ -53,6 +53,18 @@
 
 		void main()
 		{
-			out_Color.xyz = texture(lightmapSampler, uv1).xyz;// albedoColor.xyz;
-			out_Color.w = 1.0;
+			//out_Color.xyz = texture(lightmapSampler, uv1).xyz;// albedoColor.xyz;
+			
+			int ID = int(customData.x);
+
+			if (ID % 2 == 0)
+			{
+				out_Color.xyz = albedoColor.xyz;
+			}
+			else
+			{
+				out_Color.xyz = vec3(0, 0, 0);
+			}
+			 
+			 out_Color.w = 1.0;
 		};

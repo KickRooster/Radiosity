@@ -43,12 +43,12 @@ namespace Core
 
 	}
 
-	Core::uint32 GLFrameBuffer::GetWidth() const
+	uint32 GLFrameBuffer::GetWidth() const
 	{
 		return m_width;
 	}
 
-	Core::uint32 GLFrameBuffer::GetHeight() const
+	uint32 GLFrameBuffer::GetHeight() const
 	{
 		return m_height;
 	}

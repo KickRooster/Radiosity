@@ -56,23 +56,23 @@ namespace Core
 		m_ComputeFormFactorMaterial->glFragmentShader.lock()->Attach(m_ComputeFormFactorMaterial.get());
 		
 		//////////////////////////////////////////////////////////////////////////
-		m_areaLightMesh = std::make_shared<StaticMesh>();
+		m_DefaultLightMesh = std::make_shared<StaticMesh>();
 
-		int32 XCount = 10;
-		int32 YCount = 10;
+		int32 XCount = 1;
+		int32 YCount = 1;
 		float XCountF = static_cast<float>(XCount);
 		float YCountF = static_cast<float>(XCount);
 
-		m_areaLightMesh->vertexCount = XCount * YCount * 6;
-		m_areaLightMesh->pPositions = new Vector4[m_areaLightMesh->vertexCount];
-		m_areaLightMesh->pNormals = new Vector3[m_areaLightMesh->vertexCount];
-		m_areaLightMesh->pUV0s = new Vector2[m_areaLightMesh->vertexCount];
-		m_areaLightMesh->pUV1s = new Vector2[m_areaLightMesh->vertexCount];
+		m_DefaultLightMesh->vertexCount = XCount * YCount * 6;
+		m_DefaultLightMesh->pPositions = new Vector4[m_DefaultLightMesh->vertexCount];
+		m_DefaultLightMesh->pNormals = new Vector3[m_DefaultLightMesh->vertexCount];
+		m_DefaultLightMesh->pUV0s = new Vector2[m_DefaultLightMesh->vertexCount];
+		m_DefaultLightMesh->pUV1s = new Vector2[m_DefaultLightMesh->vertexCount];
 		
-		m_areaLightMesh->indexCount = XCount * YCount * 6;
-		m_areaLightMesh->pIndices = new uint32[m_areaLightMesh->indexCount];
+		m_DefaultLightMesh->indexCount = XCount * YCount * 6;
+		m_DefaultLightMesh->pIndices = new uint32[m_DefaultLightMesh->indexCount];
 		
-		Vector3 PhysicalSize = Vector3(10, 10, 0);
+		const Vector3 PhysicalSize = Vector3(1, 1, 0);
 		Vector4 LightScale = Vector4(PhysicalSize.x / static_cast<float>(XCount), PhysicalSize.y / static_cast<float>(YCount), 0, 1.0);
 		int32 VertexCursor = 0;
 		
@@ -94,57 +94,166 @@ namespace Core
 				Vector4 P5 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0);
 				P5 *= LightScale;
 				
-				m_areaLightMesh->pPositions[VertexCursor] = P0;
-				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_DefaultLightMesh->pPositions[VertexCursor] = P0;
+				m_DefaultLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				Vector2 UV0 = Vector2(static_cast<float>(j) / XCountF, static_cast<float>(i) / YCountF);
-				m_areaLightMesh->pUV0s[VertexCursor] = UV0;
-				m_areaLightMesh->pUV1s[VertexCursor] = UV0;
-				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				m_DefaultLightMesh->pUV0s[VertexCursor] = UV0;
+				m_DefaultLightMesh->pUV1s[VertexCursor] = UV0;
+				m_DefaultLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 				
-				m_areaLightMesh->pPositions[VertexCursor] = P1;
-				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_DefaultLightMesh->pPositions[VertexCursor] = P1;
+				m_DefaultLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				Vector2 UV1 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, static_cast<float>(i) / YCountF);
-				m_areaLightMesh->pUV0s[VertexCursor] = UV1;
-				m_areaLightMesh->pUV1s[VertexCursor] = UV1;
-				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				m_DefaultLightMesh->pUV0s[VertexCursor] = UV1;
+				m_DefaultLightMesh->pUV1s[VertexCursor] = UV1;
+				m_DefaultLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 
-				m_areaLightMesh->pPositions[VertexCursor] = P2;
-				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_DefaultLightMesh->pPositions[VertexCursor] = P2;
+				m_DefaultLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				Vector2 UV2 = Vector2(static_cast<float>(j) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
-				m_areaLightMesh->pUV0s[VertexCursor] = UV2;
-				m_areaLightMesh->pUV1s[VertexCursor] = UV2;
-				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				m_DefaultLightMesh->pUV0s[VertexCursor] = UV2;
+				m_DefaultLightMesh->pUV1s[VertexCursor] = UV2;
+				m_DefaultLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 				
-				m_areaLightMesh->pPositions[VertexCursor] = P3;
-				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_DefaultLightMesh->pPositions[VertexCursor] = P3;
+				m_DefaultLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				Vector2 UV3 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, static_cast<float>(i) / YCountF);
-				m_areaLightMesh->pUV0s[VertexCursor] = UV3;
-				m_areaLightMesh->pUV1s[VertexCursor] = UV3;
-				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				m_DefaultLightMesh->pUV0s[VertexCursor] = UV3;
+				m_DefaultLightMesh->pUV1s[VertexCursor] = UV3;
+				m_DefaultLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 
-				m_areaLightMesh->pPositions[VertexCursor] = P4;
-				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_DefaultLightMesh->pPositions[VertexCursor] = P4;
+				m_DefaultLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				Vector2 UV4 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
-				m_areaLightMesh->pUV0s[VertexCursor] = UV4;
-				m_areaLightMesh->pUV1s[VertexCursor] = UV4;
-				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				m_DefaultLightMesh->pUV0s[VertexCursor] = UV4;
+				m_DefaultLightMesh->pUV1s[VertexCursor] = UV4;
+				m_DefaultLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 
-				m_areaLightMesh->pPositions[VertexCursor] = P5;
-				m_areaLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				m_DefaultLightMesh->pPositions[VertexCursor] = P5;
+				m_DefaultLightMesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
 				Vector2 UV5 = Vector2(static_cast<float>(j) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
-				m_areaLightMesh->pUV0s[VertexCursor] = UV5;
-				m_areaLightMesh->pUV1s[VertexCursor] = UV5;
-				m_areaLightMesh->pIndices[VertexCursor] = VertexCursor;
+				m_DefaultLightMesh->pUV0s[VertexCursor] = UV5;
+				m_DefaultLightMesh->pUV1s[VertexCursor] = UV5;
+				m_DefaultLightMesh->pIndices[VertexCursor] = VertexCursor;
 				++VertexCursor;
 			}
 		}
 	}
 
+	std::shared_ptr<StaticMesh> WindowsEditor::CreateAreaLightMesh(int32 XLength, int32 YLength, LightPrecision Precision)
+	{
+		float XLengthF = static_cast<float>(XLength);
+		float YLengthF = static_cast<float>(YLength);
+		
+		float TriangleCountPerSize = GetLightTriangleCountPerSide(Precision);
+
+		float TriangleCountX = XLengthF * TriangleCountPerSize;
+		float TriangleCountY = YLengthF * TriangleCountPerSize;
+
+		float TriangleCountXUpper = ceil(TriangleCountX);
+		float TriangleCountYUpper = ceil(TriangleCountY);
+
+		//	For check calculation result.
+		float CalculatedXLength = TriangleCountXUpper / TriangleCountPerSize;
+		float CalculatedYLength = TriangleCountYUpper / TriangleCountPerSize;
+
+		float XCountF = TriangleCountXUpper;
+		float YCountF = TriangleCountYUpper;
+
+		int32 XCount = static_cast<int32>(XCountF);
+		int32 YCount = static_cast<int32>(YCountF);
+		
+		std::shared_ptr<StaticMesh> Mesh = std::make_shared<StaticMesh>();
+		
+		Mesh->vertexCount = XCount * YCount * 6;
+		Mesh->pPositions = new Vector4[Mesh->vertexCount];
+		Mesh->pNormals = new Vector3[Mesh->vertexCount];
+		Mesh->pUV0s = new Vector2[Mesh->vertexCount];
+		Mesh->pUV1s = new Vector2[Mesh->vertexCount];
+		
+		Mesh->indexCount = XCount * YCount * 6;
+		Mesh->pIndices = new uint32[Mesh->indexCount];
+		
+		Vector3 PhysicalSize = Vector3(XLength, YLength, 0);
+		Vector4 LightScale = Vector4(PhysicalSize.x / static_cast<float>(XCount), PhysicalSize.y / static_cast<float>(YCount), 0, 1.0);
+		int32 VertexCursor = 0;
+		
+		for (int32 i = 0; i < YCount; ++i)
+		{ 
+			for (int32 j = 0; j < XCount; ++j)
+			{
+				Vector4 P0 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i), 0, 1.0f);
+				P0 *= LightScale;
+				Vector4 P1 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j) + 1.0f, -static_cast<float>(YCount) / 2.0f + static_cast<float>(i), 0, 1.0f);
+				P1 *= LightScale;
+				Vector4 P2 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0f);
+				P2 *= LightScale;
+				
+				Vector4 P3 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j) + 1.0f, -static_cast<float>(YCount) / 2.0f + static_cast<float>(i), 0, 1.0f);
+				P3 *= LightScale;
+				Vector4 P4 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j) + 1.0f, -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0f);
+				P4 *= LightScale;
+				Vector4 P5 = Vector4(-static_cast<float>(XCount) / 2.0f +  static_cast<float>(j), -static_cast<float>(YCount) / 2.0f + static_cast<float>(i) + 1.0f, 0, 1.0);
+				P5 *= LightScale;
+				
+				Mesh->pPositions[VertexCursor] = P0;
+				Mesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				Vector2 UV0 = Vector2(static_cast<float>(j) / XCountF, static_cast<float>(i) / YCountF);
+				Mesh->pUV0s[VertexCursor] = UV0;
+				Mesh->pUV1s[VertexCursor] = UV0;
+				Mesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+				
+				Mesh->pPositions[VertexCursor] = P1;
+				Mesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				Vector2 UV1 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, static_cast<float>(i) / YCountF);
+				Mesh->pUV0s[VertexCursor] = UV1;
+				Mesh->pUV1s[VertexCursor] = UV1;
+				Mesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+
+				Mesh->pPositions[VertexCursor] = P2;
+				Mesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				Vector2 UV2 = Vector2(static_cast<float>(j) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
+				Mesh->pUV0s[VertexCursor] = UV2;
+				Mesh->pUV1s[VertexCursor] = UV2;
+				Mesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+				
+				Mesh->pPositions[VertexCursor] = P3;
+				Mesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				Vector2 UV3 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, static_cast<float>(i) / YCountF);
+				Mesh->pUV0s[VertexCursor] = UV3;
+				Mesh->pUV1s[VertexCursor] = UV3;
+				Mesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+
+				Mesh->pPositions[VertexCursor] = P4;
+				Mesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				Vector2 UV4 = Vector2((static_cast<float>(j) + 1.0f) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
+				Mesh->pUV0s[VertexCursor] = UV4;
+				Mesh->pUV1s[VertexCursor] = UV4;
+				Mesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+
+				Mesh->pPositions[VertexCursor] = P5;
+				Mesh->pNormals[VertexCursor] = Vector3(0, 0, 1.0);
+				Vector2 UV5 = Vector2(static_cast<float>(j) / XCountF, (static_cast<float>(i) + 1.0f) / YCountF);
+				Mesh->pUV0s[VertexCursor] = UV5;
+				Mesh->pUV1s[VertexCursor] = UV5;
+				Mesh->pIndices[VertexCursor] = VertexCursor;
+				++VertexCursor;
+			}
+		}
+		
+		return Mesh;
+	}
+	
 	void WindowsEditor::panelSceneObjects()
 	{
 		ImGui::SetNextWindowPos(ImVec2(400, 600));
@@ -1194,7 +1303,7 @@ namespace Core
 		}
 	}
 
-	void EditTransform(const ImVec2 & regionTopLeft, const ImVec2 & regionSize, const float *cameraView, float *cameraProjection, float* matrix, Object * pSelectedObject)
+	void EditTransform(const ImVec2 & regionTopLeft, const ImVec2 & regionSize, const float *cameraView, float *cameraProjection, float* matrix, Object * pSelectedObject, Bool IsBaking)
 	{
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
@@ -1220,8 +1329,7 @@ namespace Core
 		ImGui::InputFloat3("Tr", matrixTranslation, 3);
 		ImGui::InputFloat3("Rt", matrixRotation, 3);
 		ImGui::InputFloat3("Sc", matrixScale, 3);
-		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-
+		
 		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 		{
 			if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
@@ -1255,6 +1363,68 @@ namespace Core
 			pSelectedObject->Energy[0] = pSelectedObject->Color[0] * pSelectedObject->Intensity;
 			pSelectedObject->Energy[1] = pSelectedObject->Color[1] * pSelectedObject->Intensity;
 			pSelectedObject->Energy[2] = pSelectedObject->Color[2] * pSelectedObject->Intensity;
+
+			if (ImGui::BeginCombo("Light Precision", pSelectedObject->PrecisionString))
+			{
+				for (int32 i = LightPrecision_Invalid + 1; i < LightPrecision_Count; ++i)
+				{
+					Bool IsSelected = (pSelectedObject->LightPrecision == i);
+
+					if (ImGui::Selectable(LightPrecisionItems[i], IsSelected))
+					{
+						pSelectedObject->LightPrecision = static_cast<LightPrecision>(i);
+						pSelectedObject->PrecisionString = LightPrecisionItems[i];
+					}
+					
+					if (IsSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			int32 MinX = GetMinSizeLength(pSelectedObject->LightPrecision);
+			int32 MinY = GetMinSizeLength(pSelectedObject->LightPrecision);
+
+			if (pSelectedObject->XLength < MinX)
+			{
+				pSelectedObject->XLength = MinX;
+			}
+
+			if (pSelectedObject->YLength < MinY)
+			{
+				pSelectedObject->YLength = MinY;
+			}
+
+			ImGui::SliderInt("XLength", &pSelectedObject->XLength, MinX, pSelectedObject->MaxXLength);
+			ImGui::SameLine();
+			ImGui::InputInt("MaxX", &pSelectedObject->MaxXLength);
+
+			ImGui::SliderInt("YLength", &pSelectedObject->YLength, MinY, pSelectedObject->MaxYLength);
+			ImGui::SameLine();
+			ImGui::InputInt("MaxY", &pSelectedObject->MaxYLength);
+			
+			if (pSelectedObject->XLength % MinX > 0)
+			{
+				pSelectedObject->XLength -= pSelectedObject->XLength % MinX;
+				pSelectedObject->XLength += MinX;
+			}
+
+			if (pSelectedObject->YLength % MinY > 0)
+			{
+				pSelectedObject->YLength -= pSelectedObject->YLength % MinY;
+				pSelectedObject->YLength += MinY;
+			}
+
+			//	We don't update matrixScale when baking.
+			if (!IsBaking)
+			{
+				matrixScale[0] = static_cast<float>(pSelectedObject->XLength);
+				matrixScale[1] = static_cast<float>(pSelectedObject->YLength);
+			}
+
+			ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
 		}
 		else
 		{
@@ -1268,26 +1438,6 @@ namespace Core
 					{
 						pSelectedObject->LightmapResolution = static_cast<LightmapResolution>(i);
 						pSelectedObject->ResolutionString = LightmapResolutionItems[i];
-					}
-				
-					if (IsSelected)
-					{
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-
-			if (ImGui::BeginCombo("Light Precision", pSelectedObject->PrecisionString))
-			{
-				for (int32 i = LightPrecision_Invalid + 1; i < LightPrecision_Count; ++i)
-				{
-					Bool IsSelected = (pSelectedObject->LightPrecision == i);
-
-					if (ImGui::Selectable(LightPrecisionItems[i], IsSelected))
-					{
-						pSelectedObject->LightPrecision = static_cast<LightPrecision>(i);
-						pSelectedObject->PrecisionString = LightPrecisionItems[i];
 					}
 				
 					if (IsSelected)
@@ -1313,7 +1463,7 @@ namespace Core
 
 		ImGui::Begin("Inspector");
 		
-		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix(), pSelectedObject);
+		EditTransform(regionTopLeft, regionSize, (float*)pViewMatrix, (float *)pProjectionMatrix, (float *)pSelectedObject->GetObject2WorldMatrix(), pSelectedObject, m_baking);
 	}
 
 	std::shared_ptr<Object> WindowsEditor::createObject(std::weak_ptr<Prefab> prefab)
@@ -1394,7 +1544,7 @@ namespace Core
 	std::shared_ptr<Object> WindowsEditor::InstantiateAreaLight(std::shared_ptr<Object> object)
 	{
 		object->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		object->glRenderableUnit->staticMesh = m_areaLightMesh;
+		object->glRenderableUnit->staticMesh = m_DefaultLightMesh;// CreateAreaLightMesh(object->scale.x, object->scale.y, object->LightPrecision);
 		object->glRenderableUnit->material = m_arealLightMaterial;
 		
 		object->Initialize(m_GLDevice.get(), True);
@@ -1409,13 +1559,22 @@ namespace Core
 		areaLight->name = name;
 
 		areaLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();
-		areaLight->glRenderableUnit->staticMesh = m_areaLightMesh;
+		
+		float DefaultXLength = 100.0f;
+		float DefaultYLength = 100.0f;
+		areaLight->glRenderableUnit->staticMesh = m_DefaultLightMesh;// CreateAreaLightMesh(DefaultXLength, DefaultYLength, LightPrecision_Middle);
+		areaLight->scale.x = DefaultXLength;
+		areaLight->scale.y = DefaultYLength;
+		areaLight->XLength = static_cast<int32>(DefaultXLength);
+		areaLight->YLength = static_cast<int32>(DefaultYLength);
+
 		areaLight->glRenderableUnit->material = m_arealLightMaterial;
 		
 		areaLight->position = Vector3(0, 0, 0);
 		areaLight->eulerAngle = Vector3(-90.0f, 0, 0);
 		//	Should not be exported to editor panel.
 		areaLight->LightmapResolution = LightmapResolution_Invalid;
+		areaLight->LightPrecision = LightPrecision_Middle;
 		areaLight->IsLight = True;
 
 		return areaLight;
@@ -1521,6 +1680,20 @@ namespace Core
 			{
 				CurrentScene->AddObject(InstantiateObject(*iter), False);
 			}
+		}
+	}
+
+	void WindowsEditor::RestoreLightMesh()
+	{
+		for (int32 i = 0; i < m_scene->GetLightCount(); ++i)
+		{
+			Object* AreaLight = m_scene->GetAreaLight(i);
+
+			AreaLight->glRenderableUnit->staticMesh = m_DefaultLightMesh;
+			AreaLight->scale.x = static_cast<float>(AreaLight->XLength);
+			AreaLight->scale.y = static_cast<float>(AreaLight->YLength);
+			
+			AreaLight->UpdateTransformMatrix();
 		}
 	}
 	
@@ -1639,19 +1812,19 @@ namespace Core
 
 		//	Main Window
 
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar;
+		//ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar;
 
-		bool mainOpened = true;
+		//bool mainOpened = true;
 
 		ImGui::SetNextWindowPos(ImVec2(400, 800));
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 
-		ImGui::Begin("Main Window", &mainOpened, windowFlags);
+		ImGui::Begin("Main Window");//, &mainOpened, windowFlags);
 		//menuBar();
-		//if (ImGui::Button("GLSL Reload"))
-		//{
-		//	m_assetManager->ReloadGLShader();
-		//}
+		if (ImGui::Button("GLSL Reload"))
+		{
+			m_assetManager->ReloadGLShader();
+		}
 		//ImGui::SameLine();
 		//if (ImGui::Button("RLSL Reload"))
 		//{
@@ -1672,7 +1845,8 @@ namespace Core
 		{
 			if (m_pSelectedObject && m_pSelectedObject->IsLight)
 			{
-				m_scene->RemoveObject(m_pSelectedObject);
+				m_scene->RemoveLight(m_pSelectedObject);
+				m_pSelectedObject = Null;
 			}
 		}
 		
@@ -1680,6 +1854,8 @@ namespace Core
 		{
 			m_baking = False;
 			m_currentMaxY = 0;
+			
+			RestoreLightMesh();
 			
 			while (!RemainingPrimitives.empty())
 			{
@@ -1724,14 +1900,14 @@ namespace Core
 				m_RadiosityImage0->Fetch(m_pRadiosityImageRawData);
 			}
 
-			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
-			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureHeight();
 
 			string LightmapName = BeingBakingObject->name;
 			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
 			
-			std::shared_ptr<StaticMesh> staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.lock();
+			StaticMesh* staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.get();
 			std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
 			llss::Stitch(staticMesh, RadiosityTextureWidth, RadiosityTextureHeight, m_pRadiosityImageRawData, m_pMaskRawData);
 
@@ -1955,8 +2131,8 @@ namespace Core
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->IDCumeMap = m_primitiveIDCubeMap;
 			BeingBakingObject->glRenderableUnit->ComputeFormFactorMaterial.lock()->VisibilityTexture = m_GLVisibilityTexture;
 
-			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
-			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureWidth();
+			int32 RadiosityTextureHeight =BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureHeight();
 			
 			float* BlackData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			for (int32 i = 0; i < RadiosityTextureWidth * RadiosityTextureHeight; ++i)
@@ -2016,10 +2192,14 @@ namespace Core
 			for (int32 i = 0; i < m_scene->GetLightCount(); ++i)
 			{
 				Object* AreaLight = m_scene->GetAreaLight(i);
-				
+				AreaLight->glRenderableUnit->staticMesh = CreateAreaLightMesh(AreaLight->XLength, AreaLight->YLength, AreaLight->LightPrecision);
+				AreaLight->scale.x = 1.0f;
+				AreaLight->scale.y = 1.0f;
+				AreaLight->UpdateTransformMatrix();
 				AreaLight->BeforeBaking();
-				for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit->staticMesh.lock()->PrimitiveMap.begin();
-						iter != AreaLight->glRenderableUnit->staticMesh.lock()->PrimitiveMap.end();
+				
+				for (map<int32, Primitive>::iterator iter = AreaLight->glRenderableUnit->staticMesh->PrimitiveMap.begin();
+						iter != AreaLight->glRenderableUnit->staticMesh->PrimitiveMap.end();
 						++iter)
 				{
 					iter->second.Energy.x = AreaLight->Energy[0];
@@ -2100,8 +2280,8 @@ namespace Core
 			
 			//	RL Visibility
 			{
-				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
-				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureHeight();
 				
 				m_rlShootingPrimitiveBuffer->Activate();
 				RLShootingPrimitive* RLPrimitiveData = (RLShootingPrimitive*)m_rlShootingPrimitiveBuffer->Map(RLBufferAccessFlag_ReadWrite);
@@ -2246,8 +2426,8 @@ namespace Core
 			//	Reconstruction Pass
 			m_reconstructionPassFrameBuffer->Activate();
 			{
-				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
-				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureHeight();
 				m_GLDevice->BeginReconstrucionPass(RadiosityTextureWidth, RadiosityTextureHeight);
 
 				//	Each camera can have two usages for shaders, perspective camera or ortho camera according to
@@ -2281,9 +2461,9 @@ namespace Core
 				m_GLDevice->UploadGlobalShaderData(GLShaderDataAlias_CubeMatrices, sizeof(CubeMatrices), &CubeMatrices);
 
 				BeingBakingObject->BeforeComputeFormFactor(m_GLDevice.get());
-				for (int32 PrimitiveIndex = 0; PrimitiveIndex < BeingBakingObject->glRenderableUnit->staticMesh.lock()->indexCount / 3; ++PrimitiveIndex)
+				for (int32 PrimitiveIndex = 0; PrimitiveIndex < BeingBakingObject->glRenderableUnit->staticMesh->indexCount / 3; ++PrimitiveIndex)
 				{
-					Primitive BakingPrimitive = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[PrimitiveIndex];
+					Primitive BakingPrimitive = BeingBakingObject->glRenderableUnit->staticMesh->PrimitiveMap[PrimitiveIndex];
 					
 					Camera.position = Vector3(BakingPrimitive.UV1CentroidPosition.x, BakingPrimitive.UV1CentroidPosition.y, BakingPrimitive.UV1CentroidPosition.z);
 					Camera.position += BakingPrimitive.UV1Normal * Vector3(1.0, 1.0, 1.0);
@@ -2295,7 +2475,7 @@ namespace Core
 					float Top;
 					float ZNear;
 					float ZFar;
-					BeingBakingObject->glRenderableUnit->staticMesh.lock()->CalculateOrthoParameters(
+					BeingBakingObject->glRenderableUnit->staticMesh->CalculateOrthoParameters(
 						PrimitiveIndex,
 						1,
 						*Camera.GetViewMatrix(),
@@ -2343,8 +2523,8 @@ namespace Core
 					m_ResidualImage0->Fetch(m_pResidualImageRawData);
 				}
 				
-				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureWidth();
-				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh.lock()->GetRadiosityTextureHeight();
+				int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureWidth();
+				int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureHeight();
 
 				std::map<int32, float> PrimitiveYMap;
 				std::map<int32, Vector3> PrimitiveRGBMap;
@@ -2384,7 +2564,7 @@ namespace Core
 				}
 				
 				Vector3 RGB = PrimitiveRGBMap[MaxYPrimitiveID];
-				float ScaledUV1Area = BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID].ScaledUV1Area;
+				float ScaledUV1Area = BeingBakingObject->glRenderableUnit->staticMesh->PrimitiveMap[MaxYPrimitiveID].ScaledUV1Area;
 				RGB.x /= ScaledUV1Area;
 				RGB.y /= ScaledUV1Area;
 				RGB.z /= ScaledUV1Area;
@@ -2393,11 +2573,13 @@ namespace Core
 				if (m_currentMaxY < m_thresholdY)
 				{
 					m_baking = False;
+					RestoreLightMesh();
+					
 					return ;
 				}
 				
-				BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID].Energy = Vector4(RGB.x, RGB.y, RGB.z, 1.0);
-				RemainingPrimitives.push(BeingBakingObject->glRenderableUnit->staticMesh.lock()->PrimitiveMap[MaxYPrimitiveID]);
+				BeingBakingObject->glRenderableUnit->staticMesh->PrimitiveMap[MaxYPrimitiveID].Energy = Vector4(RGB.x, RGB.y, RGB.z, 1.0);
+				RemainingPrimitives.push(BeingBakingObject->glRenderableUnit->staticMesh->PrimitiveMap[MaxYPrimitiveID]);
 
 				for (int32 i = 0; i < RadiosityTextureHeight; ++i)
 				{

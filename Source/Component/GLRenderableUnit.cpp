@@ -8,8 +8,8 @@ namespace Core
 
 	void GLRenderableUnit::BeginUse()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->BeginUse();
+		if (staticMesh)
+			staticMesh->BeginUse();
 
 		if (!material.expired())
 			material.lock()->BeginUse();
@@ -26,8 +26,8 @@ namespace Core
 
 	void GLRenderableUnit::Activate()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Activate();
+		if (staticMesh)
+			staticMesh->Activate();
 
 		if (!material.expired())
 			material.lock()->Activate();
@@ -35,8 +35,8 @@ namespace Core
 
 	void GLRenderableUnit::Inactivate()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Inactivate();
+		if (staticMesh)
+			staticMesh->Inactivate();
 
 		if (!material.expired())
 			material.lock()->Inactivate();
@@ -44,8 +44,8 @@ namespace Core
 
 	void GLRenderableUnit::ActiveDrawGBuffer()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Activate();
+		if (staticMesh)
+			staticMesh->Activate();
 
 		if (!DrawGBufferMaterial.expired())
 			DrawGBufferMaterial.lock()->Activate();
@@ -53,8 +53,8 @@ namespace Core
 
 	void GLRenderableUnit::InactiveDrawGBuffer()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Inactivate();
+		if (staticMesh)
+			staticMesh->Inactivate();
 
 		if (!DrawGBufferMaterial.expired())
 			DrawGBufferMaterial.lock()->Inactivate();
@@ -62,8 +62,8 @@ namespace Core
 	
 	void GLRenderableUnit::ActivateDrawingID()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Activate();
+		if (staticMesh)
+			staticMesh->Activate();
 
 		if (!DrawIDMaterial.expired())
 			DrawIDMaterial.lock()->Activate();
@@ -71,8 +71,8 @@ namespace Core
 
 	void GLRenderableUnit::InactivateDrawingID()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Inactivate();
+		if (staticMesh)
+			staticMesh->Inactivate();
 
 		if (!DrawIDMaterial.expired())
 			DrawIDMaterial.lock()->Inactivate();
@@ -80,8 +80,8 @@ namespace Core
 	
 	void GLRenderableUnit::ActiveComputingFormFactor()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Activate();
+		if (staticMesh)
+			staticMesh->Activate();
 
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->Activate();
@@ -89,8 +89,8 @@ namespace Core
 
 	void GLRenderableUnit::InactiveComputingFormFactor()
 	{
-		if (!staticMesh.expired())
-			staticMesh.lock()->Inactivate();
+		if (staticMesh)
+			staticMesh->Inactivate();
 
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->Inactivate();

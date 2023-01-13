@@ -536,7 +536,7 @@ namespace llss
 		}
 	}
 	
-	void FindSeamEdges(std::shared_ptr<Core::StaticMesh> mesh, std::vector<SeamEdge>& seamEdges, int W, int H, Core::Bool flipY)
+	void FindSeamEdges(Core::StaticMesh* mesh, std::vector<SeamEdge>& seamEdges, int W, int H, Core::Bool flipY)
 	{
 		using namespace std;
 		struct tupleHasher // Hash pairs of vectors
@@ -968,7 +968,7 @@ namespace llss
 		}
 	}
 
-	void Stitch(std::shared_ptr<Core::StaticMesh> mesh, Core::int32 Width, Core::int32 Height, float* lightmapRawData, float* maskMapRawData)
+	void Stitch(Core::StaticMesh* mesh, Core::int32 Width, Core::int32 Height, float* lightmapRawData, float* maskMapRawData)
 	{
 		int W, H, comp;
 		RGBA* rawLightmap = (RGBA*)lightmapRawData;

@@ -64,6 +64,7 @@
 		void main()
 		{
 		    gl_Position = viewPerspectiveProjectionMatrix * object2World * vPos;
+		    //gl_Position = viewPerspectiveProjectionMatrix * vPos;
 		    normal = vNormal;
 		    tangent = vTangent;
 		    binormal = vBinormal;
