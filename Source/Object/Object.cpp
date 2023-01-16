@@ -245,13 +245,6 @@ namespace Core
 		glRenderableUnit->InactiveComputingFormFactor();
 	}
 	
-	void Object::SetShootingPrimitive(float PrimitiveID)
-	{
-		rlRenderableUnit->Activate();
-		rlRenderableUnit->SetShootingPrimitive(PrimitiveID);
-		rlRenderableUnit->Inactivate();
-	}
-	
 	Matrix4x4 * Object::GetObject2WorldMatrix()
 	{
 		return &m_object2WorldMatrix;

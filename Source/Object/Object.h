@@ -92,7 +92,6 @@ namespace Core
 		void BeforeComputeFormFactor(OpenGLDevice* pDevice);
 		void DrawPrimitive(OpenGLDevice * pDevice, int32 StartPrimitive, int32 PrimitiveCount);
 		void AfterComputeFormFactor();
-		void SetShootingPrimitive(float PrimitiveID);
 		Matrix4x4 * GetObject2WorldMatrix() ;
 		Vector3 GetZDirection();
 		Vector3 GetYDirection();

@@ -26,7 +26,6 @@ namespace Core
 		void Commit();
 		void Activate();
 		void Inactivate();
-		void SetShootingPrimitive(float PrimitiveID);
 		virtual void UpdateAhead() override;
 		virtual void UpdateBehind() override;
 		~RLRenderableUnit();

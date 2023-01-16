@@ -337,15 +337,6 @@ namespace Core
 		rlBindPrimitive(RL_PRIMITIVE, RL_NULL_PRIMITIVE);
 		rlCheckError();
 	}
-
-	void RLRenderableUnit::SetShootingPrimitive(float PrimitiveID)
-	{
-		int32 Loc = rlGetUniformLocation(m_program, "ShootingPrimitiveID");
-		rlCheckError();
-		
-		rlUniform1f(Loc, PrimitiveID);
-		rlCheckError();
-	}
 	
 	void RLRenderableUnit::UpdateAhead()
 	{
