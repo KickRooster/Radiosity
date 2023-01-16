@@ -11,7 +11,6 @@ namespace Core
 		std::shared_ptr<StaticMesh> staticMesh;
 		std::weak_ptr<Material> material;
 		std::weak_ptr<Material> DrawGBufferMaterial;
-		std::weak_ptr<Material> DrawIDMaterial;
 		std::weak_ptr<Material> ComputeFormFactorMaterial;
 
 		GLRenderableUnit();
@@ -20,8 +19,6 @@ namespace Core
 		void Inactivate();
 		void ActiveDrawGBuffer();
 		void InactiveDrawGBuffer();
-		void ActivateDrawingID();
-		void InactivateDrawingID();
 		void ActiveComputingFormFactor();
 		void InactiveComputingFormFactor();
 		~GLRenderableUnit();

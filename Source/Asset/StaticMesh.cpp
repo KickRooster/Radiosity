@@ -48,6 +48,8 @@ namespace Core
 		float* pPrimitiveSurfaceAreas = new float[vertexCount / 3];
 		int32* pPrimitiveIDs = new int32[vertexCount / 3];
 
+		float MinTriangleSurfaceArea = 100000.0f;
+
 		PrimitiveMap.clear();
 		
 		for (int32 triangleIndex = 0; triangleIndex < indexCount / 3; ++triangleIndex)
@@ -68,6 +70,11 @@ namespace Core
 			
 			float triangleSurfaceArea = getTriangleArea(WorldPos0XYZ, WorldPos1XYZ, WorldPos2XYZ);
 
+			if (triangleSurfaceArea < MinTriangleSurfaceArea)
+			{
+				MinTriangleSurfaceArea = triangleSurfaceArea;
+			}
+			
 			pPrimitiveSurfaceAreas[triangleIndex] = triangleSurfaceArea;
 
 			m_totalSurfaceArea += triangleSurfaceArea;

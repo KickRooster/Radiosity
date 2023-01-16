@@ -87,7 +87,6 @@ namespace Core
 		void BeforeBaking();
 		void UpdateRLMatrix(RLDevice * pDevice);
 		void DrawGBuffer(OpenGLDevice * pDevice);
-		void DrawID(OpenGLDevice * pDevice);
 		void ComputeFormFactor(OpenGLDevice * pDevice);
 		void BeforeComputeFormFactor(OpenGLDevice* pDevice);
 		void DrawPrimitive(OpenGLDevice * pDevice, int32 StartPrimitive, int32 PrimitiveCount);

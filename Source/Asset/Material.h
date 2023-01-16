@@ -72,7 +72,6 @@ namespace Core
 
 		std::weak_ptr<Texture> albedoTexture;
 		std::weak_ptr<GLTexture> VisibilityTexture;
-		std::weak_ptr<GLTexture> IDCumeMap;
 		std::weak_ptr<GLImageTexture> RadiosityImage0;
 		std::weak_ptr<GLImageTexture> RadiosityImage1;
 		std::weak_ptr<GLImageTexture> ResidualImage0;

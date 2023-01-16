@@ -96,13 +96,6 @@ namespace Core
 			albedoTexture.lock()->Activate();
 		}
 
-		if (!IDCumeMap.expired())
-		{
-			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, IDCubeMapSamplerName.c_str());
-			++SamplerSlotIndex;
-			IDCumeMap.lock()->Activate();
-		}
-
 		if (!VisibilityTexture.expired())
 		{
 			m_glProgram->ActivateTextureSlot(SamplerSlotIndex, VisibilitySamplerName.c_str());
@@ -171,12 +164,7 @@ namespace Core
 
 		if (!albedoTexture.expired())
 			albedoTexture.lock()->Inactivate();
-
-		if (!IDCumeMap.expired())
-		{
-			IDCumeMap.lock()->Inactivate();
-		}
-
+		
 		if (!VisibilityTexture.expired())
 		{
 			VisibilityTexture.lock()->Inactivate();

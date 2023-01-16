@@ -32,14 +32,9 @@
 			ivec4 FrameCount;
 			ivec4 RGBMEncoding;
 		};
-		layout (std140, binding = 1) uniform CubeMatrices
+		layout (std140, binding = 1) uniform GlobalRenderData
 		{
-			mat4 ViewProjection_Positive_X;
-			mat4 ViewProjection_Negative_X;
-			mat4 ViewProjection_Positive_Y;
-			mat4 ViewProjection_Negative_Y;
-			mat4 ViewProjection_Positive_Z;
-			mat4 ViewProjection_Negative_Z;
+			vec4 VisibilityTextureInfo;
 		};
 		layout (std140, binding = 2) uniform ShooterInfo
 		{
@@ -112,7 +107,19 @@
 			const float pi = 3.1415926535;
 			float Fij = max(cosi * cosj, 0) / (pi * distance2 + ShooterSurfaceArea.x);
 
-			float RLVisable = texture(VisibilitySampler, uv1).x;
+			vec2 VisibilityTexturePixelSize = vec2(1.0 / VisibilityTextureInfo.x, 1.0 / VisibilityTextureInfo.y);
+
+			float RLVisable00 = texture(VisibilitySampler, uv1).x;
+			float RLVisable01 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(-1.0, 0)).x;
+			float RLVisable02 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(-1.0, 1.0)).x;
+			float RLVisable03 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(0, 1.0)).x;
+			float RLVisable04 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(1.0, 1.0)).x;
+			float RLVisable05 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(1.0, 0)).x;
+			float RLVisable06 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(1.0, -1.0)).x;
+			float RLVisable07 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(0, -1.0)).x;
+			float RLVisable08 = texture(VisibilitySampler, uv1 + VisibilityTexturePixelSize * vec2(-1.0, -1.0)).x;
+			
+			float RLVisable = (RLVisable00 + RLVisable01 + RLVisable03 + RLVisable05 + RLVisable07) / 5.0;
 			
 			Fij *= RLVisable;
 			

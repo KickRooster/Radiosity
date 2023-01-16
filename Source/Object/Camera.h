@@ -19,14 +19,9 @@ namespace Core
 		int32 RGBMEncoding[4];
 	};
 
-	struct CubeMatrices
+	struct GlobalRenderData
 	{
-		Matrix4x4 ViewProjection_Positive_X;
-		Matrix4x4 ViewProjection_Negative_X;
-		Matrix4x4 ViewProjection_Positive_Y;
-		Matrix4x4 ViewProjection_Negative_Y;
-		Matrix4x4 ViewProjection_Positive_Z;
-		Matrix4x4 ViewProjection_Negative_Z;
+		Vector4 VisibilityTextureInfo;	//	width, height
 	};
 
 	struct ShooterInfo

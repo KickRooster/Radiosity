@@ -199,20 +199,6 @@ namespace Core
 		glRenderableUnit->InactiveDrawGBuffer();
 	}
 	
-	void Object::DrawID(OpenGLDevice * pDevice)
-	{
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);
-		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatricesIT, sizeof(m_object2WorldITMatrix), &m_object2WorldITMatrix);
-
-		glRenderableUnit->ActivateDrawingID();
-		pDevice->DrawElements(
-			GLTopology_Triangles,
-			glRenderableUnit->staticMesh->indexCount,
-			GLDataType_UnsignedInt,
-			Null);
-		glRenderableUnit->InactivateDrawingID();
-	}
-	
 	void Object::ComputeFormFactor(OpenGLDevice* pDevice)
 	{
 		pDevice->UploadGlobalShaderData(GLShaderDataAlias_ObjectMatrices, sizeof(m_object2WorldMatrix), &m_object2WorldMatrix);

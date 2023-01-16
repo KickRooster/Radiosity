@@ -16,10 +16,7 @@ namespace Core
 
 		if (!DrawGBufferMaterial.expired())
 			DrawGBufferMaterial.lock()->BeginUse();
-
-		if (!DrawIDMaterial.expired())
-			DrawIDMaterial.lock()->BeginUse();
-
+		
 		if (!ComputeFormFactorMaterial.expired())
 			ComputeFormFactorMaterial.lock()->BeginUse();
 	}
@@ -58,24 +55,6 @@ namespace Core
 
 		if (!DrawGBufferMaterial.expired())
 			DrawGBufferMaterial.lock()->Inactivate();
-	}
-	
-	void GLRenderableUnit::ActivateDrawingID()
-	{
-		if (staticMesh)
-			staticMesh->Activate();
-
-		if (!DrawIDMaterial.expired())
-			DrawIDMaterial.lock()->Activate();
-	}
-
-	void GLRenderableUnit::InactivateDrawingID()
-	{
-		if (staticMesh)
-			staticMesh->Inactivate();
-
-		if (!DrawIDMaterial.expired())
-			DrawIDMaterial.lock()->Inactivate();
 	}
 	
 	void GLRenderableUnit::ActiveComputingFormFactor()

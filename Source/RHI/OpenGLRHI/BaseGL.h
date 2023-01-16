@@ -25,7 +25,7 @@ namespace Core
 	enum GLShaderDataAlias : int32
 	{
 		GLShaderDataAlias_CameraUniformData,
-		GLShaderDataAlias_CubeMatrices,
+		GLShaderDataAlias_GlobalRenderData,
 		GLShaderDataAlias_ShooterInfo,
 		GLShaderDataAlias_ObjectMatrices,
 		GLShaderDataAlias_ObjectMatricesIT,

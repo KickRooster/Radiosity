@@ -23,14 +23,9 @@
 			ivec4 FrameCount;
 			ivec4 RGBMEncoding;
 		};
-		layout (std140, binding = 1) uniform CubeMatrices
+		layout (std140, binding = 1) uniform GlobalRenderData
 		{
-			mat4 ViewProjection_Positive_X;
-			mat4 ViewProjection_Negative_X;
-			mat4 ViewProjection_Positive_Y;
-			mat4 ViewProjection_Negative_Y;
-			mat4 ViewProjection_Positive_Z;
-			mat4 ViewProjection_Negative_Z;
+			vec4 VisibilityTextureInfo;
 		};
 		layout (std140, binding = 2) uniform ShooterInfo
 		{

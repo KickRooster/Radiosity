@@ -52,13 +52,7 @@ namespace Core
 		float m_thresholdY;
 		float m_currentMaxY;
 		std::queue<Primitive> RemainingPrimitives;
-
-		//	Visibility Pass
-		const int32 PrimitiveIDTextureWidth = 1024;
-		const int32 PrimitiveIDTextureHeight = 1024;
-		std::unique_ptr<GLFrameBuffer> m_visibilityPassFrameBuffer;
-		std::shared_ptr<GLTexture> m_primitiveIDCubeMap;
-
+		
 		//	Reconstrucsion Pass
 		std::unique_ptr<GLFrameBuffer> m_reconstructionPassFrameBuffer;
 		std::unique_ptr<GLTexture> m_RadiosityTexture;
@@ -80,7 +74,6 @@ namespace Core
 		//	Editor Builtin Resources
 		std::shared_ptr<Material> m_arealLightMaterial;
 		std::shared_ptr<Material> m_DrawGBufferMaterial;
-		std::shared_ptr<Material> m_DrawIDMaterial;
 		std::shared_ptr<Material> m_ComputeFormFactorMaterial;
 		std::shared_ptr<StaticMesh> m_DefaultLightMesh;
 
@@ -109,8 +102,6 @@ namespace Core
 		Vector2 Hammersley(uint32 Index, uint32 NumSamples);
 		Vector3 UniformSampleHemisphere(float u, float v);
 		const int32 SamplerCount = 512;
-		
-		CubeMatrices CubeMatrices;
 		
 	public:
 		WindowsEditor();
