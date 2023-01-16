@@ -1706,28 +1706,9 @@ namespace Core
 			OffsetedY = 0 ;
 			break ;
 		}
-
-		//	Wrap coordinate, clamp
-		if (OffsetedX < 0)
-		{
-			OffsetedX = 0;
-		}
-		else if(OffsetedX >= Width)
-		{
-			OffsetedX = Width - 1;
-		}
-		
-		if (OffsetedY < 0)
-		{
-			OffsetedY = 0;
-		}
-		else if (OffsetedY >= Height)
-		{
-			OffsetedY = Height - 1;
-		}
 	}
 
-	void WindowsEditor::DilateLightmap(float* RadiosityImageRawData, float* MaskRawData, int32 Width, int32 Height, float* OutRadiosityImageData)
+	void WindowsEditor::DilateLightmap(float* RadiosityImageRawData, int32 Width, int32 Height, float* OutRadiosityImageData)
 	{
 		Vector2 Offsets[8] = {
 			Vector2(-1.0f, 0),
@@ -1749,9 +1730,11 @@ namespace Core
 				OutRadiosityImageData[(Y * Height + X) * 4 + 1] = RadiosityImageRawData[(Y * Height + X) * 4 + 1];
 				OutRadiosityImageData[(Y * Height + X) * 4 + 2] = RadiosityImageRawData[(Y * Height + X) * 4 + 2];
 				OutRadiosityImageData[(Y * Height + X) * 4 + 3] = RadiosityImageRawData[(Y * Height + X) * 4 + 3];
-				
+
 				//	gutter pixle, need dilating.
-				if (MaskRawData[(Y * Height + X) * 4] == 0)
+				if (RadiosityImageRawData[(Y * Height + X) * 4 + 0] == 0 &&
+					RadiosityImageRawData[(Y * Height + X) * 4 + 1] == 0 &&
+					RadiosityImageRawData[(Y * Height + X) * 4 + 2] == 0)
 				{
 					Vector2 UV = Vector2(X, Y);
 					float MinDistance = 10.0f;
@@ -1761,6 +1744,12 @@ namespace Core
 						int32 OffsetedX;
 						int32 OffsetedY;
 						CalculateOffsetedCoordinate(Direction, Width, Height, X, Y, OffsetedX, OffsetedY);
+
+						if (OffsetedX < 0 || OffsetedX >= Width || OffsetedY < 0 || OffsetedY >= Height)
+						{
+							continue;
+						}
+						
 						Vector3 OffsetedRadiosity = Vector3(
 							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 0],
 							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 1],
@@ -1768,7 +1757,9 @@ namespace Core
 						
 						Vector2 OffsetedUV = Vector2(X, Y) + Offsets[Direction];
 						
-						if (MaskRawData[(OffsetedY * Height + OffsetedX) * 4] > 0)
+						if (RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 0] > 0 ||
+							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 1] > 0 ||
+							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 2] > 0)
 						{
 							float Distance = Length(UV - OffsetedUV);
 
@@ -1777,12 +1768,20 @@ namespace Core
 								int32 ProjectedX;
 								int32 ProjectedY;
 								CalculateOffsetedCoordinate(Direction, Width, Height, OffsetedX, OffsetedY, ProjectedX, ProjectedY);
+
+								if (ProjectedX < 0 || ProjectedX >= Width || ProjectedY < 0 || ProjectedY >= Height)
+								{
+									continue;
+								}
+								
 								Vector3 ProjectedRadiosity = Vector3(
 									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0],
 									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 1],
 									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 2]);
 								
-								if (MaskRawData[(ProjectedY * Height + ProjectedX) * 4] > 0)
+								if (RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0] > 0 ||
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0] > 0 ||
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0] > 0)
 								{
 									Vector3 Delta = OffsetedRadiosity - ProjectedRadiosity;
 									
@@ -1877,8 +1876,7 @@ namespace Core
 		m_RLBakeFrameBuffer(std::make_unique<RLFrameBuffer>()),
 		m_RLBakeColorAttach(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_RLBakePackingBuffer(std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer)),
-		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
-		m_pMaskRawData(Null),
+		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Bilinear)),
 		m_frameCount(0),
 		m_LightmapEncodingInRGBM(False),
 		m_baking(False),
@@ -1964,15 +1962,15 @@ namespace Core
 
 		ImGui::Begin("Main Window");//, &mainOpened, windowFlags);
 		//menuBar();
-		//if (ImGui::Button("GLSL Reload"))
-		//{
-		//	m_assetManager->ReloadGLShader();
-		//}
-		//ImGui::SameLine();
-		//if (ImGui::Button("RLSL Reload"))
-		//{
-		//	m_assetManager->ReloadRLShader();
-		//}
+		if (ImGui::Button("GLSL Reload"))
+		{
+			m_assetManager->ReloadGLShader();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("RLSL Reload"))
+		{
+			m_assetManager->ReloadRLShader();
+		}
 		
 		if (ImGui::Button("Create Light"))
 		{
@@ -2051,7 +2049,7 @@ namespace Core
 			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
 			
 			float* DilatedRadiosityRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
-			DilateLightmap(m_pRadiosityImageRawData, m_pMaskRawData, RadiosityTextureWidth, RadiosityTextureHeight, DilatedRadiosityRawData);
+			DilateLightmap(m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight, DilatedRadiosityRawData);
 			
 			LightmapName += "_D";
 			SaveLightmap(LightmapName, DilatedRadiosityRawData, RadiosityTextureWidth, RadiosityTextureHeight);
@@ -2126,13 +2124,13 @@ namespace Core
 		ImGui::SetNextWindowPos(ImVec2(600, 0));
 		ImGui::SetNextWindowSize(ImVec2(600, 600));
 
-		ImGui::Begin("Mask View");
+		ImGui::Begin("Debug View");
 		ImVec2 DebugViewRegion = ImGui::GetContentRegionAvail();
 
-		if (m_GLMaskAttach)
+		if (m_GLPositionAttach)
 		{
 			ImGui::Image(
-				reinterpret_cast<void *>(m_GLMaskAttach->GetID64()),
+				reinterpret_cast<void *>(m_GLPositionAttach->GetID64()),
 			DebugViewRegion,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -2365,18 +2363,11 @@ namespace Core
 			RadiosityTextureWidth,
 			RadiosityTextureHeight,
 			Null);
-
-			m_GLMaskAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_GLMaskAttach->LoadImage(
-			RadiosityTextureWidth,
-			RadiosityTextureHeight,
-			Null);
 			
 			m_GLGBufferFrameBuffer = std::make_unique<GLFrameBuffer>();
 			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
 			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach->GetTarget(), m_GLPositionAttach.get());
 			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach->GetTarget(), m_GLNormalAttach.get());
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor2, m_GLMaskAttach->GetTarget(), m_GLMaskAttach.get());
 			
 			m_GLGBufferFrameBuffer->Activate();
 			{
@@ -2387,23 +2378,16 @@ namespace Core
 
 			float* m_pPositionRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			float* m_pNormalRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
-
-			if (m_pMaskRawData)
-			{
-				delete[] m_pMaskRawData;
-			}
-			m_pMaskRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			
 			m_GLPositionAttach->Fetch(m_pPositionRawData);
 			m_GLNormalAttach->Fetch(m_pNormalRawData);
-			m_GLMaskAttach->Fetch(m_pMaskRawData);
-			
+
 			m_RLBakingObjectPosition->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pPositionRawData);
 			m_RLBakingObjectNormal->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pNormalRawData);
 		
 			delete[] m_pPositionRawData;
 			delete[] m_pNormalRawData;
-			
+
 			m_RLBakeColorAttach->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, Null);
 			m_RLBakeFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLBakeColorAttach.get());
 
@@ -2755,12 +2739,14 @@ namespace Core
 
 	WindowsEditor::~WindowsEditor()
 	{
-		delete[] m_pRadiosityImageRawData;
-		delete[] m_pResidualImageRawData;
-		
-		if (m_pMaskRawData)
+		if (m_pRadiosityImageRawData)
 		{
-			delete[] m_pMaskRawData;
+			delete[] m_pRadiosityImageRawData;
+		}
+
+		if (m_pResidualImageRawData)
+		{
+			delete[] m_pResidualImageRawData;
 		}
 	}
 }

@@ -51,7 +51,6 @@
 
 		layout(location = 0) out vec4 attch0;
 		layout(location = 1) out vec4 attch1;
-		layout(location = 2) out vec4 attch2;
 
 		void main()
 		{
@@ -63,6 +62,4 @@
 			vec4 WorldNormal4 = object2WorldIT * Normal4;
 			attch1.xyz = normalize(WorldNormal4.xyz);
 			attch1.w = 1.0;
-
-			attch2 = vec4(1.0, 1.0, 1.0, 1.0);
 		};

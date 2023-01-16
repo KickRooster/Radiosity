@@ -37,8 +37,6 @@ namespace Core
 		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLPositionAttach;
 		std::unique_ptr<GLTexture> m_GLNormalAttach;
-		std::unique_ptr<GLTexture> m_GLMaskAttach;
-		float* m_pMaskRawData;
 
 		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition;	//	float
 		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal;	//	float
@@ -103,7 +101,7 @@ namespace Core
 		std::shared_ptr<Object> createAreaLight(int32 Index);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height);
-		void DilateLightmap(float* RadiosityImageRawData, float* MaskRawData, int32 Width, int32 Height, float* OutRadiosityImageData);
+		void DilateLightmap(float* RadiosityImageRawData, int32 Width, int32 Height, float* OutRadiosityImageData);
 		void InstantiateScene(Scene* CurrentScene);
 		void RestoreLightMesh();
 		
