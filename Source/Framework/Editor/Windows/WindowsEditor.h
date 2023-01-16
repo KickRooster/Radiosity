@@ -103,6 +103,7 @@ namespace Core
 		std::shared_ptr<Object> createAreaLight(int32 Index);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height);
+		void DilateLightmap(float* RadiosityImageRawData, float* MaskRawData, int32 Width, int32 Height, float* OutRadiosityImageData);
 		void InstantiateScene(Scene* CurrentScene);
 		void RestoreLightMesh();
 		

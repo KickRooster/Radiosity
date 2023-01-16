@@ -99,8 +99,13 @@ namespace Core
 	{
 		return x.x * y.y - y.x * x.y;
 	}
-
+	
 	float Length(const Vector3 & v)
+	{
+		return glm::length(v);
+	}
+
+	float Length(const Vector2& v)
 	{
 		return glm::length(v);
 	}

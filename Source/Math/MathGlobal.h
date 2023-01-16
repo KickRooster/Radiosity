@@ -45,8 +45,10 @@ namespace Core
 	Vector3 Cross(const Vector3 & x, const Vector3 & y);
 
 	float Cross(const Vector2 & x, const Vector2 & y);
-
+	
 	float Length(const Vector3 & v);
+	
+	float Length(const Vector2& v);
 
 	//	radians,����
 	//	degree,�Ƕ�

@@ -1665,6 +1665,149 @@ namespace Core
 		delete[] LightmapRawData;
 	}
 
+	void CalculateOffsetedCoordinate(int32 Direction, int32 Width, int32 Height, int32 X, int32 Y, int32& OffsetedX, int32& OffsetedY)
+	{
+		switch (Direction)
+		{
+		case 0:
+			OffsetedX = X - 1;
+			OffsetedY = Y;
+			break ;
+		case 1:
+			OffsetedX = X + 1;
+			OffsetedY = Y;
+			break;
+		case 2:
+			OffsetedX = X;
+			OffsetedY = Y + 1;
+			break;
+		case 3:
+			OffsetedX = X;
+			OffsetedY = Y - 1;
+			break ;
+		case 4:
+			OffsetedX = X - 1;
+			OffsetedY = Y + 1;
+			break;
+		case 5:
+			OffsetedX = X + 1;
+			OffsetedY = Y + 1;
+			break;
+		case 6:
+			OffsetedX = X + 1;
+			OffsetedY = Y - 1;
+			break;
+		case 7:
+			OffsetedX = X - 1;
+			OffsetedY = Y - 1;
+			break ;
+		default:
+			OffsetedX = 0;
+			OffsetedY = 0 ;
+			break ;
+		}
+
+		//	Wrap coordinate, clamp
+		if (OffsetedX < 0)
+		{
+			OffsetedX = 0;
+		}
+		else if(OffsetedX >= Width)
+		{
+			OffsetedX = Width - 1;
+		}
+		
+		if (OffsetedY < 0)
+		{
+			OffsetedY = 0;
+		}
+		else if (OffsetedY >= Height)
+		{
+			OffsetedY = Height - 1;
+		}
+	}
+
+	void WindowsEditor::DilateLightmap(float* RadiosityImageRawData, float* MaskRawData, int32 Width, int32 Height, float* OutRadiosityImageData)
+	{
+		Vector2 Offsets[8] = {
+			Vector2(-1.0f, 0),
+			Vector2(1.0f, 0),
+			Vector2(0, 1.0f),
+			Vector2(0, -1.0f),
+			Vector2(-1.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, -1.0f),
+			Vector2(-1.0f, -1.0f),
+		};
+		
+		for (int32 Y = 0; Y < Height; ++Y)
+		{
+			for (int32 X = 0; X < Width; ++X)
+			{
+				//	As a fallback ahead.
+				OutRadiosityImageData[(Y * Height + X) * 4 + 0] = RadiosityImageRawData[(Y * Height + X) * 4 + 0];
+				OutRadiosityImageData[(Y * Height + X) * 4 + 1] = RadiosityImageRawData[(Y * Height + X) * 4 + 1];
+				OutRadiosityImageData[(Y * Height + X) * 4 + 2] = RadiosityImageRawData[(Y * Height + X) * 4 + 2];
+				OutRadiosityImageData[(Y * Height + X) * 4 + 3] = RadiosityImageRawData[(Y * Height + X) * 4 + 3];
+				
+				//	gutter pixle, need dilating.
+				if (MaskRawData[(Y * Height + X) * 4] == 0)
+				{
+					Vector2 UV = Vector2(X, Y);
+					float MinDistance = 10.0f;
+					
+					for (int32 Direction = 0; Direction < 8; ++Direction)
+					{
+						int32 OffsetedX;
+						int32 OffsetedY;
+						CalculateOffsetedCoordinate(Direction, Width, Height, X, Y, OffsetedX, OffsetedY);
+						Vector3 OffsetedRadiosity = Vector3(
+							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 0],
+							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 1],
+							RadiosityImageRawData[(OffsetedY * Height + OffsetedX) * 4 + 2]);
+						
+						Vector2 OffsetedUV = Vector2(X, Y) + Offsets[Direction];
+						
+						if (MaskRawData[(OffsetedY * Height + OffsetedX) * 4] > 0)
+						{
+							float Distance = Length(UV - OffsetedUV);
+
+							if (Distance < MinDistance)
+							{
+								int32 ProjectedX;
+								int32 ProjectedY;
+								CalculateOffsetedCoordinate(Direction, Width, Height, OffsetedX, OffsetedY, ProjectedX, ProjectedY);
+								Vector3 ProjectedRadiosity = Vector3(
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0],
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 1],
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 2]);
+								
+								if (MaskRawData[(ProjectedY * Height + ProjectedX) * 4] > 0)
+								{
+									Vector3 Delta = OffsetedRadiosity - ProjectedRadiosity;
+									
+									OutRadiosityImageData[(Y * Height + X) * 4 + 0] = OffsetedRadiosity.r + Delta.r;
+									OutRadiosityImageData[(Y * Height + X) * 4 + 1] = OffsetedRadiosity.g + Delta.g;
+									OutRadiosityImageData[(Y * Height + X) * 4 + 2] = OffsetedRadiosity.b + Delta.b;
+									OutRadiosityImageData[(Y * Height + X) * 4 + 3] = 1.0f;
+								}
+								else
+								{
+									OutRadiosityImageData[(Y * Height + X) * 4 + 0] = OffsetedRadiosity.r;
+									OutRadiosityImageData[(Y * Height + X) * 4 + 1] = OffsetedRadiosity.g;
+									OutRadiosityImageData[(Y * Height + X) * 4 + 2] = OffsetedRadiosity.b;
+									OutRadiosityImageData[(Y * Height + X) * 4 + 3] = 1.0f;
+								}
+								
+								MinDistance = Distance;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	void WindowsEditor::InstantiateScene(Scene* CurrentScene)
 	{
 		//	ʵ�������������л��õĶ���
@@ -1907,12 +2050,12 @@ namespace Core
 			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
 			
-			StaticMesh* staticMesh = BeingBakingObject->glRenderableUnit->staticMesh.get();
-			std::shared_ptr<Material> material = BeingBakingObject->glRenderableUnit->material.lock();
-			llss::Stitch(staticMesh, RadiosityTextureWidth, RadiosityTextureHeight, m_pRadiosityImageRawData, m_pMaskRawData);
-
-			LightmapName += "_Stitched";
-			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
+			float* DilatedRadiosityRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			DilateLightmap(m_pRadiosityImageRawData, m_pMaskRawData, RadiosityTextureWidth, RadiosityTextureHeight, DilatedRadiosityRawData);
+			
+			LightmapName += "_D";
+			SaveLightmap(LightmapName, DilatedRadiosityRawData, RadiosityTextureWidth, RadiosityTextureHeight);
+			delete[] DilatedRadiosityRawData;
 			
 			m_assetManager->ScanLightmap();
 			m_assetManager->ReloadLightmap();
