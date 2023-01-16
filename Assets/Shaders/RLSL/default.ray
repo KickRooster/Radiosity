@@ -1,5 +1,3 @@
-uniform float ShootingPrimitiveID;
-
 varying vec4 CustomData;
 
 void main()

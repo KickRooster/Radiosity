@@ -13,43 +13,6 @@ void setup()
 	rl_OutputRayCount = 1;
 }
 
-#define PI 3.141592654
-
-vec4 UniformSampleHemisphere( vec2 E )
-{
-	float Phi = 2.0 * PI * E.x;
-	float CosTheta = E.y;
-	float SinTheta = sqrt( 1.0 - CosTheta * CosTheta );
-
-	vec3 H = vec3(SinTheta * cos( Phi ), SinTheta * sin( Phi ), CosTheta);
-	//H.x = SinTheta * cos( Phi );
-	//H.y = SinTheta * sin( Phi );
-	//H.z = CosTheta;
-
-	float PDF = 1.0 / (2.0 * PI);
-
-	return vec4(H.x, H.y, H.z, PDF );
-}
-
-void CreateBasis(vec3 v, inout mat3 basis)
-{
-	vec3 perp;
-	
-	if (abs(v.x) > abs(v.y))
-	{
-		float invLen = 1.0 / sqrt(v.x*v.x + v.z*v.z);
-		perp = vec3(-v.z*invLen, 0, v.x*invLen);
-	}
-	else
-	{
-		float invLen = 1.0 / sqrt(v.y*v.y + v.z*v.z);
-		perp = vec3(0, v.z*invLen, -v.y*invLen);
-	}
-	
-	vec3 perp2 = cross(v, perp);
-	basis      = mat3(perp.x, perp.y, perp.z, perp2.x, perp2.y, perp2.z, v.x, v.y, v.z);
-}
-
 void main()
 {
 	vec2 uv = rl_FrameCoord.xy / rl_FrameSize.xy;
@@ -57,32 +20,11 @@ void main()
     vec3 WorldNormal = texture2D(normalTexture, uv).xyz;
 
 	//	Shoot to centroid position 
-	for (int i = 0; i < 1; ++i)
-	{
-		vec3 Direction = ShootingPrimitive.Positions[i] - WorldPosition;
+	vec3 Direction = ShootingPrimitive.Positions[0] - WorldPosition;
 
-		createRay();
-   		rl_OutRay.origin              = WorldPosition + WorldNormal * vec3(0.005, 0.005, 0.005);	//	Offset origin
-		rl_OutRay.direction           = normalize(Direction);
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-		emitRay();
-	}
-	
-	return ;
-
-	mat3 basis;
-	CreateBasis(WorldNormal, basis);
-
-	float PixelSize = 1.0 / 512.0;
-
-	for (int i = 0; i < 512; ++i)
-	{
-		vec3 Dir = texture2D(hammersleyTexture, vec2(PixelSize * float(i), 0)).xyz;
-		vec3 TransformedDir = basis * Dir;
-
-		createRay();
-   	 	rl_OutRay.origin              = WorldPosition;
-		rl_OutRay.direction           = TransformedDir;
-		rl_OutRay.defaultPrimitive    = environmentPrimitive;
-	}
+	createRay();
+   	rl_OutRay.origin              = WorldPosition + WorldNormal * vec3(0.005, 0.005, 0.005);	//	Offset origin
+	rl_OutRay.direction           = normalize(Direction);
+	rl_OutRay.defaultPrimitive    = environmentPrimitive;
+	emitRay();
 }
