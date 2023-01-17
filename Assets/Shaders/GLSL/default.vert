@@ -48,7 +48,7 @@
 		out vec3 binormal;
 		out vec3 color;
 		flat out vec4 customData;
-		flat out vec2 uv0;
+		out vec2 uv0;
 		out vec2 uv1;
 		out vec2 uv2;
 		out vec2 uv3;

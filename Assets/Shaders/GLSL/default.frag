@@ -3,7 +3,7 @@
 		in vec3 normal;
 		in vec3 tangent;
 		in vec3 binormal;
-		flat in vec3 color;
+		in vec3 color;
 		flat in vec4 customData;
 		in vec2 uv0;
 		in vec2 uv1;
