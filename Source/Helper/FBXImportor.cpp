@@ -365,8 +365,9 @@ namespace Core
 				switch (k)
 				{
 				case 0:
+					//	XXX:	Flip UV0 Y for OpenGL
 					pStaticMesh->pUV0s[vertexID].x = uv.x;
-					pStaticMesh->pUV0s[vertexID].y = uv.y;
+					pStaticMesh->pUV0s[vertexID].y = 1.0 - uv.y;
 					break;
 				case 1:
 					pStaticMesh->pUV1s[vertexID].x = uv.x;
