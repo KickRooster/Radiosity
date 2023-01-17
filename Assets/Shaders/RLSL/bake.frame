@@ -1,6 +1,5 @@
 uniform sampler2D positionTexture;
 uniform sampler2D normalTexture;
-uniform sampler2D hammersleyTexture;
 uniform primitive environmentPrimitive;
 
 uniformblock ShootingPrimitive

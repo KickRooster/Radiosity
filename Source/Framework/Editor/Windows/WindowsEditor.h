@@ -45,7 +45,6 @@ namespace Core
 		std::unique_ptr<RLTexture2D> m_RLBakeColorAttach;
 		std::unique_ptr<RLBuffer> m_RLBakePackingBuffer;
 		std::shared_ptr<GLTexture> m_GLVisibilityTexture;
-		std::unique_ptr<RLTexture2D> m_RLHammersleyTexture;
 		std::unique_ptr<RLBuffer> m_rlShootingPrimitiveBuffer;
 
 		Bool m_baking;
@@ -97,11 +96,6 @@ namespace Core
 		void DilateLightmap(float* RadiosityImageRawData, int32 Width, int32 Height, float* OutRadiosityImageData);
 		void InstantiateScene(Scene* CurrentScene);
 		void RestoreLightMesh();
-		
-		uint32 ReverseBits(uint32 Value);
-		Vector2 Hammersley(uint32 Index, uint32 NumSamples);
-		Vector3 UniformSampleHemisphere(float u, float v);
-		const int32 SamplerCount = 512;
 		
 	public:
 		WindowsEditor();

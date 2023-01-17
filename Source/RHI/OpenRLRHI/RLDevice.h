@@ -37,7 +37,7 @@ namespace Core
 		void Clear();
 		void SetViewport(int32 xOffset, int32 yOffset, int32 width, int32 height);
 		void SetTransformMatrix(RLprogram Program, void * pTransformMatrix);
-		void BeginBake(RLTexture2D* pPositionTexture, RLTexture2D* pNormalTexture, RLTexture2D* pHammersleyTexture, RLBuffer* ShootingPrimitiveBuffer);
+		void BeginBake(RLTexture2D* pPositionTexture, RLTexture2D* pNormalTexture, RLBuffer* ShootingPrimitiveBuffer);
 		void ExecuteCommands();
 		virtual void UpdateAhead() override;
 		virtual void UpdateBehind() override;

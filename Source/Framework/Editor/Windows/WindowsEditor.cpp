@@ -1829,31 +1829,6 @@ namespace Core
 		}
 	}
 	
-	uint32 WindowsEditor::ReverseBits(uint32 Value)
-	{
-		Value = (Value << 16u) | (Value >> 16u); 
-		Value = ((Value & 0x55555555) << 1u) | ((Value & 0xAAAAAAAA) >> 1u);
-		Value = ((Value & 0x33333333) << 2u) | ((Value & 0xCCCCCCCC) >> 2u);
-		Value = ((Value & 0x0F0F0F0F) << 4u) | ((Value & 0xF0F0F0F0) >> 4u);
-		Value = ((Value & 0x00FF00FF) << 8u) | ((Value & 0xFF00FF00) >> 8u);
-		
-		return  float(Value) * 2.3283064365386963e-10;
-	}
-
-	Vector2 WindowsEditor::Hammersley(uint32 Index, uint32 NumSamples)
-	{
-		return Vector2(float(Index) / float(NumSamples), ReverseBits(Index));
-	}
-
-	Vector3 WindowsEditor::UniformSampleHemisphere(float u, float v)
-	{
-		float phi = v * 2.0f * PI;
-		float cosTheta = 1.0f - u;
-		float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
-		
-		return Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
-	}
-	
 	WindowsEditor::WindowsEditor()
 		:
 		m_assetManager(std::make_unique<AssetManager>()),
@@ -1884,21 +1859,6 @@ namespace Core
 		-0.9692660f,  1.8760108f,  0.0415560f,
 		0.0134474f, -0.1183897f,  1.0154096f
 		);
-
-		float* Sequences = new float[SamplerCount * 4];
-		for (int32 i = 0; i < SamplerCount; ++i)
-		{
-			Vector2 H = Hammersley(i, SamplerCount);
-				
-			Sequences[i * 4 + 0] = H.x;
-			Sequences[i * 4 + 1] = H.y;
-			Sequences[i * 4 + 2] = 0;
-			Sequences[i * 4 + 3] = 1.0;
-		}
-		
-		m_RLHammersleyTexture = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
-		m_RLHammersleyTexture->LoadImage(SamplerCount, 1.0, Sequences);
-		delete[] Sequences;
 	}
 
 	void WindowsEditor::Initialize(int32 width, int32 height)
@@ -2398,7 +2358,7 @@ namespace Core
 				m_rlShootingPrimitiveBuffer->Unmap();
 				m_rlShootingPrimitiveBuffer->Inactivate();
 				
-				m_RLDevice->BeginBake(m_RLBakingObjectPosition.get(), m_RLBakingObjectNormal.get(), m_RLHammersleyTexture.get(), m_rlShootingPrimitiveBuffer.get());
+				m_RLDevice->BeginBake(m_RLBakingObjectPosition.get(), m_RLBakingObjectNormal.get(), m_rlShootingPrimitiveBuffer.get());
 				m_RLBakeFrameBuffer->Activate();
 				m_RLDevice->SetViewport(0, 0, RadiosityTextureWidth, RadiosityTextureHeight);
 				m_RLDevice->Clear();

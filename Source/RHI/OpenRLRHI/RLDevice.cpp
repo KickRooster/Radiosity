@@ -80,7 +80,7 @@ namespace Core
 		//rlCheckError();
 	}
 
-	void RLDevice::BeginBake(RLTexture2D* pPositionTexture, RLTexture2D* pNormalTexture, RLTexture2D* pHammersleyTexture, RLBuffer* ShootingPrimitiveBuffer)
+	void RLDevice::BeginBake(RLTexture2D* pPositionTexture, RLTexture2D* pNormalTexture, RLBuffer* ShootingPrimitiveBuffer)
 	{
 		rlBindPrimitive(RL_PRIMITIVE, RL_NULL_PRIMITIVE);
 		rlCheckError();
@@ -92,9 +92,6 @@ namespace Core
 		rlCheckError();
 
 		m_bakeProgram->SetTexture("normalTexture", pNormalTexture->GetRawTexture());
-		rlCheckError();
-
-		m_bakeProgram->SetTexture("hammersleyTexture", pHammersleyTexture->GetRawTexture());
 		rlCheckError();
 
 		int32 loc = rlGetUniformBlockIndex(m_bakeProgram->GetRawData(), ShootingPrimitiveBuffer->name);
