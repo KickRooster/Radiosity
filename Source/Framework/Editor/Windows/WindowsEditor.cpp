@@ -1542,7 +1542,7 @@ namespace Core
 		return object;
 	}
 	
-	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index)
+	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index, Vector3 Position, Vector3 EulerAngle)
 	{
 		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
 		ctd::string name = "Area Light " + to_string(Index);
@@ -1560,8 +1560,8 @@ namespace Core
 
 		areaLight->glRenderableUnit->material = m_arealLightMaterial;
 		
-		areaLight->position = Vector3(0, 0, 0);
-		areaLight->eulerAngle = Vector3(-90.0f, 0, 0);
+		areaLight->position = Position;
+		areaLight->eulerAngle = EulerAngle;
 		//	Should not be exported to editor panel.
 		areaLight->LightmapResolution = LightmapResolution_Invalid;
 		areaLight->LightPrecision = LightPrecision_Low;
@@ -1770,8 +1770,8 @@ namespace Core
 									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 2]);
 								
 								if (RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0] > 0 ||
-									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0] > 0 ||
-									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 0] > 0)
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 1] > 0 ||
+									RadiosityImageRawData[(ProjectedY * Height + ProjectedX) * 4 + 2] > 0)
 								{
 									Vector3 Delta = OffsetedRadiosity - ProjectedRadiosity;
 									
@@ -1787,9 +1787,9 @@ namespace Core
 									OutRadiosityImageData[(Y * Height + X) * 4 + 2] = OffsetedRadiosity.b;
 									OutRadiosityImageData[(Y * Height + X) * 4 + 3] = 1.0f;
 								}
-								
-								MinDistance = Distance;
 							}
+								
+							MinDistance = Distance;
 						}
 					}
 				}
@@ -1915,7 +1915,17 @@ namespace Core
 		if (ImGui::Button("Create Light"))
 		{
 			int32 Index = m_scene->GetLightCount();
-			std::shared_ptr<Object> lightObject = createAreaLight(Index);
+			
+			Vector3 LightPosition = Vector3(0, 0, 0);
+			Vector3 EulerAngle = Vector3(-90.0f, 0, 0);
+			
+			if (m_pSelectedObject)
+			{
+				LightPosition = m_pSelectedObject->position;
+				EulerAngle = m_pSelectedObject->eulerAngle;
+			}
+			
+			std::shared_ptr<Object> lightObject = createAreaLight(Index, LightPosition, EulerAngle);
 			lightObject->Initialize(m_GLDevice.get(), True);
 			m_scene->AddLight(lightObject, True);
 		}
@@ -2067,10 +2077,10 @@ namespace Core
 		ImGui::Begin("Debug View");
 		ImVec2 DebugViewRegion = ImGui::GetContentRegionAvail();
 
-		if (m_GLPositionAttach)
+		if (m_GLNormalAttach)
 		{
 			ImGui::Image(
-				reinterpret_cast<void *>(m_GLPositionAttach->GetID64()),
+				reinterpret_cast<void *>(m_GLNormalAttach->GetID64()),
 			DebugViewRegion,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
