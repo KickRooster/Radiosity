@@ -11,7 +11,6 @@ namespace Core
 {
 	class Scene : public IAsset
 	{
-	private:
 		friend class cereal::access;
 
 		std::unique_ptr<Camera> m_camera;
@@ -19,9 +18,26 @@ namespace Core
 		std::vector<std::weak_ptr<Object>> m_LightRefs;
 		std::weak_ptr<Object> m_beingBakingObjectRef;
 
+		int32 m_SSKernel;
+		float m_camera_z_near;
+		float m_camera_z_far;
+		float m_camera_fov;
+		float m_camera_position_x;
+		float m_camera_position_y;
+		float m_camera_position_z;
+		float m_camera_look_at_x;
+		float m_camera_look_at_y;
+		float m_camera_look_at_z;
+		float m_camera_eulerAngle_x;
+		float m_camera_eulerAngle_y;
+		float m_camera_eulerAngle_z;
+	
 	public:
 		ctd::vector<std::shared_ptr<Object>> objects;
 		ctd::vector<std::shared_ptr<Object>> serializedObjects;
+
+		SuperSampleKernel SSKernel;
+		std::string SSKernelString;
 
 		Scene();
 		Scene(Scene &) {}
@@ -29,7 +45,6 @@ namespace Core
 		virtual void Reload() override;
 		virtual void BeforeSave() override;
 		virtual void AfterLoad() override;
-		void Initialize();
 		void Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState);
 		void Render(OpenGLDevice * pDevice, int32 width, int32 height, Bool LightmapEncodingInRGBM);
 		Camera * GetCamera();
@@ -44,6 +59,19 @@ namespace Core
 		template <class Archive>
 		void serialize(Archive & ar)
 		{
+			ar(m_SSKernel);
+			ar(m_camera_z_near);
+			ar(m_camera_z_far);
+			ar(m_camera_fov);
+			ar(m_camera_position_x);
+			ar(m_camera_position_y);
+			ar(m_camera_position_z);
+			ar(m_camera_look_at_x);
+			ar(m_camera_look_at_y);
+			ar(m_camera_look_at_z);
+			ar(m_camera_eulerAngle_x);
+			ar(m_camera_eulerAngle_y);
+			ar(m_camera_eulerAngle_z);
 			ar(serializedObjects);
 		}
 

@@ -50,8 +50,6 @@ namespace Core
 		Bool m_baking;
 		float m_thresholdY;
 		float m_currentMaxY;
-		SuperSampleKernel SSKernel;
-		std::string SSKernelString;
 		std::queue<Primitive> RemainingPrimitives;
 		
 		//	Reconstrucsion Pass

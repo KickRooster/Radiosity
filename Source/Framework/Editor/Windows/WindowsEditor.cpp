@@ -845,8 +845,6 @@ namespace Core
 					{
 						m_LightmapEncodingInRGBM = False;
 					}
-					
-					m_scene->Initialize();
 				}
 				
 				ImGui::EndChild();
@@ -1842,9 +1840,7 @@ namespace Core
 		m_frameCount(0),
 		m_LightmapEncodingInRGBM(False),
 		m_baking(False),
-		m_thresholdY(0.01f),
-		SSKernel(SuperSampleKernel_1x1),
-		SSKernelString(SuperSampleKernelItems[SSKernel])
+		m_thresholdY(0.01f)
 	{
 		//	http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
 		AdobeRGBD65RGBToXYZ = Matrix3x3(
@@ -1883,7 +1879,6 @@ namespace Core
 			m_scene = std::make_shared<Scene>();
 		
 		InstantiateScene(m_scene.get());
-		m_scene->Initialize();
 	}
 
 	void WindowsEditor::Tick(float deltaTime, int32 width, int32 height, InputState & inputState)
@@ -1940,16 +1935,16 @@ namespace Core
 			}
 		}
 
-		if (ImGui::BeginCombo("Super Kernel", SSKernelString.c_str()))
+		if (ImGui::BeginCombo("Super Sample Kernel", m_scene->SSKernelString.c_str()))
 		{
 			for (int32 i = SuperSampleKernel_Invalid + 1; i < SuperSampleKernel_Count; ++i)
 			{
-				Bool IsSelected = (SSKernel == i);
+				Bool IsSelected = (m_scene->SSKernel == i);
 
 				if (ImGui::Selectable(SuperSampleKernelItems[i], IsSelected))
 				{
-					SSKernel = static_cast<SuperSampleKernel>(i);
-					SSKernelString = SuperSampleKernelItems[i];
+					m_scene->SSKernel = static_cast<SuperSampleKernel>(i);
+					m_scene->SSKernelString = SuperSampleKernelItems[i];
 				}
 				
 				if (IsSelected)
@@ -2299,7 +2294,7 @@ namespace Core
 				}
 			}
 
-			int32 SuperSampleScale = GetSuperSampleScale(SSKernel);
+			int32 SuperSampleScale = GetSuperSampleScale(m_scene->SSKernel);
 
 			int32 SSRadiosityTextureWidth = RadiosityTextureWidth * SuperSampleScale;
 			int32 SSRadiosityTextureHeight = RadiosityTextureHeight * SuperSampleScale;

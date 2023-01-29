@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cereal>
 	<value0>
-		<value0 size="dynamic">
+		<value0>0</value0>
+		<value1>1</value1>
+		<value2>6000</value2>
+		<value3>1.5707963705062866</value3>
+		<value4>88.466728210449219</value4>
+		<value5>846.45086669921875</value5>
+		<value6>-19.334207534790039</value6>
+		<value7>0.80241316556930542</value7>
+		<value8>-0.27691623568534851</value8>
+		<value9>0.52863073348999023</value9>
+		<value10>0</value10>
+		<value11>0</value11>
+		<value12>0</value12>
+		<value13 size="dynamic">
 			<value0>
 				<ptr_wrapper>
 					<id>2147483649</id>
@@ -15,7 +28,7 @@
 						<value6>-90</value6>
 						<value7>-0</value7>
 						<value8>0</value8>
-						<value9>0.9993320107460022</value9>
+						<value9>0.99933159351348877</value9>
 						<value10>1</value10>
 						<value11>1</value11>
 						<value12>0</value12>
@@ -48,7 +61,7 @@
 						<value6>90</value6>
 						<value7>-0</value7>
 						<value8>0</value8>
-						<value9>2047.9998779296875</value9>
+						<value9>2047.999267578125</value9>
 						<value10>1280</value10>
 						<value11>1</value11>
 						<value12>1</value12>
@@ -68,7 +81,7 @@
 					</data>
 				</ptr_wrapper>
 			</value1>
-		</value0>
+		</value13>
 	</value0>
 </cereal>
 

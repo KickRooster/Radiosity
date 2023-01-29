@@ -8,8 +8,20 @@ using namespace ctd;
 namespace Core
 {
 	Scene::Scene()
-		:m_camera(std::make_unique<Camera>())
+		:m_camera(std::make_unique<Camera>()),
+		SSKernel(SuperSampleKernel_1x1),
+		SSKernelString(SuperSampleKernelItems[SSKernel])
 	{
+		//	Camera default parameters.
+		m_camera->zNear = 1.0;
+		m_camera->zFar =  6000.0f;
+		//	Mark it created just now.
+		m_camera->ascept = 0.0;
+		m_camera->fovY = 90.0f * Deg2Rad;
+
+		m_camera->position = Vector3(0, 0, 0);
+		m_camera->lookAtDir = Vector3(0, 0, -1.0f);
+		m_camera->eularAngle = Vector3(0, 0, 0);
 	}
 
 	void Scene::BeginUse()
@@ -22,6 +34,20 @@ namespace Core
 	
 	void Scene::BeforeSave()
 	{
+		m_SSKernel = SSKernel;
+		m_camera_z_near = m_camera->zNear;
+		m_camera_z_far = m_camera->zFar;
+		m_camera_fov = m_camera->fovY;
+		m_camera_position_x = m_camera->position.x;
+		m_camera_position_y = m_camera->position.y;
+		m_camera_position_z = m_camera->position.z;
+		m_camera_look_at_x = m_camera->lookAtDir.x;
+		m_camera_look_at_y = m_camera->lookAtDir.y;
+		m_camera_look_at_z = m_camera->lookAtDir.z;
+		m_camera_eulerAngle_x = m_camera->eularAngle.x;
+		m_camera_eulerAngle_y = m_camera->eularAngle.y;
+		m_camera_eulerAngle_z = m_camera->eularAngle.z;
+		
 		for (vector<std::shared_ptr<Object>>::iterator iter = serializedObjects.begin();
 			iter != serializedObjects.end();
 			++iter)
@@ -32,25 +58,32 @@ namespace Core
 	
 	void Scene::AfterLoad()
 	{
+		SSKernel = static_cast<SuperSampleKernel>(m_SSKernel);
+		
+		if (SSKernel != SuperSampleKernel_Invalid)
+		{
+			SSKernelString = SuperSampleKernelItems[SSKernel];
+		}
+
+		m_camera->zNear = m_camera_z_near;
+		m_camera->zFar = m_camera_z_far ;
+		m_camera->fovY = m_camera_fov ;
+		m_camera->position.x = m_camera_position_x;
+		m_camera->position.y = m_camera_position_y;
+		m_camera->position.z = m_camera_position_z;
+		m_camera->lookAtDir.x = m_camera_look_at_x;
+		m_camera->lookAtDir.y = m_camera_look_at_y;
+		m_camera->lookAtDir.z = m_camera_look_at_z;
+		m_camera->eularAngle.x = m_camera_eulerAngle_x;
+		m_camera->eularAngle.y = m_camera_eulerAngle_y;
+		m_camera->eularAngle.z = m_camera_eulerAngle_z;
+		
 		for (vector<std::shared_ptr<Object>>::iterator iter = serializedObjects.begin();
 			iter != serializedObjects.end();
 			++iter)
 		{
 			iter->get()->AfterLoad();
 		}
-	}
-
-	void Scene::Initialize()
-	{
-		m_camera->zNear = 1.0f;
-		m_camera->zFar = 6000.0f;
-		//	Mark it created just now.
-		m_camera->ascept = 0.0;
-		m_camera->fovY = 90.0f * Deg2Rad;
-
-		m_camera->position = Vector3(0, 0, 0.0f);
-		m_camera->lookAtDir = Vector3(0, 0, -1.0f);
-		m_camera->eularAngle = Vector3(0, 0, 0);
 	}
 
 	void Scene::Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState)
