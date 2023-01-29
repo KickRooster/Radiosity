@@ -8,9 +8,7 @@ using namespace ctd;
 namespace Core
 {
 	Scene::Scene()
-		:m_camera(std::make_unique<Camera>()),
-		SSKernel(SuperSampleKernel_1x1),
-		SSKernelString(SuperSampleKernelItems[SSKernel])
+		:m_camera(std::make_unique<Camera>())
 	{
 		//	Camera default parameters.
 		m_camera->zNear = 1.0;
@@ -34,7 +32,6 @@ namespace Core
 	
 	void Scene::BeforeSave()
 	{
-		m_SSKernel = SSKernel;
 		m_camera_z_near = m_camera->zNear;
 		m_camera_z_far = m_camera->zFar;
 		m_camera_fov = m_camera->fovY;
@@ -58,13 +55,6 @@ namespace Core
 	
 	void Scene::AfterLoad()
 	{
-		SSKernel = static_cast<SuperSampleKernel>(m_SSKernel);
-		
-		if (SSKernel != SuperSampleKernel_Invalid)
-		{
-			SSKernelString = SuperSampleKernelItems[SSKernel];
-		}
-
 		m_camera->zNear = m_camera_z_near;
 		m_camera->zFar = m_camera_z_far ;
 		m_camera->fovY = m_camera_fov ;

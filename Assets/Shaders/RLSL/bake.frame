@@ -2,6 +2,8 @@ uniform sampler2D positionTexture1x1;
 uniform sampler2D normalTexture1x1;
 uniform sampler2D positionTexture2x2;
 uniform sampler2D normalTexture2x2;
+uniform sampler2D positionTexture4x4;
+uniform sampler2D normalTexture4x4;
 uniform primitive environmentPrimitive;
 
 uniformblock ShootingPrimitive
@@ -29,6 +31,11 @@ void EmitRay(vec2 UV, vec3 TargetPos, int KernelSize)
 		WorldPosition = texture2D(positionTexture2x2, UV).xyz;
     	WorldNormal = texture2D(normalTexture2x2, UV).xyz;
 	}
+	else if (KernelSize == 4)
+	{
+		WorldPosition = texture2D(positionTexture4x4, UV).xyz;
+    	WorldNormal = texture2D(normalTexture4x4, UV).xyz;
+	}
 
 	//	Shoot to centroid position 
 	vec3 Direction = TargetPos - WorldPosition;
@@ -43,27 +50,108 @@ void EmitRay(vec2 UV, vec3 TargetPos, int KernelSize)
 void main()
 {
 	//	Sample 1x1 GBuffer
-	vec2 UV00 = rl_FrameCoord.xy / rl_FrameSize.xy;
-	EmitRay(UV00, ShootingPrimitive.Positions[0], 1);
+	vec2 UV0 = rl_FrameCoord.xy / rl_FrameSize.xy;
+	EmitRay(UV0, ShootingPrimitive.Positions[0], 1);
 
 	//	Sample 2x2 GBuffer
-	vec2 UV01 = vec2(
+	vec2 UV1 = vec2(
 		(rl_FrameCoord.x * 2.0) / (rl_FrameSize.x * 2.0),
 		(rl_FrameCoord.y * 2.0) / (rl_FrameSize.y * 2.0));
-	EmitRay(UV01, ShootingPrimitive.Positions[0], 2);
+	EmitRay(UV1, ShootingPrimitive.Positions[0], 2);
 
-	vec2 UV02 = vec2(
+	vec2 UV2 = vec2(
 		(rl_FrameCoord.x * 2.0 + 1.0) / (rl_FrameSize.x * 2.0), 
 		(rl_FrameCoord.y * 2.0) / (rl_FrameSize.y * 2.0));
-	EmitRay(UV02, ShootingPrimitive.Positions[0], 2);
+	EmitRay(UV2, ShootingPrimitive.Positions[0], 2);
 
-	vec2 UV03 = vec2(
+	vec2 UV3 = vec2(
 		(rl_FrameCoord.x * 2.0) / (rl_FrameSize.x * 2.0),
 		(rl_FrameCoord.y * 2.0 + 1.0) / (rl_FrameSize.y * 2.0));
-	EmitRay(UV03, ShootingPrimitive.Positions[0], 2);
+	EmitRay(UV3, ShootingPrimitive.Positions[0], 2);
 
-	vec2 UV04 = vec2(
+	vec2 UV4 = vec2(
 		(rl_FrameCoord.x * 2.0 + 1.0) / (rl_FrameSize.x * 2.0),
 		(rl_FrameCoord.y * 2.0 + 1.0) / (rl_FrameSize.y * 2.0));
-	EmitRay(UV04, ShootingPrimitive.Positions[0], 2);
+	EmitRay(UV4, ShootingPrimitive.Positions[0], 2);
+
+	//	Sample 4x4 GBuffer
+	vec2 UV00 = vec2(
+		(rl_FrameCoord.x * 4.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV00, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV01 = vec2(
+		(rl_FrameCoord.x * 4.0 + 1.0) / (rl_FrameSize.x * 4.0), 
+		(rl_FrameCoord.y * 4.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV01, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV02 = vec2(
+		(rl_FrameCoord.x * 4.0 + 2.0) / (rl_FrameSize.x * 4.0), 
+		(rl_FrameCoord.y * 4.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV02, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV03 = vec2(
+		(rl_FrameCoord.x * 4.0 + 3.0) / (rl_FrameSize.x * 4.0), 
+		(rl_FrameCoord.y * 4.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV03, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV10 = vec2(
+		(rl_FrameCoord.x * 4.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 1.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV10, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV11 = vec2(
+		(rl_FrameCoord.x * 4.0 + 1.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 1.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV11, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV12 = vec2(
+		(rl_FrameCoord.x * 4.0 + 2.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 1.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV12, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV13 = vec2(
+		(rl_FrameCoord.x * 4.0 + 3.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 1.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV13, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV20 = vec2(
+		(rl_FrameCoord.x * 4.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 2.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV20, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV21 = vec2(
+		(rl_FrameCoord.x * 4.0 + 1.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 2.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV21, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV22 = vec2(
+		(rl_FrameCoord.x * 4.0 + 2.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 2.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV22, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV23 = vec2(
+		(rl_FrameCoord.x * 4.0 + 3.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 2.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV13, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV30 = vec2(
+		(rl_FrameCoord.x * 4.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 3.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV30, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV31 = vec2(
+		(rl_FrameCoord.x * 4.0 + 1.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 3.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV31, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV32 = vec2(
+		(rl_FrameCoord.x * 4.0 + 2.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 3.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV32, ShootingPrimitive.Positions[0], 4);
+
+	vec2 UV33 = vec2(
+		(rl_FrameCoord.x * 4.0 + 3.0) / (rl_FrameSize.x * 4.0),
+		(rl_FrameCoord.y * 4.0 + 3.0) / (rl_FrameSize.y * 4.0));
+	EmitRay(UV33, ShootingPrimitive.Positions[0], 4);
 }

@@ -18,7 +18,6 @@ namespace Core
 		std::vector<std::weak_ptr<Object>> m_LightRefs;
 		std::weak_ptr<Object> m_beingBakingObjectRef;
 
-		int32 m_SSKernel;
 		float m_camera_z_near;
 		float m_camera_z_far;
 		float m_camera_fov;
@@ -35,10 +34,7 @@ namespace Core
 	public:
 		ctd::vector<std::shared_ptr<Object>> objects;
 		ctd::vector<std::shared_ptr<Object>> serializedObjects;
-
-		SuperSampleKernel SSKernel;
-		std::string SSKernelString;
-
+		
 		Scene();
 		Scene(Scene &) {}
 		virtual void BeginUse() override;
@@ -59,7 +55,6 @@ namespace Core
 		template <class Archive>
 		void serialize(Archive & ar)
 		{
-			ar(m_SSKernel);
 			ar(m_camera_z_near);
 			ar(m_camera_z_far);
 			ar(m_camera_fov);

@@ -34,16 +34,17 @@ namespace Core
 		std::unique_ptr<GLFrameBuffer> m_GLFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLColorAttach;			//	uint8
 		
-		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer;
+		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer1x1;
 		std::unique_ptr<GLTexture> m_GLPositionAttach1x1;
 		std::unique_ptr<GLTexture> m_GLNormalAttach1x1;
+		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer2x2;
 		std::unique_ptr<GLTexture> m_GLPositionAttach2x2;
 		std::unique_ptr<GLTexture> m_GLNormalAttach2x2;
 		
-		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition1x1;	//	float
-		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal1x1;		//	float
-		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition2x2;	//	float
-		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal2x2;		//	float
+		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition1x1;
+		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal1x1;
+		std::unique_ptr<RLTexture2D> m_RLBakingObjectPosition2x2;
+		std::unique_ptr<RLTexture2D> m_RLBakingObjectNormal2x2;
 		
 		std::unique_ptr<RLFrameBuffer> m_RLBakeFrameBuffer;
 		std::unique_ptr<RLTexture2D> m_RLBakeColorAttach;

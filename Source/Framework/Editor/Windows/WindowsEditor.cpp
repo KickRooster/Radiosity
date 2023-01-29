@@ -1935,26 +1935,6 @@ namespace Core
 			}
 		}
 
-		if (ImGui::BeginCombo("Super Sample Kernel", m_scene->SSKernelString.c_str()))
-		{
-			for (int32 i = SuperSampleKernel_Invalid + 1; i < SuperSampleKernel_Count; ++i)
-			{
-				Bool IsSelected = (m_scene->SSKernel == i);
-
-				if (ImGui::Selectable(SuperSampleKernelItems[i], IsSelected))
-				{
-					m_scene->SSKernel = static_cast<SuperSampleKernel>(i);
-					m_scene->SSKernelString = SuperSampleKernelItems[i];
-				}
-				
-				if (IsSelected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-		
 		if (m_baking && ImGui::Button("Stop"))
 		{
 			m_baking = False;
@@ -2307,17 +2287,17 @@ namespace Core
 			RadiosityTextureHeight,
 			Null);
 			
-			m_GLGBufferFrameBuffer = std::make_unique<GLFrameBuffer>();
-			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach1x1->GetTarget(), m_GLPositionAttach1x1.get());
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach1x1->GetTarget(), m_GLNormalAttach1x1.get());
+			m_GLGBufferFrameBuffer1x1 = std::make_unique<GLFrameBuffer>();
+			m_GLGBufferFrameBuffer1x1->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
+			m_GLGBufferFrameBuffer1x1->AttachColor(GLAttachIndexColor0, m_GLPositionAttach1x1->GetTarget(), m_GLPositionAttach1x1.get());
+			m_GLGBufferFrameBuffer1x1->AttachColor(GLAttachIndexColor1, m_GLNormalAttach1x1->GetTarget(), m_GLNormalAttach1x1.get());
 			
-			m_GLGBufferFrameBuffer->Activate();
+			m_GLGBufferFrameBuffer1x1->Activate();
 			{
 				m_GLDevice->BeginBasePass(RadiosityTextureWidth, RadiosityTextureHeight);
 				BeingBakingObject->DrawGBuffer(m_GLDevice.get());
 			}
-			m_GLGBufferFrameBuffer->Inactivate();
+			m_GLGBufferFrameBuffer1x1->Inactivate();
 
 			float* m_pPositionRawData1x1 = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			float* m_pNormalRawData1x1 = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
@@ -2347,16 +2327,17 @@ namespace Core
 			RadiosityTextureHeight * 2,
 			Null);
 
-			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2);
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach2x2->GetTarget(), m_GLPositionAttach2x2.get());
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach2x2->GetTarget(), m_GLNormalAttach2x2.get());
+			m_GLGBufferFrameBuffer2x2 = std::make_unique<GLFrameBuffer>();
+			m_GLGBufferFrameBuffer2x2->Resize(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2);
+			m_GLGBufferFrameBuffer2x2->AttachColor(GLAttachIndexColor0, m_GLPositionAttach2x2->GetTarget(), m_GLPositionAttach2x2.get());
+			m_GLGBufferFrameBuffer2x2->AttachColor(GLAttachIndexColor1, m_GLNormalAttach2x2->GetTarget(), m_GLNormalAttach2x2.get());
 
-			m_GLGBufferFrameBuffer->Activate();
+			m_GLGBufferFrameBuffer2x2->Activate();
 			{
 				m_GLDevice->BeginBasePass(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2);
 				BeingBakingObject->DrawGBuffer(m_GLDevice.get());
 			}
-			m_GLGBufferFrameBuffer->Inactivate();
+			m_GLGBufferFrameBuffer2x2->Inactivate();
 
 			float* m_pPositionRawData2x2 = new float[(RadiosityTextureWidth * 2) * (RadiosityTextureHeight * 2) * 4];
 			float* m_pNormalRawData2x2 = new float[(RadiosityTextureWidth * 2) * (RadiosityTextureHeight * 2) * 4];
@@ -2372,7 +2353,6 @@ namespace Core
 		
 			delete[] m_pPositionRawData2x2;
 			delete[] m_pNormalRawData2x2;
-			
 			///////////////////////////////////////////////////////
 			
 			m_RLBakeColorAttach = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
