@@ -80,7 +80,7 @@ namespace Core
 		//rlCheckError();
 	}
 
-	void RLDevice::BeginBake(RLTexture2D* pPositionTexture, RLTexture2D* pNormalTexture, RLBuffer* ShootingPrimitiveBuffer)
+	void RLDevice::BeginBake(RLTexture2D* pPositionTexture1x1, RLTexture2D* pNormalTexture1x1, RLTexture2D* pPositionTexture2x2, RLTexture2D* pNormalTexture2x2, RLBuffer* ShootingPrimitiveBuffer)
 	{
 		rlBindPrimitive(RL_PRIMITIVE, RL_NULL_PRIMITIVE);
 		rlCheckError();
@@ -88,10 +88,16 @@ namespace Core
 		rlUseProgram(m_bakeProgram->GetRawData());
 		rlCheckError();
 
-		m_bakeProgram->SetTexture("positionTexture", pPositionTexture->GetRawTexture());
+		m_bakeProgram->SetTexture("positionTexture1x1", pPositionTexture1x1->GetRawTexture());
 		rlCheckError();
 
-		m_bakeProgram->SetTexture("normalTexture", pNormalTexture->GetRawTexture());
+		m_bakeProgram->SetTexture("normalTexture1x1", pNormalTexture1x1->GetRawTexture());
+		rlCheckError();
+
+		m_bakeProgram->SetTexture("positionTexture2x2", pPositionTexture2x2->GetRawTexture());
+		rlCheckError();
+
+		m_bakeProgram->SetTexture("normalTexture2x2", pNormalTexture2x2->GetRawTexture());
 		rlCheckError();
 
 		int32 loc = rlGetUniformBlockIndex(m_bakeProgram->GetRawData(), ShootingPrimitiveBuffer->name);

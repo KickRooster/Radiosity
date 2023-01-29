@@ -1,5 +1,7 @@
-uniform sampler2D positionTexture;
-uniform sampler2D normalTexture;
+uniform sampler2D positionTexture1x1;
+uniform sampler2D normalTexture1x1;
+uniform sampler2D positionTexture2x2;
+uniform sampler2D normalTexture2x2;
 uniform primitive environmentPrimitive;
 
 uniformblock ShootingPrimitive
@@ -9,13 +11,24 @@ uniformblock ShootingPrimitive
 
 void setup() 
 {
-	rl_OutputRayCount = 1;
+	rl_OutputRayCount = 5;
 }
 
-void EmitRay(vec2 UV, vec3 TargetPos)
+void EmitRay(vec2 UV, vec3 TargetPos, int KernelSize)
 {
-	vec3 WorldPosition = texture2D(positionTexture, UV).xyz;
-    vec3 WorldNormal = texture2D(normalTexture, UV).xyz;
+	vec3 WorldPosition = vec3(0.0, 0.0, 0.0);
+	vec3 WorldNormal = vec3(0.0, 0.0, 0.0);
+
+	if (KernelSize == 1)
+	{
+		WorldPosition = texture2D(positionTexture1x1, UV).xyz;
+    	WorldNormal = texture2D(normalTexture1x1, UV).xyz;
+	}
+	else if (KernelSize == 2)
+	{
+		WorldPosition = texture2D(positionTexture2x2, UV).xyz;
+    	WorldNormal = texture2D(normalTexture2x2, UV).xyz;
+	}
 
 	//	Shoot to centroid position 
 	vec3 Direction = TargetPos - WorldPosition;
@@ -29,23 +42,28 @@ void EmitRay(vec2 UV, vec3 TargetPos)
 
 void main()
 {
-	vec2 UV = rl_FrameCoord.xy / rl_FrameSize.xy;
+	//	Sample 1x1 GBuffer
+	vec2 UV00 = rl_FrameCoord.xy / rl_FrameSize.xy;
+	EmitRay(UV00, ShootingPrimitive.Positions[0], 1);
 
-	EmitRay(UV, ShootingPrimitive.Positions[0]);
+	//	Sample 2x2 GBuffer
+	vec2 UV01 = vec2(
+		(rl_FrameCoord.x * 2.0) / (rl_FrameSize.x * 2.0),
+		(rl_FrameCoord.y * 2.0) / (rl_FrameSize.y * 2.0));
+	EmitRay(UV01, ShootingPrimitive.Positions[0], 2);
 
-	return;
+	vec2 UV02 = vec2(
+		(rl_FrameCoord.x * 2.0 + 1.0) / (rl_FrameSize.x * 2.0), 
+		(rl_FrameCoord.y * 2.0) / (rl_FrameSize.y * 2.0));
+	EmitRay(UV02, ShootingPrimitive.Positions[0], 2);
 
-	vec2 PixelSize = vec2(1.0, 1.0) / (rl_FrameSize.xy * vec2(2.0, 2.0));
+	vec2 UV03 = vec2(
+		(rl_FrameCoord.x * 2.0) / (rl_FrameSize.x * 2.0),
+		(rl_FrameCoord.y * 2.0 + 1.0) / (rl_FrameSize.y * 2.0));
+	EmitRay(UV03, ShootingPrimitive.Positions[0], 2);
 
-	vec2 UV0 = UV + vec2(-1.0, -1.0) * PixelSize;
-	EmitRay(UV0, ShootingPrimitive.Positions[0]);
-
-	vec2 UV1 = UV + vec2(1.0, -1.0) * PixelSize;
-	EmitRay(UV1, ShootingPrimitive.Positions[0]);
-
-	vec2 UV2 = UV + vec2(-1.0, 1.0) * PixelSize;
-	EmitRay(UV2, ShootingPrimitive.Positions[0]);
-
-	vec2 UV3 = UV + vec2(1.0, 1.0) * PixelSize;
-	EmitRay(UV3, ShootingPrimitive.Positions[0]);
+	vec2 UV04 = vec2(
+		(rl_FrameCoord.x * 2.0 + 1.0) / (rl_FrameSize.x * 2.0),
+		(rl_FrameCoord.y * 2.0 + 1.0) / (rl_FrameSize.y * 2.0));
+	EmitRay(UV04, ShootingPrimitive.Positions[0], 2);
 }

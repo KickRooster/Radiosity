@@ -340,6 +340,11 @@ namespace Core
 	
 	void RLRenderableUnit::UpdateAhead()
 	{
+		if (!m_program)
+		{
+			return;
+		}
+		
 		rlDetachShader(m_program, material.lock()->rlVertexShader.lock()->GetRLShader()->GetRawShader());
 		rlCheckError();
 		
@@ -349,6 +354,11 @@ namespace Core
 
 	void RLRenderableUnit::UpdateBehind()
 	{
+		if (!m_program)
+		{
+			return;
+		}
+		
 		rlAttachShader(m_program, material.lock()->rlVertexShader.lock()->GetRLShader()->GetRawShader());
 		rlCheckError();
 		

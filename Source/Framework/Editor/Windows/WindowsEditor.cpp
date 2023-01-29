@@ -2098,10 +2098,10 @@ namespace Core
 		ImGui::Begin("Debug View");
 		ImVec2 DebugViewRegion = ImGui::GetContentRegionAvail();
 
-		if (m_GLNormalAttach)
+		if (m_GLNormalAttach2x2)
 		{
 			ImGui::Image(
-				reinterpret_cast<void *>(m_GLNormalAttach->GetID64()),
+				reinterpret_cast<void *>(m_GLNormalAttach2x2->GetID64()),
 			DebugViewRegion,
 			ImVec2(0, 1.0f),
 			ImVec2(1.0f, 0));
@@ -2294,50 +2294,87 @@ namespace Core
 				}
 			}
 
-			int32 SuperSampleScale = GetSuperSampleScale(m_scene->SSKernel);
-
-			int32 SSRadiosityTextureWidth = RadiosityTextureWidth * SuperSampleScale;
-			int32 SSRadiosityTextureHeight = RadiosityTextureHeight * SuperSampleScale;
-			
-			m_GLPositionAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_GLPositionAttach->LoadImage(
-			SSRadiosityTextureWidth,
-			SSRadiosityTextureHeight,
+			//	1x1 GBuffer
+			m_GLPositionAttach1x1 = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLPositionAttach1x1->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
 			Null);
-
-			m_GLNormalAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
-			m_GLNormalAttach->LoadImage(
-			SSRadiosityTextureWidth,
-			SSRadiosityTextureHeight,
+			
+			m_GLNormalAttach1x1 = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLNormalAttach1x1->LoadImage(
+			RadiosityTextureWidth,
+			RadiosityTextureHeight,
 			Null);
 			
 			m_GLGBufferFrameBuffer = std::make_unique<GLFrameBuffer>();
-			m_GLGBufferFrameBuffer->Resize(SSRadiosityTextureWidth, SSRadiosityTextureHeight);
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach->GetTarget(), m_GLPositionAttach.get());
-			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach->GetTarget(), m_GLNormalAttach.get());
+			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach1x1->GetTarget(), m_GLPositionAttach1x1.get());
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach1x1->GetTarget(), m_GLNormalAttach1x1.get());
 			
 			m_GLGBufferFrameBuffer->Activate();
 			{
-				m_GLDevice->BeginBasePass(SSRadiosityTextureWidth, SSRadiosityTextureHeight);
+				m_GLDevice->BeginBasePass(RadiosityTextureWidth, RadiosityTextureHeight);
 				BeingBakingObject->DrawGBuffer(m_GLDevice.get());
 			}
 			m_GLGBufferFrameBuffer->Inactivate();
 
-			float* m_pPositionRawData = new float[SSRadiosityTextureWidth * SSRadiosityTextureHeight * 4];
-			float* m_pNormalRawData = new float[SSRadiosityTextureWidth * SSRadiosityTextureHeight * 4];
+			float* m_pPositionRawData1x1 = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			float* m_pNormalRawData1x1 = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			
-			m_GLPositionAttach->Fetch(m_pPositionRawData);
-			m_GLNormalAttach->Fetch(m_pNormalRawData);
+			m_GLPositionAttach1x1->Fetch(m_pPositionRawData1x1);
+			m_GLNormalAttach1x1->Fetch(m_pNormalRawData1x1);
 
-			m_RLBakingObjectPosition = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
-			m_RLBakingObjectPosition->LoadImage(SSRadiosityTextureWidth, SSRadiosityTextureHeight, m_pPositionRawData);
+			m_RLBakingObjectPosition1x1 = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+			m_RLBakingObjectPosition1x1->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pPositionRawData1x1);
 
-			m_RLBakingObjectNormal = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
-			m_RLBakingObjectNormal->LoadImage(SSRadiosityTextureWidth, SSRadiosityTextureHeight, m_pNormalRawData);
+			m_RLBakingObjectNormal1x1 = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+			m_RLBakingObjectNormal1x1->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pNormalRawData1x1);
 		
-			delete[] m_pPositionRawData;
-			delete[] m_pNormalRawData;
+			delete[] m_pPositionRawData1x1;
+			delete[] m_pNormalRawData1x1;
 
+			//	2x2 GBuffer
+			m_GLPositionAttach2x2 = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLPositionAttach2x2->LoadImage(
+			RadiosityTextureWidth * 2,
+			RadiosityTextureHeight * 2,
+			Null);
+
+			m_GLNormalAttach2x2 = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
+			m_GLNormalAttach2x2->LoadImage(
+			RadiosityTextureWidth * 2,
+			RadiosityTextureHeight * 2,
+			Null);
+
+			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2);
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach2x2->GetTarget(), m_GLPositionAttach2x2.get());
+			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach2x2->GetTarget(), m_GLNormalAttach2x2.get());
+
+			m_GLGBufferFrameBuffer->Activate();
+			{
+				m_GLDevice->BeginBasePass(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2);
+				BeingBakingObject->DrawGBuffer(m_GLDevice.get());
+			}
+			m_GLGBufferFrameBuffer->Inactivate();
+
+			float* m_pPositionRawData2x2 = new float[(RadiosityTextureWidth * 2) * (RadiosityTextureHeight * 2) * 4];
+			float* m_pNormalRawData2x2 = new float[(RadiosityTextureWidth * 2) * (RadiosityTextureHeight * 2) * 4];
+			
+			m_GLPositionAttach2x2->Fetch(m_pPositionRawData2x2);
+			m_GLNormalAttach2x2->Fetch(m_pNormalRawData2x2);
+
+			m_RLBakingObjectPosition2x2 = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+			m_RLBakingObjectPosition2x2->LoadImage(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2, m_pPositionRawData2x2);
+
+			m_RLBakingObjectNormal2x2 = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+			m_RLBakingObjectNormal2x2->LoadImage(RadiosityTextureWidth * 2, RadiosityTextureHeight * 2, m_pNormalRawData2x2);
+		
+			delete[] m_pPositionRawData2x2;
+			delete[] m_pNormalRawData2x2;
+			
+			///////////////////////////////////////////////////////
+			
 			m_RLBakeColorAttach = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
 			m_RLBakeColorAttach->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, Null);
 			m_RLBakeFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLBakeColorAttach.get());
@@ -2370,7 +2407,7 @@ namespace Core
 				m_rlShootingPrimitiveBuffer->Unmap();
 				m_rlShootingPrimitiveBuffer->Inactivate();
 				
-				m_RLDevice->BeginBake(m_RLBakingObjectPosition.get(), m_RLBakingObjectNormal.get(), m_rlShootingPrimitiveBuffer.get());
+				m_RLDevice->BeginBake(m_RLBakingObjectPosition1x1.get(), m_RLBakingObjectNormal1x1.get(), m_RLBakingObjectPosition2x2.get(), m_RLBakingObjectNormal2x2.get(), m_rlShootingPrimitiveBuffer.get());
 				m_RLBakeFrameBuffer->Activate();
 				m_RLDevice->SetViewport(0, 0, RadiosityTextureWidth, RadiosityTextureHeight);
 				m_RLDevice->Clear();
