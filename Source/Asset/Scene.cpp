@@ -180,7 +180,12 @@ namespace Core
 			iter != objects.end();
 			++iter)
 		{
-			(*iter)->rlRenderableUnit = Null;
+			if ((*iter)->rlRenderableUnit)
+			{
+				(*iter)->rlRenderableUnit->material.lock()->rlVertexShader.lock()->Detach((*iter)->rlRenderableUnit.get());
+				(*iter)->rlRenderableUnit->material.lock()->rlRayShader.lock()->Detach((*iter)->rlRenderableUnit.get());
+				(*iter)->rlRenderableUnit = Null;
+			}
 		}
 		
 		objects.clear();
