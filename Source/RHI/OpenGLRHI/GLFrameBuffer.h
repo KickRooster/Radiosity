@@ -8,7 +8,6 @@ namespace Core
 {
 	class GLFrameBuffer
 	{
-	private:
 		uint32 m_fboID;
 		uint32 m_rboID;
 		uint32 m_width;

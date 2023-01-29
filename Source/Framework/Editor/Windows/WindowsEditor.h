@@ -33,7 +33,7 @@ namespace Core
 
 		std::unique_ptr<GLFrameBuffer> m_GLFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLColorAttach;			//	uint8
-
+		
 		std::unique_ptr<GLFrameBuffer> m_GLGBufferFrameBuffer;
 		std::unique_ptr<GLTexture> m_GLPositionAttach;
 		std::unique_ptr<GLTexture> m_GLNormalAttach;
@@ -50,6 +50,8 @@ namespace Core
 		Bool m_baking;
 		float m_thresholdY;
 		float m_currentMaxY;
+		SuperSampleKernel SSKernel;
+		std::string SSKernelString;
 		std::queue<Primitive> RemainingPrimitives;
 		
 		//	Reconstrucsion Pass

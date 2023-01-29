@@ -96,4 +96,37 @@ namespace Core
 
 		return static_cast<int32>(MinSizeLength);
 	}
+
+	const ANSICHAR* SuperSampleKernelItems[] = {
+		"1x1",
+		"2x2",
+		"3x3",
+		"4x4",
+	};
+
+	int32 GetSuperSampleScale(SuperSampleKernel Kernel)
+	{
+		int32 Scale;
+
+		switch (Kernel)
+		{
+		case SuperSampleKernel_1x1:
+			Scale = 1;
+			break;
+		case SuperSampleKernel_2x2:
+			Scale = 2;
+			break;
+		case SuperSampleKernel_3x3:
+			Scale = 3;
+			break;
+		case SuperSampleKernel_4x4:
+			Scale = 4;
+			break;
+		default:
+			Scale = 0;
+			break;
+		}
+
+		return Scale;
+	}
 }

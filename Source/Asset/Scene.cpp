@@ -142,6 +142,14 @@ namespace Core
 
 	void Scene::Clear()
 	{
+		//	Destory RLPrimitive manually.
+		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
+			iter != objects.end();
+			++iter)
+		{
+			(*iter)->rlRenderableUnit = Null;
+		}
+		
 		objects.clear();
 		m_LightRefs.clear();
 	}

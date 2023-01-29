@@ -12,18 +12,40 @@ void setup()
 	rl_OutputRayCount = 1;
 }
 
-void main()
+void EmitRay(vec2 UV, vec3 TargetPos)
 {
-	vec2 uv = rl_FrameCoord.xy / rl_FrameSize.xy;
-    vec3 WorldPosition = texture2D(positionTexture, uv).xyz;
-    vec3 WorldNormal = texture2D(normalTexture, uv).xyz;
+	vec3 WorldPosition = texture2D(positionTexture, UV).xyz;
+    vec3 WorldNormal = texture2D(normalTexture, UV).xyz;
 
 	//	Shoot to centroid position 
-	vec3 Direction = ShootingPrimitive.Positions[0] - WorldPosition;
+	vec3 Direction = TargetPos - WorldPosition;
 
 	createRay();
    	rl_OutRay.origin              = WorldPosition + WorldNormal * vec3(0.005, 0.005, 0.005);	//	Offset origin
 	rl_OutRay.direction           = normalize(Direction);
 	rl_OutRay.defaultPrimitive    = environmentPrimitive;
 	emitRay();
+}
+
+void main()
+{
+	vec2 UV = rl_FrameCoord.xy / rl_FrameSize.xy;
+
+	EmitRay(UV, ShootingPrimitive.Positions[0]);
+
+	return;
+
+	vec2 PixelSize = vec2(1.0, 1.0) / (rl_FrameSize.xy * vec2(2.0, 2.0));
+
+	vec2 UV0 = UV + vec2(-1.0, -1.0) * PixelSize;
+	EmitRay(UV0, ShootingPrimitive.Positions[0]);
+
+	vec2 UV1 = UV + vec2(1.0, -1.0) * PixelSize;
+	EmitRay(UV1, ShootingPrimitive.Positions[0]);
+
+	vec2 UV2 = UV + vec2(-1.0, 1.0) * PixelSize;
+	EmitRay(UV2, ShootingPrimitive.Positions[0]);
+
+	vec2 UV3 = UV + vec2(1.0, 1.0) * PixelSize;
+	EmitRay(UV3, ShootingPrimitive.Positions[0]);
 }

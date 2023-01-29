@@ -248,8 +248,8 @@ namespace Core
 	
 	void WindowsEditor::panelSceneObjects()
 	{
-		ImGui::SetNextWindowPos(ImVec2(400, 600));
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		ImGui::SetNextWindowPos(ImVec2(0, 600));
+		ImGui::SetNextWindowSize(ImVec2(600, 200));
 
 		ImGui::Begin("Scene Objects");
 		{
@@ -817,7 +817,7 @@ namespace Core
 					{
 						m_scene->Clear();
 					}
-					
+
 					std::string SceneName = selectedStaticMesh.lock()->fileName;
 					
 					if (m_assetManager->sceneMap.find(SceneName) != m_assetManager->sceneMap.end())
@@ -1484,7 +1484,7 @@ namespace Core
 		defaultObject->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		defaultObject->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 
-		defaultObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
+		defaultObject->rlRenderableUnit = std::make_unique<RLRenderableUnit>();
 		defaultObject->rlRenderableUnit->staticMesh = m_assetManager->staticMeshMap[prefab.lock()->staticMeshName];
 		defaultObject->rlRenderableUnit->material = material;
 		material->rlVertexShader.lock()->Attach(defaultObject->rlRenderableUnit.get());
@@ -1518,7 +1518,7 @@ namespace Core
 		object->glRenderableUnit->DrawGBufferMaterial = m_DrawGBufferMaterial;
 		object->glRenderableUnit->ComputeFormFactorMaterial = m_ComputeFormFactorMaterial;
 
-		object->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
+		object->rlRenderableUnit = std::make_unique<RLRenderableUnit>();
 		object->rlRenderableUnit->staticMesh = m_assetManager->staticMeshMap[object->staticMeshName];
 		object->rlRenderableUnit->material = material;
 		material->rlVertexShader.lock()->Attach(object->rlRenderableUnit.get());
@@ -1607,7 +1607,7 @@ namespace Core
 		PrimitiveMaterial->rlRayShader = m_assetManager->rlRayShaderMap["primitive"];
 		
 		std::unique_ptr<Object> PrimitiveObject = std::make_unique<Object>();
-		PrimitiveObject->rlRenderableUnit = std::make_shared<RLRenderableUnit>();
+		PrimitiveObject->rlRenderableUnit = std::make_unique<RLRenderableUnit>();
 		PrimitiveObject->rlRenderableUnit->staticMesh = PrimitiveMesh;
 		PrimitiveObject->rlRenderableUnit->material = PrimitiveMaterial;
 
@@ -1836,16 +1836,15 @@ namespace Core
 		m_RLDevice(std::make_unique<RLDevice>()),
 		m_guiWrapper(std::make_unique<GUIWrapper>()),
 		m_GLFrameBuffer(std::make_unique<GLFrameBuffer>()),
-		m_RLBakingObjectPosition(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
-		m_RLBakingObjectNormal(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_RLBakeFrameBuffer(std::make_unique<RLFrameBuffer>()),
-		m_RLBakeColorAttach(std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point)),
 		m_RLBakePackingBuffer(std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer)),
 		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_frameCount(0),
 		m_LightmapEncodingInRGBM(False),
 		m_baking(False),
-		m_thresholdY(0.01f)
+		m_thresholdY(0.01f),
+		SSKernel(SuperSampleKernel_1x1),
+		SSKernelString(SuperSampleKernelItems[SSKernel])
 	{
 		//	http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
 		AdobeRGBD65RGBToXYZ = Matrix3x3(
@@ -1897,8 +1896,8 @@ namespace Core
 
 		//bool mainOpened = true;
 
-		ImGui::SetNextWindowPos(ImVec2(400, 800));
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		ImGui::SetNextWindowPos(ImVec2(0, 800));
+		ImGui::SetNextWindowSize(ImVec2(600, 200));
 
 		ImGui::Begin("Main Window");//, &mainOpened, windowFlags);
 		//menuBar();
@@ -1940,6 +1939,26 @@ namespace Core
 				m_pSelectedObject = Null;
 			}
 		}
+
+		if (ImGui::BeginCombo("Super Kernel", SSKernelString.c_str()))
+		{
+			for (int32 i = SuperSampleKernel_Invalid + 1; i < SuperSampleKernel_Count; ++i)
+			{
+				Bool IsSelected = (SSKernel == i);
+
+				if (ImGui::Selectable(SuperSampleKernelItems[i], IsSelected))
+				{
+					SSKernel = static_cast<SuperSampleKernel>(i);
+					SSKernelString = SuperSampleKernelItems[i];
+				}
+				
+				if (IsSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
 		
 		if (m_baking && ImGui::Button("Stop"))
 		{
@@ -1977,6 +1996,13 @@ namespace Core
 		string BakingInfo = "Frame: ";
 		BakingInfo += to_string(m_frameCount - 1);
 		ImGui::Text(BakingInfo.c_str());
+
+		ImGui::SameLine();
+		
+		string FPSInfo = "FPS: ";
+		float FPS = deltaTime == 0.0 ? 1000 : 1.0f / deltaTime;
+		FPSInfo += to_string(FPS);
+		ImGui::Text(FPSInfo.c_str());
 		
 		if (ImGui::Button("Save Lightmap"))
 		{
@@ -2087,34 +2113,10 @@ namespace Core
 		}
 		ImGui::End();
 		//////////////////////////////////////////////////////////////////////////
-		if (m_GLVisibilityTexture.get())
-		{
-			ImGui::SetNextWindowPos(ImVec2(1200, 0));
-			ImGui::SetNextWindowSize(ImVec2(600, 600));
-
-			ImGui::Begin("Visibility View");
-			ImVec2 ProfileViewRegion = ImGui::GetContentRegionAvail();
-		
-			//ImGui::Image(
-			//	reinterpret_cast<void *>(
-			//	(m_frameCount - 1) % 2 == 0 ? m_RadiosityImage1->GetID64() : m_RadiosityImage0->GetID64()),
-			//	ProfileViewRegion,
-			//	ImVec2(0, 1.0f),
-			//	ImVec2(1.0f, 0));
-
-			ImGui::Image(
-				reinterpret_cast<void *>(m_GLVisibilityTexture->GetID64()),
-				ProfileViewRegion,
-				ImVec2(0, 1.0f),
-				ImVec2(1.0f, 0));
-			
-			ImGui::End();
-		}
-		//////////////////////////////////////////////////////////////////////////
 		if (m_RadiosityImage0.get())
 		{
-			ImGui::SetNextWindowPos(ImVec2(0, 600));
-			ImGui::SetNextWindowSize(ImVec2(200, 200));
+			ImGui::SetNextWindowPos(ImVec2(1200, 0));
+			ImGui::SetNextWindowSize(ImVec2(300, 300));
 		
 			ImGui::Begin("Radiosity 0");
 			ImVec2 colorAttach0Region = ImGui::GetContentRegionAvail();
@@ -2130,8 +2132,8 @@ namespace Core
 		//////////////////////////////////////////////////////////////////////////
 		if (m_ResidualImage0.get())
 		{
-			ImGui::SetNextWindowPos(ImVec2(200, 600));
-			ImGui::SetNextWindowSize(ImVec2(200, 200));
+			ImGui::SetNextWindowPos(ImVec2(1500, 0));
+			ImGui::SetNextWindowSize(ImVec2(300, 300));
 		
 			ImGui::Begin("Residual 0");
 			ImVec2 colorAttach1Region = ImGui::GetContentRegionAvail();
@@ -2145,12 +2147,10 @@ namespace Core
 			ImGui::End();
 		}
 		//////////////////////////////////////////////////////////////////////////
-		
-		//////////////////////////////////////////////////////////////////////////
 		if (m_RadiosityImage1.get())
 		{
-			ImGui::SetNextWindowPos(ImVec2(0, 800));
-			ImGui::SetNextWindowSize(ImVec2(200, 200));
+			ImGui::SetNextWindowPos(ImVec2(1200, 300));
+			ImGui::SetNextWindowSize(ImVec2(300, 300));
 		
 			ImGui::Begin("Radiosity 1");
 			ImVec2 bakeViewRegion = ImGui::GetContentRegionAvail();
@@ -2164,12 +2164,10 @@ namespace Core
 			ImGui::End();
 		}
 		//////////////////////////////////////////////////////////////////////////
-
-		//////////////////////////////////////////////////////////////////////////
 		if (m_ResidualImage1.get())
 		{
-			ImGui::SetNextWindowPos(ImVec2(200, 800));
-			ImGui::SetNextWindowSize(ImVec2(200, 200));
+			ImGui::SetNextWindowPos(ImVec2(1500, 300));
+			ImGui::SetNextWindowSize(ImVec2(300, 300));
 
 			ImGui::Begin("Residual 1");
 			ImVec2 debugViewRegion = ImGui::GetContentRegionAvail();
@@ -2300,43 +2298,52 @@ namespace Core
 					RemainingPrimitives.push(iter->second);
 				}
 			}
+
+			int32 SuperSampleScale = GetSuperSampleScale(SSKernel);
+
+			int32 SSRadiosityTextureWidth = RadiosityTextureWidth * SuperSampleScale;
+			int32 SSRadiosityTextureHeight = RadiosityTextureHeight * SuperSampleScale;
 			
 			m_GLPositionAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_GLPositionAttach->LoadImage(
-			RadiosityTextureWidth,
-			RadiosityTextureHeight,
+			SSRadiosityTextureWidth,
+			SSRadiosityTextureHeight,
 			Null);
 
 			m_GLNormalAttach = std::make_unique<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA32F, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point);
 			m_GLNormalAttach->LoadImage(
-			RadiosityTextureWidth,
-			RadiosityTextureHeight,
+			SSRadiosityTextureWidth,
+			SSRadiosityTextureHeight,
 			Null);
 			
 			m_GLGBufferFrameBuffer = std::make_unique<GLFrameBuffer>();
-			m_GLGBufferFrameBuffer->Resize(RadiosityTextureWidth, RadiosityTextureHeight);
+			m_GLGBufferFrameBuffer->Resize(SSRadiosityTextureWidth, SSRadiosityTextureHeight);
 			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor0, m_GLPositionAttach->GetTarget(), m_GLPositionAttach.get());
 			m_GLGBufferFrameBuffer->AttachColor(GLAttachIndexColor1, m_GLNormalAttach->GetTarget(), m_GLNormalAttach.get());
 			
 			m_GLGBufferFrameBuffer->Activate();
 			{
-				m_GLDevice->BeginBasePass(RadiosityTextureWidth, RadiosityTextureHeight);
+				m_GLDevice->BeginBasePass(SSRadiosityTextureWidth, SSRadiosityTextureHeight);
 				BeingBakingObject->DrawGBuffer(m_GLDevice.get());
 			}
 			m_GLGBufferFrameBuffer->Inactivate();
 
-			float* m_pPositionRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
-			float* m_pNormalRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
+			float* m_pPositionRawData = new float[SSRadiosityTextureWidth * SSRadiosityTextureHeight * 4];
+			float* m_pNormalRawData = new float[SSRadiosityTextureWidth * SSRadiosityTextureHeight * 4];
 			
 			m_GLPositionAttach->Fetch(m_pPositionRawData);
 			m_GLNormalAttach->Fetch(m_pNormalRawData);
 
-			m_RLBakingObjectPosition->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pPositionRawData);
-			m_RLBakingObjectNormal->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, m_pNormalRawData);
+			m_RLBakingObjectPosition = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+			m_RLBakingObjectPosition->LoadImage(SSRadiosityTextureWidth, SSRadiosityTextureHeight, m_pPositionRawData);
+
+			m_RLBakingObjectNormal = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
+			m_RLBakingObjectNormal->LoadImage(SSRadiosityTextureWidth, SSRadiosityTextureHeight, m_pNormalRawData);
 		
 			delete[] m_pPositionRawData;
 			delete[] m_pNormalRawData;
 
+			m_RLBakeColorAttach = std::make_unique<RLTexture2D>(RLIinternalFormat_RGBA, RLPixelFormat_RGBA, RLDataType_Float, RLTextureWrapMode_Clamp, RLTextureFilterMode_Point);
 			m_RLBakeColorAttach->LoadImage(RadiosityTextureWidth, RadiosityTextureHeight, Null);
 			m_RLBakeFrameBuffer->AttachColor(RLAttachIndexColor0, m_RLBakeColorAttach.get());
 

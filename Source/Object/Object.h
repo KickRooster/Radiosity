@@ -76,7 +76,7 @@ namespace Core
 		int32 MaxYLength;
 		
 		std::unique_ptr<GLRenderableUnit> glRenderableUnit;
-		std::shared_ptr<RLRenderableUnit> rlRenderableUnit;
+		std::unique_ptr<RLRenderableUnit> rlRenderableUnit;
 		
 		Object();
 		void Initialize(OpenGLDevice * pDevice, Bool SerializedRTSAsLocal2World);

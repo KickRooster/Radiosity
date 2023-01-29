@@ -97,6 +97,20 @@ namespace Core
 	float GetLightTriangleCountPerSide(LightPrecision Precision);
 
 	int32 GetMinSizeLength(LightPrecision Precision);
+
+	enum SuperSampleKernel
+	{
+		SuperSampleKernel_Invalid = -1,
+		SuperSampleKernel_1x1,
+		SuperSampleKernel_2x2,
+		SuperSampleKernel_3x3,
+		SuperSampleKernel_4x4,
+		SuperSampleKernel_Count
+	};
+
+	const ANSICHAR* SuperSampleKernelItems[];
+
+	int32 GetSuperSampleScale(SuperSampleKernel Kernel);
 }
 /*
 //	??????????.
