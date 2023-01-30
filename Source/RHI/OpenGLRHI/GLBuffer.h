@@ -23,11 +23,11 @@ namespace Core
 		BufferUsage_StaticDraw = GL_STATIC_DRAW,
 		BufferUsage_DynamicDraw = GL_DYNAMIC_DRAW,
 		BufferUsage_StreamRead = GL_STREAM_READ,
+		BufferUsage_StreamCopy = GL_STREAM_COPY,
 	};
 
 	class GLBuffer
 	{
-	private:
 		uint32 m_id;
 
 	public:
