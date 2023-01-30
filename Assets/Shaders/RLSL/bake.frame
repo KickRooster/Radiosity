@@ -74,6 +74,8 @@ void main()
 		(rl_FrameCoord.y * 2.0 + 1.0) / (rl_FrameSize.y * 2.0));
 	EmitRay(UV4, ShootingPrimitive.Positions[0], 2);
 
+	return;
+
 	//	Sample 4x4 GBuffer
 	vec2 UV00 = vec2(
 		(rl_FrameCoord.x * 4.0) / (rl_FrameSize.x * 4.0),
