@@ -1979,7 +1979,7 @@ namespace Core
 		FPSInfo += to_string(FPS);
 		ImGui::Text(FPSInfo.c_str());
 		
-		if (ImGui::Button("Save Lightmap"))
+		if (ImGui::Button("Save and Apply Lightmap"))
 		{
 			Object* BeingBakingObject = m_scene->GetBeingBakingObject();
 
@@ -1994,22 +1994,32 @@ namespace Core
 
 			int32 RadiosityTextureWidth = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureWidth();
 			int32 RadiosityTextureHeight = BeingBakingObject->glRenderableUnit->staticMesh->GetRadiosityTextureHeight();
-
+			
 			string LightmapName = BeingBakingObject->name;
-			SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
+			//SaveLightmap(LightmapName, m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
 			
 			float* DilatedRadiosityRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * 4];
 			DilateLightmap(m_pRadiosityImageRawData, RadiosityTextureWidth, RadiosityTextureHeight, DilatedRadiosityRawData);
 			
-			LightmapName += "_D";
+			//LightmapName += "_D";
 			SaveLightmap(LightmapName, DilatedRadiosityRawData, RadiosityTextureWidth, RadiosityTextureHeight);
 			delete[] DilatedRadiosityRawData;
 			
 			m_assetManager->ScanLightmap();
 			m_assetManager->ReloadLightmap();
-		}
+			
+			BeingBakingObject->glRenderableUnit->material.lock()->lightmapName = LightmapName;
+			BeingBakingObject->glRenderableUnit->material.lock()->lightmapTexture = m_assetManager->lightmapMap[LightmapName];
+			BeingBakingObject->glRenderableUnit->material.lock()->lightmapTexture.lock()->BeginUse();
+			BeingBakingObject->glRenderableUnit->material.lock()->IsBeingBaking = False;
 
+			if (LightmapName != "DummyLightmap")
+			{
+				m_LightmapEncodingInRGBM = True;
+			}
+		}
+		
 		ImGui::End();
 
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -2251,7 +2261,7 @@ namespace Core
 			
 			m_pResidualImageRawData = new float[RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4];
 			memset(m_pResidualImageRawData, 0, RadiosityTextureWidth * RadiosityTextureHeight * sizeof(float) * 4);
-
+			
 			for (int32 i = 0; i < m_scene->GetLightCount(); ++i)
 			{
 				Object* AreaLight = m_scene->GetAreaLight(i);
