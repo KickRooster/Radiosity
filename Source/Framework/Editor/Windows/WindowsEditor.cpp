@@ -1979,7 +1979,7 @@ namespace Core
 		FPSInfo += to_string(FPS);
 		ImGui::Text(FPSInfo.c_str());
 		
-		if (ImGui::Button("Save and Apply Lightmap"))
+		if (ImGui::Button("Save and Apply Lightmap") && m_frameCount > 0)
 		{
 			Object* BeingBakingObject = m_scene->GetBeingBakingObject();
 
