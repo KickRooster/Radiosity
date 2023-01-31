@@ -813,6 +813,9 @@ namespace Core
 
 				if (ImGui::Button("Open its scene"))
 				{
+					m_frameCount = 0;
+					m_currentMaxY = 0;
+					
 					if (m_scene)
 					{
 						m_scene->Clear();
@@ -1540,7 +1543,7 @@ namespace Core
 		return object;
 	}
 	
-	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index, Vector3 Position, Vector3 EulerAngle)
+	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index, Vector3 Position, Vector3 EulerAngle, int32 XLength, int32 YLength, int32 MaxXLength, int32 MaxYLength, Vector3 Color, float Intensity, Vector3 Energy, LightPrecision Precision)
 	{
 		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
 		ctd::string name = "Area Light " + to_string(Index);
@@ -1548,21 +1551,28 @@ namespace Core
 
 		areaLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();
 		
-		float DefaultXLength = 100.0f;
-		float DefaultYLength = 100.0f;
 		areaLight->glRenderableUnit->staticMesh = m_DefaultLightMesh;// CreateAreaLightMesh(DefaultXLength, DefaultYLength, LightPrecision_Middle);
-		areaLight->scale.x = DefaultXLength;
-		areaLight->scale.y = DefaultYLength;
-		areaLight->XLength = static_cast<int32>(DefaultXLength);
-		areaLight->YLength = static_cast<int32>(DefaultYLength);
+		areaLight->scale.x = static_cast<float>(XLength);
+		areaLight->scale.y = static_cast<float>(YLength);
+		areaLight->XLength = XLength;
+		areaLight->YLength = YLength;
+		areaLight->MaxXLength = MaxXLength;
+		areaLight->MaxYLength = MaxYLength;
 
 		areaLight->glRenderableUnit->material = m_arealLightMaterial;
 		
 		areaLight->position = Position;
 		areaLight->eulerAngle = EulerAngle;
+		areaLight->Color[0] = Color.x;
+		areaLight->Color[1] = Color.y;
+		areaLight->Color[2] = Color.z;
+		areaLight->Intensity = Intensity;
+		areaLight->Energy[0] = Energy.x;
+		areaLight->Energy[1] = Energy.y;
+		areaLight->Energy[2] = Energy.z;
 		//	Should not be exported to editor panel.
 		areaLight->LightmapResolution = LightmapResolution_Invalid;
-		areaLight->LightPrecision = LightPrecision_Low;
+		areaLight->LightPrecision = Precision;
 		areaLight->IsLight = True;
 
 		return areaLight;
@@ -1912,14 +1922,34 @@ namespace Core
 			
 			Vector3 LightPosition = Vector3(0, 0, 0);
 			Vector3 EulerAngle = Vector3(-90.0f, 0, 0);
+			Vector3 Color = Vector3(1.0, 1.0, 1.0);
+			float Intensity = 1.0f;
+			Vector3 Energy = Vector3(1.0, 1.0, 1.0);
+			int32 XLength = 100;
+			int32 YLength = 100;
+			int32 MaxXLengh = 1000;
+			int32 MaxYLength = 1000;
+			LightPrecision Precision = LightPrecision_Low;
 			
 			if (m_pSelectedObject)
 			{
 				LightPosition = m_pSelectedObject->position;
 				EulerAngle = m_pSelectedObject->eulerAngle;
+				Color.x = m_pSelectedObject->Color[0];
+				Color.y = m_pSelectedObject->Color[1];
+				Color.z = m_pSelectedObject->Color[2];
+				Intensity = m_pSelectedObject->Intensity;
+				Energy.x = m_pSelectedObject->Energy[0];
+				Energy.y = m_pSelectedObject->Energy[1];
+				Energy.z = m_pSelectedObject->Energy[2];
+				XLength = m_pSelectedObject->XLength;
+				YLength = m_pSelectedObject->YLength;
+				MaxXLengh = m_pSelectedObject->MaxXLength;
+				MaxYLength = m_pSelectedObject->MaxYLength;
+				Precision = m_pSelectedObject->LightPrecision;
 			}
 			
-			std::shared_ptr<Object> lightObject = createAreaLight(Index + 1, LightPosition, EulerAngle);
+			std::shared_ptr<Object> lightObject = createAreaLight(Index + 1, LightPosition, EulerAngle, XLength, YLength, MaxXLengh, MaxYLength, Color, Intensity, Energy, Precision);
 			lightObject->Initialize(m_GLDevice.get(), True);
 			m_scene->AddLight(lightObject, True);
 		}

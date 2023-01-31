@@ -95,7 +95,7 @@ namespace Core
 		//	Create for serialized.
 		std::shared_ptr<Object> InstantiateObject(std::shared_ptr<Object> object);
 		std::shared_ptr<Object> InstantiateAreaLight(std::shared_ptr<Object> object);
-		std::shared_ptr<Object> createAreaLight(int32 Index, Vector3 Position, Vector3 EulerAngle);
+		std::shared_ptr<Object> createAreaLight(int32 Index, Vector3 Position, Vector3 EulerAngle, int32 XLength, int32 YLength, int32 MaxXLength, int32 MaxYLength, Vector3 Color, float Intensity, Vector3 Energy, LightPrecision Precision);
 		std::unique_ptr<Object> CreateObject(const Primitive& Primitive);
 		void SaveLightmap(std::string Name, float* RadiosityImageRawData, int32 Width, int32 Height);
 		void DilateLightmap(float* RadiosityImageRawData, int32 Width, int32 Height, float* OutRadiosityImageData);
