@@ -844,9 +844,18 @@ namespace Core
 						}
 					}
 
-					if (m_scene->GetBeingBakingObject() && m_scene->GetBeingBakingObject()->glRenderableUnit->material.lock()->lightmapName == "DummyLightmap")
+					m_scene->GetBeingBakingObject()->glRenderableUnit->material.lock()->IsBeingBaking = False;
+
+					if (m_scene->GetBeingBakingObject())
 					{
-						m_LightmapEncodingInRGBM = False;
+						if (m_scene->GetBeingBakingObject()->glRenderableUnit->material.lock()->lightmapName == "DummyLightmap")
+						{
+							m_LightmapEncodingInRGBM = False;
+						}
+						else
+						{
+							m_LightmapEncodingInRGBM = True;
+						}
 					}
 				}
 				
