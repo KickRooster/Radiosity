@@ -1506,13 +1506,6 @@ namespace Core
 
 		std::shared_ptr<Material> material = m_assetManager->materialMap[object->materialName];
 
-		material->lightmapName = "DummyLightmap";
-		if (m_assetManager->lightmapMap.find("DummyLightmap") != m_assetManager->lightmapMap.end())
-		{
-			material->lightmapTexture = m_assetManager->lightmapMap["DummyLightmap"];
-			material->lightmapTexture.lock()->Attach(material.get());
-		}
-
 		material->IsOccluder = True;
 
 		object->glRenderableUnit->material = material;

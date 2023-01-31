@@ -405,8 +405,8 @@ namespace Core
 		if (textureMap.find(materialRef.lock()->roughnessTextureName) != textureMap.end())
 			materialRef.lock()->roughnessTexture = textureMap[materialRef.lock()->roughnessTextureName];
 
-		if (textureMap.find(materialRef.lock()->lightmapName) != textureMap.end())
-			materialRef.lock()->lightmapTexture = textureMap[materialRef.lock()->lightmapName];
+		if (lightmapMap.find(materialRef.lock()->lightmapName) != lightmapMap.end())
+			materialRef.lock()->lightmapTexture = lightmapMap[materialRef.lock()->lightmapName];
 	}
 	
 	void AssetManager::processFolder(AssetType assetType, const ANSICHAR * folderFullPathName, const ANSICHAR * extension0, ...)
