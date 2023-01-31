@@ -49,6 +49,7 @@ namespace Core
 		void RemoveLight(Object* Light);
 		void Clear();
 		int32 GetLightCount() const ;
+		int32 GetMaxLightIndex() const;
 		Object* GetAreaLight(int32 Index) const;
 		Object* GetBeingBakingObject() const;
 

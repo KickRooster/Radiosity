@@ -1908,7 +1908,7 @@ namespace Core
 		
 		if (ImGui::Button("Create Light"))
 		{
-			int32 Index = m_scene->GetLightCount();
+			int32 Index = m_scene->GetMaxLightIndex();
 			
 			Vector3 LightPosition = Vector3(0, 0, 0);
 			Vector3 EulerAngle = Vector3(-90.0f, 0, 0);
@@ -1919,7 +1919,7 @@ namespace Core
 				EulerAngle = m_pSelectedObject->eulerAngle;
 			}
 			
-			std::shared_ptr<Object> lightObject = createAreaLight(Index, LightPosition, EulerAngle);
+			std::shared_ptr<Object> lightObject = createAreaLight(Index + 1, LightPosition, EulerAngle);
 			lightObject->Initialize(m_GLDevice.get(), True);
 			m_scene->AddLight(lightObject, True);
 		}
@@ -2019,7 +2019,7 @@ namespace Core
 				m_LightmapEncodingInRGBM = True;
 			}
 		}
-		
+		 
 		ImGui::End();
 
 		ImGui::SetNextWindowPos(ImVec2(0, 0));

@@ -186,6 +186,28 @@ namespace Core
 	{
 		return m_LightRefs.size();
 	}
+
+	int32 Scene::GetMaxLightIndex() const
+	{
+		int32 MaxIndex = -1;
+		
+		for (std::vector<std::weak_ptr<Object>>::const_iterator iter = m_LightRefs.begin();
+			iter != m_LightRefs.end();
+			++iter)
+		{
+			size_t Offset = iter->lock()->name.find_last_of('t');
+			size_t NameLength = iter->lock()->name.length();
+			string IndexStr = iter->lock()->name.substr(Offset + 1, NameLength - Offset);
+			int32 Index = std::stoi(IndexStr);
+
+			if (Index > MaxIndex)
+			{
+				MaxIndex = Index;
+			}
+		}
+
+		return MaxIndex;
+	}
 	
 	Object* Scene::GetAreaLight(int32 Index) const
 	{
