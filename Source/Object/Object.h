@@ -9,7 +9,7 @@
 #include "../3rdParty/cereal/archives/xml.hpp"
 #include "..\3rdParty\RectangleBinPack\Rect.h"
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {
@@ -52,9 +52,9 @@ namespace Core
 		static int32 idSeed;
 		int32 id;
 		
-		ctd::string name;
-		ctd::string staticMeshName;
-		ctd::string materialName;
+		std::string name;
+		std::string staticMeshName;
+		std::string materialName;
 
 		Vector3 position;
 		Vector3 eulerAngle;

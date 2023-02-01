@@ -9,7 +9,6 @@
 #include "../3rdParty/cereal/archives/xml.hpp"
 #include "FBXImportor.h"
 
-using namespace ctd;
 using namespace std;
 
 namespace Core
@@ -173,17 +172,17 @@ namespace Core
 	
 	void AssetManager::processStaticMesh(const ANSICHAR * extension, const ANSICHAR * fileName, const ANSICHAR * fileFullPathName)
 	{
-		ctd::vector<std::unique_ptr<StaticMesh>> staticMeshes;
-		ctd::vector<std::unique_ptr<Material>> materials;
+		std::vector<std::unique_ptr<StaticMesh>> staticMeshes;
+		std::vector<std::unique_ptr<Material>> materials;
 
 		FBXImportor::Instance()->LoadStaticMesh(fileFullPathName, staticMeshes, materials, True);
 
-		vector<ctd::string> meshNames;
-		vector<ctd::string> materialNames;
+		vector<std::string> meshNames;
+		vector<std::string> materialNames;
 
 		for (int32 i = 0; i < staticMeshes.size(); ++i)
 		{
-			ctd::string meshName = staticMeshes[i]->fileName;
+			std::string meshName = staticMeshes[i]->fileName;
 
 			weak_ptr<StaticMesh> staticMeshRef = staticMeshMap[meshName];
 
@@ -204,7 +203,7 @@ namespace Core
 		
 		for (int32 i = 0; i < materials.size(); ++i)
 		{
-			ctd::string materialName = materials[i]->fileName;
+			std::string materialName = materials[i]->fileName;
 
 			weak_ptr<Material> materialRef = materialMap[materialName];
 
@@ -243,7 +242,7 @@ namespace Core
 		//	����prefab
 		for (int32 i = 0; i < meshNames.size(); ++i)
 		{
-			ctd::string prefabName = meshNames[i];
+			std::string prefabName = meshNames[i];
 
 			std::weak_ptr<Prefab> prefabRef = prefabMap[prefabName];
 
@@ -285,7 +284,7 @@ namespace Core
 			textureInfoMap[fileName] = make_shared<TextureInfo>();
 			weak_ptr<TextureInfo> textureInfoRef = textureInfoMap[fileName];
 
-			ctd::string textureInfoFullPathName = textureFullPath;
+			std::string textureInfoFullPathName = textureFullPath;
 			textureInfoFullPathName.append("\\");
 			textureInfoFullPathName.append(fileName);
 			textureInfoFullPathName.append(textureInfoExt);
@@ -326,7 +325,7 @@ namespace Core
 			textureInfoMap[fileName] = make_shared<TextureInfo>();
 			weak_ptr<TextureInfo> textureInfoRef = textureInfoMap[fileName];
 
-			ctd::string textureInfoFullPathName = lightmapFullPath;
+			std::string textureInfoFullPathName = lightmapFullPath;
 			textureInfoFullPathName.append("\\");
 			textureInfoFullPathName.append(fileName);
 			textureInfoFullPathName.append(textureInfoExt);
@@ -530,7 +529,7 @@ namespace Core
 
 	void AssetManager::SaveMaterialToDisk()
 	{
-		for (ctd::map<ctd::string, std::shared_ptr<Material>>::iterator iter = materialMap.begin();
+		for (std::map<std::string, std::shared_ptr<Material>>::iterator iter = materialMap.begin();
 			iter != materialMap.end();
 			++iter)
 		{
@@ -548,14 +547,14 @@ namespace Core
 
 	void AssetManager::ReloadGLShader()
 	{
-		for (ctd::map<ctd::string, std::shared_ptr<GLSL>>::iterator iter = glVertexShaderMap.begin();
+		for (std::map<std::string, std::shared_ptr<GLSL>>::iterator iter = glVertexShaderMap.begin();
 			iter != glVertexShaderMap.end();
 			++iter)
 		{
 			iter->second->Reload();
 		}
 
-		for (ctd::map<ctd::string, std::shared_ptr<GLSL>>::iterator iter = glFragmentShaderMap.begin();
+		for (std::map<std::string, std::shared_ptr<GLSL>>::iterator iter = glFragmentShaderMap.begin();
 			iter != glFragmentShaderMap.end();
 			++iter)
 		{
@@ -565,21 +564,21 @@ namespace Core
 
 	void AssetManager::ReloadRLShader()
 	{
-		for (ctd::map<ctd::string, std::shared_ptr<RLSL>>::iterator iter = rlVertexShaderMap.begin();
+		for (std::map<std::string, std::shared_ptr<RLSL>>::iterator iter = rlVertexShaderMap.begin();
 			iter != rlVertexShaderMap.end();
 			++iter)
 		{
 			iter->second->Reload();
 		}
 
-		for (ctd::map<ctd::string, std::shared_ptr<RLSL>>::iterator iter = rlRayShaderMap.begin();
+		for (std::map<std::string, std::shared_ptr<RLSL>>::iterator iter = rlRayShaderMap.begin();
 			iter != rlRayShaderMap.end();
 			++iter)
 		{
 			iter->second->Reload();
 		}
 
-		for (ctd::map<ctd::string, std::shared_ptr<RLSL>>::iterator iter = rlFrameShaderMap.begin();
+		for (std::map<std::string, std::shared_ptr<RLSL>>::iterator iter = rlFrameShaderMap.begin();
 			iter != rlFrameShaderMap.end();
 			++iter)
 		{
@@ -589,7 +588,7 @@ namespace Core
 	
 	void AssetManager::ReloadTexture()
 	{
-		for (ctd::map<ctd::string, std::shared_ptr<Texture>>::iterator iter = textureMap.begin();
+		for (std::map<std::string, std::shared_ptr<Texture>>::iterator iter = textureMap.begin();
 			iter != textureMap.end();
 			++iter)
 		{
@@ -599,7 +598,7 @@ namespace Core
 
 	void AssetManager::ReloadLightmap()
 	{
-		for (ctd::map<ctd::string, std::shared_ptr<Texture>>::iterator iter = lightmapMap.begin();
+		for (std::map<std::string, std::shared_ptr<Texture>>::iterator iter = lightmapMap.begin();
 			iter != lightmapMap.end();
 			++iter)
 		{
@@ -609,7 +608,7 @@ namespace Core
 
 	void AssetManager::SaveLightmap(const ANSICHAR * name, TextureFormat textureFormat, uint8 * pPixels, int32 width, int32 height)
 	{
-		ctd::string fileFullPathName = lightmapFullPath;
+		std::string fileFullPathName = lightmapFullPath;
 		fileFullPathName  += "\\";
 		fileFullPathName += name;
 		fileFullPathName += texturePNGExt;
@@ -675,7 +674,7 @@ namespace Core
 	void AssetManager::SaveAll()
 	{
 		//	Scene
-		for (ctd::map<ctd::string, std::shared_ptr<Scene>>::iterator iter = sceneMap.begin();
+		for (std::map<std::string, std::shared_ptr<Scene>>::iterator iter = sceneMap.begin();
 			iter != sceneMap.end();
 			++iter)
 		{
@@ -684,7 +683,7 @@ namespace Core
 		}
 
 		//	Prefab
-		for (ctd::map<ctd::string, std::shared_ptr<Prefab>>::iterator iter = prefabMap.begin();
+		for (std::map<std::string, std::shared_ptr<Prefab>>::iterator iter = prefabMap.begin();
 			iter != prefabMap.end();
 			++iter)
 		{
@@ -692,7 +691,7 @@ namespace Core
 		}
 
 		//	Material
-		for (ctd::map<ctd::string, std::shared_ptr<Material>>::iterator iter = materialMap.begin();
+		for (std::map<std::string, std::shared_ptr<Material>>::iterator iter = materialMap.begin();
 			iter != materialMap.end();
 			++iter)
 		{
@@ -700,7 +699,7 @@ namespace Core
 		}
 
 		//	Texture Info
-		for (ctd::map<ctd::string, std::shared_ptr<TextureInfo>>::iterator iter = textureInfoMap.begin();
+		for (std::map<std::string, std::shared_ptr<TextureInfo>>::iterator iter = textureInfoMap.begin();
 			iter != textureInfoMap.end();
 			++iter)
 		{
@@ -710,7 +709,7 @@ namespace Core
 
 	AssetManager::~AssetManager()
 	{
-		for (ctd::map<ctd::string, std::shared_ptr<Material>>::iterator iter = materialMap.begin();
+		for (std::map<std::string, std::shared_ptr<Material>>::iterator iter = materialMap.begin();
 			iter != materialMap.end();
 			++iter)
 		{

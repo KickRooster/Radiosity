@@ -1,6 +1,6 @@
 #pragma once
 #include <BaseInclude.h>
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {

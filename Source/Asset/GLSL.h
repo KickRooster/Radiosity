@@ -8,15 +8,14 @@ namespace Core
 {
 	class GLSL : public IAsset, public Subject
 	{
-	private:
 		std::unique_ptr<GLShader> m_shader;
 		void load();
 	public:
 		GLSL();
-		virtual void BeginUse() override;
-		virtual void Reload() override;
-		virtual void BeforeSave() override;
-		virtual void AfterLoad() override;
+		void BeginUse() override;
+		void Reload() override;
+		void BeforeSave() override;
+		void AfterLoad() override;
 		GLShader * GetGLShader() const;
 		virtual ~GLSL();
 	};

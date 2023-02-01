@@ -4,7 +4,7 @@
 #include "../RHI/OpenGLRHI/GLTexture.h"
 #include "../Asset/Texture.h"
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {

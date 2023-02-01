@@ -11,8 +11,8 @@ namespace Core
 		rbp::MaxRectsBinPack binInstance;
 		std::unique_ptr<uint8[]> rawData;
 		std::unique_ptr<float[]> rawDataFloat;
-		ctd::vector<rbp::Rect> rects;
-		ctd::vector<Bool> rectAppendeds;
+		std::vector<rbp::Rect> rects;
+		std::vector<Bool> rectAppendeds;
 	};
 
 	class AtlasManager
@@ -22,7 +22,7 @@ namespace Core
 		const rbp::MaxRectsBinPack::FreeRectChoiceHeuristic heuristic = rbp::MaxRectsBinPack::RectBestShortSideFit; // This can be changed individually even for each rectangle packed.
 		const int32 channelCount = 4;
 
-		ctd::vector<std::unique_ptr<Atlas>> m_atlasList;
+		std::vector<std::unique_ptr<Atlas>> m_atlasList;
 		int32 m_lastAtlasIndex = -1;
 		int32 m_currentAtlasIndex = -1;
 		Bool m_atlasChanged = False;

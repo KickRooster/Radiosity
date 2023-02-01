@@ -10,7 +10,7 @@
 #include "../Math/Vector4.h"
 #include "../RHI/OpenGLRHI/ImageTexture.h"
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {
@@ -86,45 +86,45 @@ namespace Core
 		Bool IsBeingBaking;
 
 		//	TODO:	�������ܻ���id
-		ctd::string glVertexShaderName;
-		ctd::string glFragmentShaderName;
-		ctd::string rlVertexShaderName;
-		ctd::string rlRayShaderName;
+		std::string glVertexShaderName;
+		std::string glFragmentShaderName;
+		std::string rlVertexShaderName;
+		std::string rlRayShaderName;
 		
-		ctd::string albedoTextureName;
-		ctd::string IDTextureName;
-		ctd::string normalMapName;
-		ctd::string metallicTextureName;
-		ctd::string roughnessTextureName;
-		ctd::string lightmapName;
-		ctd::string maskMapName;
+		std::string albedoTextureName;
+		std::string IDTextureName;
+		std::string normalMapName;
+		std::string metallicTextureName;
+		std::string roughnessTextureName;
+		std::string lightmapName;
+		std::string maskMapName;
 
 		float albedoColor[4] = { 1.0f, 1.0f,1.0f,1.0f }; 
 
-		const ctd::string albedoSamplerName = "albedoSampler";
-		const ctd::string IDCubeMapSamplerName = "IDCubeMapSampler";
-		const ctd::string VisibilitySamplerName = "VisibilitySampler";
-		const ctd::string RadiosityImage0Name = "RadiosityOutput0";
-		const ctd::string RadiosityImage1Name = "RadiosityOutput1";
-		const ctd::string ResidualImage0Name = "ResidualOutput0";
-		const ctd::string ResidualImage1Name = "ResidualOutput1";
-		const ctd::string normalSamplerName = "normalSampler";
-		const ctd::string metallicSamplerName = "metallicSampler";
-		const ctd::string roughnessSamplerName = "roughnessSampler";
-		const ctd::string lightmapSamplerName = "lightmapSampler";
-		const ctd::string idName = "id";
-		const ctd::string albedoColorName = "albedoColor";
+		const std::string albedoSamplerName = "albedoSampler";
+		const std::string IDCubeMapSamplerName = "IDCubeMapSampler";
+		const std::string VisibilitySamplerName = "VisibilitySampler";
+		const std::string RadiosityImage0Name = "RadiosityOutput0";
+		const std::string RadiosityImage1Name = "RadiosityOutput1";
+		const std::string ResidualImage0Name = "ResidualOutput0";
+		const std::string ResidualImage1Name = "ResidualOutput1";
+		const std::string normalSamplerName = "normalSampler";
+		const std::string metallicSamplerName = "metallicSampler";
+		const std::string roughnessSamplerName = "roughnessSampler";
+		const std::string lightmapSamplerName = "lightmapSampler";
+		const std::string idName = "id";
+		const std::string albedoColorName = "albedoColor";
 
 		Material();
-		Material(Material & mat);
+		Material(const Material & mat);
 
-		virtual void BeginUse() override;
-		virtual void Reload() override;
-		virtual void BeforeSave() override;
-		virtual void AfterLoad() override;
+		void BeginUse() override;
+		void Reload() override;
+		void BeforeSave() override;
+		void AfterLoad() override;
 		void Activate();
 		void Inactivate();
-		void SetSampler(int32 slotIndex, ctd::string samplerName, GLTexture * pTexture);
+		void SetSampler(int32 slotIndex, const std::string& samplerName, const GLTexture * pTexture);
 		void SetAlbedoColor();
 
 		template <class Archive>
@@ -141,55 +141,7 @@ namespace Core
 				albedoColor
 			);
 		}
-
-		//template <class Archive>
-		//void save(Archive & ar) const
-		//{
-		//	//m_lightmapUVParam_x = lightmapUVParam.x;
-		//	//m_lightmapUVParam_y = lightmapUVParam.y;
-		//	//m_lightmapUVParam_z = lightmapUVParam.z;
-		//	//m_lightmapUVParam_w = lightmapUVParam.w;
-		//
-		//	ar(
-		//		m_lightmapUVParam_x,
-		//		m_lightmapUVParam_y,
-		//		m_lightmapUVParam_z,
-		//		m_lightmapUVParam_w,
-		//		IsOccluder,
-		//		lightmapIndex,
-		//		glVertexShaderName,
-		//		glFragmentShaderName,
-		//		rlVertexShaderName,
-		//		rlRayShaderName,
-		//		albedoTextureName,
-		//		lightmapName
-		//	);
-		//}
-		//
-		//template <class Archive>
-		//void load(Archive & ar)
-		//{
-		//	ar(
-		//		m_lightmapUVParam_x,
-		//		m_lightmapUVParam_y,
-		//		m_lightmapUVParam_z,
-		//		m_lightmapUVParam_w,
-		//		IsOccluder,
-		//		lightmapIndex,
-		//		glVertexShaderName,
-		//		glFragmentShaderName,
-		//		rlVertexShaderName,
-		//		rlRayShaderName,
-		//		albedoTextureName,
-		//		lightmapName
-		//	);
-		//
-		//	lightmapUVParam.x = m_lightmapUVParam_x;
-		//	lightmapUVParam.y = m_lightmapUVParam_y;
-		//	lightmapUVParam.z = m_lightmapUVParam_z;
-		//	lightmapUVParam.w = m_lightmapUVParam_w;
-		//}
-
+		
 		virtual void UpdateAhead();
 		virtual void UpdateBehind();
 		virtual ~Material();

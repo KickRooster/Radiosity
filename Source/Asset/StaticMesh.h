@@ -9,10 +9,7 @@
 #include "IAsset.h"
 #include "..\Math\Matrix4x4.h"
 
-#include MAP_INCLUDE_PATH
-#include VECTOR_INCLUDE_PATH
-#include LIST_INCLUDE_PATH
-#include SET_INCLUDE_PATH
+#include <map>
 
 namespace Core
 {

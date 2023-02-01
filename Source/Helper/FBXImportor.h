@@ -13,9 +13,9 @@ namespace Core
 	private:
 		ErrorCode initializeSdkObjects(FbxManager*& pManager, FbxScene*& pScene);
 		ErrorCode loadScene(FbxManager* pManager, FbxDocument* pScene, const ANSICHAR* pFilename);
-		void processMesh(FbxNode* pNode, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
-		void processNode(FbxNode* pNode, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
+		void processMesh(FbxNode* pNode, std::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, std::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
+		void processNode(FbxNode* pNode, std::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, std::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
 	public:
-		ErrorCode LoadStaticMesh(const ANSICHAR * fileFullPathName, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
+		ErrorCode LoadStaticMesh(const ANSICHAR * fileFullPathName, std::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, std::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData = True);
 	};
 }

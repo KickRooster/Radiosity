@@ -5,7 +5,7 @@
 #include "Prefab.h"
 #include "../3rdParty/cereal/types/vector.hpp"
 
-#include VECTOR_INCLUDE_PATH
+#include <vector>
 
 namespace Core
 {
@@ -32,8 +32,8 @@ namespace Core
 		float m_camera_eulerAngle_z;
 	
 	public:
-		ctd::vector<std::shared_ptr<Object>> objects;
-		ctd::vector<std::shared_ptr<Object>> serializedObjects;
+		std::vector<std::shared_ptr<Object>> objects;
+		std::vector<std::shared_ptr<Object>> serializedObjects;
 		
 		Scene();
 		Scene(Scene &) {}

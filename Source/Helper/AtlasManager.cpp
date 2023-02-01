@@ -2,7 +2,7 @@
 #include "..\Settings\LightmappingSetting.h"
 #include "..\Math\MathGlobal.h"
 
-#include VECTOR_INCLUDE_PATH
+#include <vector>
 
 namespace Core
 {
@@ -230,7 +230,7 @@ namespace Core
 
 		for (int32 i = 0; i < m_atlasList.size(); ++i)
 		{
-			ctd::string lightmapName = LightmappingSetting::Instance()->GetLightmapName(i);
+			std::string lightmapName = LightmappingSetting::Instance()->GetLightmapName(i);
 
 			m_assetManager.lock()->SaveLightmap(
 				lightmapName.c_str(),

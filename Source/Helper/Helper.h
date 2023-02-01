@@ -2,7 +2,7 @@
 #include <BaseInclude.h>
 #include <random>
 
-#include VECTOR_INCLUDE_PATH
+#include <vector>
 
 namespace Core
 {
@@ -18,8 +18,8 @@ namespace Core
 			return rand(randomEngine, Distribution::param_type(minValue, maxValue));
 		}
 	public:
-		static void GenerateRandomNumbers(const float minValue, const float maxValue, const size_t count, ctd::vector<float> &randomNumbers);
-		static void RandomizeRadial(const float radius, const size_t count, ctd::vector<float> &randomNumbers);
+		static void GenerateRandomNumbers(const float minValue, const float maxValue, const size_t count, std::vector<float> &randomNumbers);
+		static void RandomizeRadial(const float radius, const size_t count, std::vector<float> &randomNumbers);
 		static float Random( float minValue,  float maxValue);
 	};
 

@@ -10,7 +10,6 @@
 
 using namespace DirectX;
 using namespace Thekla;
-using namespace ctd;
 
 namespace Core
 {

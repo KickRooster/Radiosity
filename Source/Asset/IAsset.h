@@ -7,7 +7,7 @@
 //	���еĻ����������ù�ϵ,ͬʱ�����һ�������ԭ���ڴ����,ʹ���滻��
 //	malloc�ķ�����ʵ��.
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {
@@ -34,9 +34,9 @@ namespace Core
 		Bool m_beingUsed;
 
 	public:
-		ctd::string fullPathName;
-		ctd::string fileName;
-		ctd::string fileNameWithExt;		//	�ļ���,����չ��
+		std::string fullPathName;
+		std::string fileName;
+		std::string fileNameWithExt;		//	�ļ���,����չ��
 		FileType type;
 
 		IAsset() : m_beingUsed(False) {}

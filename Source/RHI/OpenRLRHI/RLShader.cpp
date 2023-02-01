@@ -31,7 +31,7 @@ namespace Core
 
 			rlGetShaderString(m_rawData, RL_COMPILE_LOG, &pParam);
 
-			m_errorInfo = std::make_unique<ctd::string>(pParam);
+			m_errorInfo = std::make_unique<std::string>(pParam);
 
 			return !ErrorCode_OK;
 		}

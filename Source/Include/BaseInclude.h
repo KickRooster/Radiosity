@@ -9,20 +9,6 @@
 //	????????
 #include "../Platform/Platform.h"
 
-//	?????,??????????STL??
-#define ctd std
-
-#define VECTOR_INCLUDE_PATH <vector>
-#define SET_INCLUDE_PATH <set>
-#define MAP_INCLUDE_PATH <map>
-#define HASH_MAP_INCLUDE_PATH <hash_map>
-#define HASH_SET_INCLUDE_PATH <hash_set>
-#define STRING_INCLUDE_PATH <string>
-#define LIST_INCLUDE_PATH <list>
-#define STACK_INCLUDE_PATH <stack>
-#define FUNCTIONAL_INCLUDE_PATH <functional>
-#define ALGORITHM_INCLUDE_PATH <algorithm>
-
 #define True 1
 #define False 0
 #define Null 0

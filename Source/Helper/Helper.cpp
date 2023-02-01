@@ -6,7 +6,7 @@
 
 namespace Core
 {
-	void Helper::GenerateRandomNumbers(const float minValue, const float maxValue, const size_t count, ctd::vector<float> &randomNumbers)
+	void Helper::GenerateRandomNumbers(const float minValue, const float maxValue, const size_t count, std::vector<float> &randomNumbers)
 	{
 		static std::random_device randomDevice;
 		static std::mt19937 generator(randomDevice());
@@ -23,13 +23,13 @@ namespace Core
 		}
 	}
 
-	void Helper::RandomizeRadial(const float radius, const size_t count, ctd::vector<float> &randomNumbers)
+	void Helper::RandomizeRadial(const float radius, const size_t count, std::vector<float> &randomNumbers)
 	{
 		// Generate the random values via rejection sampling.
 		float radiusSquared = radius * radius;
 		randomNumbers.resize(count);
 
-		ctd::vector<float> randomValues;
+		std::vector<float> randomValues;
 		GenerateRandomNumbers(0.0f, 1.0f, count, randomValues);
 		size_t randomIndex = 0;
 

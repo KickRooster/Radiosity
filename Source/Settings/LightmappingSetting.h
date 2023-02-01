@@ -2,15 +2,15 @@
 #include <BaseInclude.h>
 #include "..\DesignPattern\SingletonPattern\Singleton.h"
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {
 	class LightmappingSetting : public Singleton<LightmappingSetting>
 	{
 	private:
-		ctd::string lightmapNamePrefix = "lightmap_";
-		ctd::string maskMapNamePrefix = "maskMap_";
+		std::string lightmapNamePrefix = "lightmap_";
+		std::string maskMapNamePrefix = "maskMap_";
 
 	public:
 		static const int32 lightmapSize;
@@ -22,14 +22,14 @@ namespace Core
 		//	approximate amount of lightmap pixels per world unit. Affects the amount and resolution of generated lightmaps.
 		static float TexelsPerUnit;
 
-		const ctd::string GetLightmapName(int32 lightmapIndex)
+		const std::string GetLightmapName(int32 lightmapIndex)
 		{
-			return lightmapNamePrefix + ctd::to_string(lightmapIndex);
+			return lightmapNamePrefix + std::to_string(lightmapIndex);
 		}
 
-		const ctd::string GetMaskMapName(int32 lightmapIndex)
+		const std::string GetMaskMapName(int32 lightmapIndex)
 		{
-			return maskMapNamePrefix + ctd::to_string(lightmapIndex);
+			return maskMapNamePrefix + std::to_string(lightmapIndex);
 		}
 	};
 }

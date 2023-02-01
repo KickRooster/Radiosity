@@ -1,7 +1,6 @@
 #include "Subject.h"
 
 using namespace std;
-using namespace ctd;
 
 namespace Core
 {

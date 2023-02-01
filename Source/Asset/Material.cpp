@@ -9,7 +9,7 @@ namespace Core
 
 	}
 
-	Material::Material(Material & mat)
+	Material::Material(const Material & mat)
 	{
 		this->albedoTextureName = mat.albedoTextureName;
 		this->normalMapName = mat.normalMapName;
@@ -189,7 +189,7 @@ namespace Core
 		}
 	}
 
-	void Material::SetSampler(int32 slotIndex, ctd::string samplerName, GLTexture * pTexture)
+	void Material::SetSampler(int32 slotIndex, const std::string& samplerName, const GLTexture * pTexture)
 	{
 		m_glProgram->Activate();
 		m_glProgram->ActivateTextureSlot(slotIndex, samplerName.c_str());

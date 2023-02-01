@@ -2,7 +2,7 @@
 #include "BaseGL.h"
 #include "GLTexture.h"
 
-#include VECTOR_INCLUDE_PATH
+#include <vector>
 
 namespace Core
 {
@@ -13,7 +13,7 @@ namespace Core
 		uint32 m_width;
 		uint32 m_height;
 
-		ctd::vector<GLAttachIndex> m_colorAttaches;
+		std::vector<GLAttachIndex> m_colorAttaches;
 
 		const GLenum singleAttaches[1] = { GL_COLOR_ATTACHMENT0 };
 		const GLenum doubleAttaches[2] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1 };

@@ -1,7 +1,7 @@
 #include <BaseInclude.h>
 #include "FBXImportor.h"
 #include <fbxsdk\scene\geometry\fbxlayer.h>
-#include SET_INCLUDE_PATH
+#include <set>
 
 namespace Core
 {
@@ -103,9 +103,9 @@ namespace Core
 		return lStatus ? ErrorCode_OK : !ErrorCode_OK ;
 	}
 
-	void FBXImportor::processMesh(FbxNode* pNode, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
+	void FBXImportor::processMesh(FbxNode* pNode, std::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, std::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
 	{
-		ctd::string nodeName = pNode->GetName();
+		std::string nodeName = pNode->GetName();
 
 		FbxMesh* pMesh = (FbxMesh*)pNode->GetNodeAttribute();
 
@@ -478,7 +478,7 @@ namespace Core
 
 		pStaticMesh->indexCount = indexCount;
 
-		ctd::map<int32, int32> oldControlPointIndex2NewControlPointIndexMap;
+		std::map<int32, int32> oldControlPointIndex2NewControlPointIndexMap;
 
 		for (int32 i = 0; i < vertexCount; ++i)
 		{
@@ -503,7 +503,7 @@ namespace Core
 		assert(vertexCount == indexCount);
 	}
 	
-	void FBXImportor::processNode(FbxNode* pNode, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
+	void FBXImportor::processNode(FbxNode* pNode, std::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, std::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
 	{
 		FbxNodeAttribute::EType lAttributeType;
 
@@ -533,7 +533,7 @@ namespace Core
 		}
 	}
 
-	ErrorCode FBXImportor::LoadStaticMesh(const ANSICHAR * fileFullPathName, ctd::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, ctd::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
+	ErrorCode FBXImportor::LoadStaticMesh(const ANSICHAR * fileFullPathName, std::vector<std::unique_ptr<StaticMesh>> & outStaticMeshes, std::vector<std::unique_ptr<Material>> & outMaterials, Bool generateTangentsData /*= True*/)
 	{
 		FbxManager* pSDKManager = Null;
 		FbxScene* pScene = Null;

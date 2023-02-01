@@ -1,7 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <BaseInclude.h>
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {

@@ -3,7 +3,6 @@
 #include <algorithm>
 
 using namespace std;
-using namespace ctd;
 
 namespace Core
 {
@@ -78,7 +77,7 @@ namespace Core
 
 	void Scene::Tick(float deltaTime, OpenGLDevice * pDevice, const InputState & inputState)
 	{
-		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
+		for (std::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 			iter != objects.end();
 			++iter)
 		{
@@ -94,7 +93,7 @@ namespace Core
 		m_camera->LightmapEncodingInRGBM = LightmapEncodingInRGBM;
 		m_camera->UpdataGLParam(pDevice);
 
-		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
+		for (std::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 			iter != objects.end();
 			++iter)
 		{
@@ -140,7 +139,7 @@ namespace Core
 			}
 		}
 		
-		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
+		for (std::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 					iter != objects.end();
 					++iter)
 		{
@@ -151,7 +150,7 @@ namespace Core
 			}
 		}
 
-		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = serializedObjects.begin();
+		for (std::vector<std::shared_ptr<Object>> ::iterator iter = serializedObjects.begin();
 					iter != serializedObjects.end();
 					++iter)
 		{
@@ -166,7 +165,7 @@ namespace Core
 	void Scene::Clear()
 	{
 		//	Destory RLPrimitive manually.
-		for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
+		for (std::vector<std::shared_ptr<Object>> ::iterator iter = objects.begin();
 			iter != objects.end();
 			++iter)
 		{

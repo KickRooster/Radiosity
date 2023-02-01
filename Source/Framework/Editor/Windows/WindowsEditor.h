@@ -15,14 +15,14 @@
 #include "Matrix3x3.h"
 #include <queue>
 
-#include VECTOR_INCLUDE_PATH
+#include <vector>
 
 
 namespace Core
 {
 	class WindowsEditor : public IFramework
 	{
-		const ctd::string startSceneName = "default";
+		const std::string startSceneName = "default";
 
 		std::shared_ptr<AssetManager> m_assetManager;
 
@@ -85,8 +85,8 @@ namespace Core
 		std::shared_ptr<StaticMesh> CreateAreaLightMesh(int32 XLength, int32 YLength, LightPrecision Precision);
 
 		void panelSceneObjects();
-		void popupNamingTick(const ANSICHAR *pName, const ANSICHAR *pExtension, InputState & inputState, Bool & pressedOK, ctd::string & fileName);
-		void popupFileSelectingTick(FileType fileType, const ANSICHAR *pName, bool * pfileSelections, int32 & selectedIndex, int32 & selectedIndexLastFrame, InputState & inputState, Bool & pressedOK, ctd::string & fileNameWithExt);
+		void popupNamingTick(const ANSICHAR *pName, const ANSICHAR *pExtension, InputState & inputState, Bool & pressedOK, std::string & fileName);
+		void popupFileSelectingTick(FileType fileType, const ANSICHAR *pName, bool * pfileSelections, int32 & selectedIndex, int32 & selectedIndexLastFrame, InputState & inputState, Bool & pressedOK, std::string & fileNameWithExt);
 		void panelAssets(InputState & inputState) ;
 		void menuBar();
 		void guizmoTick(const ImVec2 & regionTopLeft, const ImVec2 & regionSize, void * pViewMatrix, void * pProjectionMatrix, Object * pSelectedObject);

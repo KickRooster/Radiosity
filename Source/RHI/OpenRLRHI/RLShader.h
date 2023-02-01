@@ -8,7 +8,7 @@ namespace Core
 		RLShaderType m_type;
 		RLshader m_rawData;
 		RLShaderStatus m_status;
-		std::unique_ptr<ctd::string> m_errorInfo;
+		std::unique_ptr<std::string> m_errorInfo;
 
 	public:
 		RLShader(RLShaderType type);

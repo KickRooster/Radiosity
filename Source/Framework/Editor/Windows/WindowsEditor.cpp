@@ -7,10 +7,9 @@
 #include "../../../Helper/Helper.h"
 #include "LinearColor.h"
 
-#include STRING_INCLUDE_PATH
-#include VECTOR_INCLUDE_PATH
+#include <string>
+#include <vector>
 
-using namespace ctd;
 using namespace std;
 using namespace rbp;
 
@@ -253,7 +252,7 @@ namespace Core
 
 		ImGui::Begin("Scene Objects");
 		{
-			for (ctd::vector<std::shared_ptr<Object>> ::iterator iter = m_scene->objects.begin();
+			for (std::vector<std::shared_ptr<Object>> ::iterator iter = m_scene->objects.begin();
 				iter != m_scene->objects.end();
 				++iter)
 			{
@@ -272,7 +271,7 @@ namespace Core
 		ImGui::End();
 	}
 
-	void WindowsEditor::popupNamingTick(const ANSICHAR *pName, const ANSICHAR *pExtension, InputState & inputState, Bool & pressedOK, ctd::string & fileName)
+	void WindowsEditor::popupNamingTick(const ANSICHAR *pName, const ANSICHAR *pExtension, InputState & inputState, Bool & pressedOK, std::string & fileName)
 	{
 		if (ImGui::BeginPopupModal(pName))
 		{
@@ -302,7 +301,7 @@ namespace Core
 		}
 	}
 
-	void WindowsEditor::popupFileSelectingTick(FileType fileType, const ANSICHAR *pName, bool * pfileSelections, int32 & selectedIndex, int32 & selectedIndexLastFrame, InputState & inputState, Bool & pressedOK, ctd::string & fileNameWithExt)
+	void WindowsEditor::popupFileSelectingTick(FileType fileType, const ANSICHAR *pName, bool * pfileSelections, int32 & selectedIndex, int32 & selectedIndexLastFrame, InputState & inputState, Bool & pressedOK, std::string & fileNameWithExt)
 	{
 		if (ImGui::BeginPopupModal(pName))
 		{
@@ -496,7 +495,7 @@ namespace Core
 			//	���IMGUI,��Ҫ��bool������Bool.��ĿͬCategory��Ŀһ��.
 			static bool categorySelections[10] = { False, False, False, False, False, False, False, False , False};
 
-			ctd::string categoryName = "";
+			std::string categoryName = "";
 
 			const int32 maxFileSize = 200;
 			static bool fileSelections[maxFileSize] = { false };
@@ -1548,7 +1547,7 @@ namespace Core
 	std::shared_ptr<Object> WindowsEditor::createAreaLight(int32 Index, Vector3 Position, Vector3 EulerAngle, int32 XLength, int32 YLength, int32 MaxXLength, int32 MaxYLength, Vector3 Color, float Intensity, Vector3 Energy, LightPrecision Precision)
 	{
 		std::shared_ptr<Object> areaLight = std::make_shared<Object>();
-		ctd::string name = "Area Light " + to_string(Index);
+		std::string name = "Area Light " + to_string(Index);
 		areaLight->name = name;
 
 		areaLight->glRenderableUnit = std::make_unique<GLRenderableUnit>();

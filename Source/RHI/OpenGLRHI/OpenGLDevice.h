@@ -2,7 +2,7 @@
 #include "BaseGL.h"
 #include "GLBuffer.h"
 
-#include MAP_INCLUDE_PATH
+#include <map>
 
 namespace Core
 {
@@ -12,8 +12,8 @@ namespace Core
 		int32 m_maxUniformBufferBindingCount;
 		int32 m_bindingCursor;
 
-		ctd::map<GLShaderDataAlias, int32> m_aliasBindingIDMap;
-		ctd::map<GLShaderDataAlias, std::unique_ptr<GLBuffer>> m_aliasBufferMap;
+		std::map<GLShaderDataAlias, int32> m_aliasBindingIDMap;
+		std::map<GLShaderDataAlias, std::unique_ptr<GLBuffer>> m_aliasBufferMap;
 
 		void queryLimts();
 		void registerShaderGlobalData(GLShaderDataAlias alias, int32 dataSize);

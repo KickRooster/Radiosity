@@ -9,9 +9,9 @@
 #include "..\Asset\Prefab.h"
 #include "..\Asset\Scene.h"
 
-#include VECTOR_INCLUDE_PATH
-#include MAP_INCLUDE_PATH
-#include STRING_INCLUDE_PATH
+#include <vector>
+#include <map>
+#include <string>
 
 namespace Core
 {
@@ -77,21 +77,21 @@ namespace Core
 		
 		AssetManager();
 
-		ctd::map<ctd::string, std::shared_ptr<Scene>> sceneMap;
-		ctd::map<ctd::string, std::shared_ptr<Prefab>> prefabMap;
+		std::map<std::string, std::shared_ptr<Scene>> sceneMap;
+		std::map<std::string, std::shared_ptr<Prefab>> prefabMap;
 
-		ctd::map<ctd::string, std::shared_ptr<GLSL>> glVertexShaderMap;
-		ctd::map<ctd::string, std::shared_ptr<GLSL>> glFragmentShaderMap;
+		std::map<std::string, std::shared_ptr<GLSL>> glVertexShaderMap;
+		std::map<std::string, std::shared_ptr<GLSL>> glFragmentShaderMap;
 
-		ctd::map<ctd::string, std::shared_ptr<RLSL>> rlVertexShaderMap;
-		ctd::map<ctd::string, std::shared_ptr<RLSL>> rlRayShaderMap;
-		ctd::map<ctd::string, std::shared_ptr<RLSL>> rlFrameShaderMap;
+		std::map<std::string, std::shared_ptr<RLSL>> rlVertexShaderMap;
+		std::map<std::string, std::shared_ptr<RLSL>> rlRayShaderMap;
+		std::map<std::string, std::shared_ptr<RLSL>> rlFrameShaderMap;
 
-		ctd::map<ctd::string, std::shared_ptr<StaticMesh>> staticMeshMap;
-		ctd::map<ctd::string, std::shared_ptr<TextureInfo>> textureInfoMap;
-		ctd::map<ctd::string, std::shared_ptr<Texture>> textureMap;
-		ctd::map<ctd::string, std::shared_ptr<Texture>> lightmapMap;
-		ctd::map<ctd::string, std::shared_ptr<Material>> materialMap;
+		std::map<std::string, std::shared_ptr<StaticMesh>> staticMeshMap;
+		std::map<std::string, std::shared_ptr<TextureInfo>> textureInfoMap;
+		std::map<std::string, std::shared_ptr<Texture>> textureMap;
+		std::map<std::string, std::shared_ptr<Texture>> lightmapMap;
+		std::map<std::string, std::shared_ptr<Material>> materialMap;
 		
 		void ScanLightmap();
 		void Scan();

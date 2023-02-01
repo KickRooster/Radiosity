@@ -3,15 +3,15 @@
 #include <../3rdParty/cereal/archives/xml.hpp>
 #include "IAsset.h"
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 namespace Core
 {
 	class Prefab : public IAsset
 	{
 	public:
-		ctd::string staticMeshName;
-		ctd::string materialName;
+		std::string staticMeshName;
+		std::string materialName;
 
 		virtual void BeginUse() override;
 		virtual void Reload() override;

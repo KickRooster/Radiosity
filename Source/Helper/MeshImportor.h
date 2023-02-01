@@ -1,7 +1,7 @@
 #pragma once
 #include <BaseInclude.h>
 
-#include STRING_INCLUDE_PATH
+#include <string>
 
 #include <assimp/Importer.hpp> 
 #include <assimp/scene.h>     

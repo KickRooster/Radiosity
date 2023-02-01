@@ -8,21 +8,29 @@ namespace Core
 		ANSICHAR * pMem = (ANSICHAR *)FileOperator::MapMemory(fullPathName.c_str());
 
 		if (pMem == Null)
+		{
 			return;
-
+		}
+		
 		if (type == FileType_GLSL_Vertex)
 		{
-			if (m_shader.get() == Null)
+			if (m_shader == Null)
+			{
 				m_shader = std::make_unique<GLShader>(GLShaderType_VertexShader);
+			}
 		}
 		else if (type == FileType_GLSL_Fragment)
 		{
-			if (m_shader.get() == Null)
+			if (m_shader == Null)
+			{
 				m_shader = std::make_unique<GLShader>(GLShaderType_FragmentShader);
+			}
 		}
 		else
+		{
 			assert(False);
-
+		}
+		
 		ErrorCode result = m_shader->Compile(pMem);
 
 		if (result != ErrorCode_OK)

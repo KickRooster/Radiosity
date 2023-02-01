@@ -28,7 +28,7 @@ namespace Core
 		{
 			m_status = GLShaderStatus_CompileFailed;
 
-			m_errorInfo = std::make_unique<ctd::string>(infoBuffer);
+			m_errorInfo = std::make_unique<std::string>(infoBuffer);
 
 			return !ErrorCode_OK;
 		}

@@ -2,14 +2,14 @@
 #include <BaseInclude.h>
 #include "Obeserver.h"
 
-#include VECTOR_INCLUDE_PATH
+#include <vector>
 
 namespace Core
 {
 	class Subject
 	{
 	private:
-		ctd::vector<Obeserver *> m_observerList;
+		std::vector<Obeserver *> m_observerList;
 
 	public:
 		Subject();
