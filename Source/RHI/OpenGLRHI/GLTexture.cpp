@@ -4,6 +4,8 @@ namespace Core
 {
 	void GLTexture::setWrapMode(GLTextureWrapMode wrapMode)
 	{
+		m_wrapMode = wrapMode;
+		
 		switch (m_wrapMode)
 		{
 		case GLTextureWrapMode_Repeat:
@@ -35,6 +37,8 @@ namespace Core
 
 	void GLTexture::setFilterMode(GLTextureFilterMode filterMode)
 	{
+		m_filterMode = filterMode;
+		
 		switch (m_filterMode)
 		{
 		case GLTextureFilterMode_Point:
