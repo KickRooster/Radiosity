@@ -814,6 +814,7 @@ namespace Core
 				{
 					m_frameCount = 0;
 					m_currentMaxY = 0;
+					m_timeElapsed = 0;
 					
 					if (m_scene)
 					{
@@ -1849,6 +1850,7 @@ namespace Core
 		m_RLBakePackingBuffer(std::make_unique<RLBuffer>(RLBufferTarget_PixelPackBuffer)),
 		m_GLVisibilityTexture(std::make_shared<GLTexture>(GLTextureTarget_2D, GLInternalFormat_RGBA, GLPixelFormat_RGBA, GLDataType_Float, GLTextureWrapMode_Clamp, GLTextureFilterMode_Point)),
 		m_frameCount(0),
+		m_timeElapsed(0),
 		m_LightmapEncodingInRGBM(False),
 		m_baking(False),
 		m_thresholdY(0.01f)
@@ -2009,6 +2011,15 @@ namespace Core
 		float FPS = deltaTime == 0.0 ? 1000 : 1.0f / deltaTime;
 		FPSInfo += to_string(FPS);
 		ImGui::Text(FPSInfo.c_str());
+		
+		if (m_baking)
+		{
+			m_timeElapsed += deltaTime;
+		}
+		
+		string TimeElapsedInfo = "Time Elapsed(s): ";
+		TimeElapsedInfo += to_string(m_timeElapsed);
+		ImGui::Text(TimeElapsedInfo.c_str());
 		
 		if (ImGui::Button("Save and Apply Lightmap") && m_frameCount > 0)
 		{
