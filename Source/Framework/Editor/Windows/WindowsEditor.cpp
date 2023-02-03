@@ -1983,6 +1983,7 @@ namespace Core
 		else if (!m_baking && ImGui::Button("Bake"))
 		{
 			m_baking = True;
+			m_timeElapsed = 0;
 		}
 		
 		ImGui::SameLine();
