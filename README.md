@@ -6,3 +6,4 @@ Lightmap baker based on OpenGL and OpenRL.
 ![](https://github.com/Aix3D/OpenRL_Baker/blob/master/screenshot3.bmp)
 ![](https://github.com/Aix3D/OpenRL_Baker/blob/master/screenshot4.bmp)
 ![](https://github.com/Aix3D/OpenRL_Baker/blob/master/screenshot5.bmp)
+![](https://github.com/KickRooster/PathTracer/blob/master/snapshot0.bmp)
